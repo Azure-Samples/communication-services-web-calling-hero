@@ -51,7 +51,7 @@
   },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
-    "start": "rimraf ./build && react-scripts start",
+    "start": "rimraf ./build && react-scripts --max_old_space_size=4096 start",
     "build": "react-scripts build",
     "test": "cross-env CI=true react-scripts test --env=jsdom",
     "eject": "react-scripts eject",

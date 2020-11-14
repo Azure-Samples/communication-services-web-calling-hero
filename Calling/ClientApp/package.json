@@ -51,8 +51,8 @@
   },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
-    "start": "rimraf ./build && react-scripts start",
-    "build": "react-scripts build",
+    "start": "rimraf ./build && react-scripts --max_old_space_size=8096 start",
+    "build": "react-scripts --max_old_space_size=8096 build",
     "test": "cross-env CI=true react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "prettier": "prettier --write --config .prettierrc **/*.js **/*.ts",

@@ -36,6 +36,11 @@ export const utils = {
   isSmallScreen() {
     return window.innerWidth < 700 || window.innerHeight < 400;
   },
+  isUnsupportedBrowser() {
+    return window.navigator.userAgent.match(/(Firefox)/g)
+      ? true
+      : false;
+  },
   getId: (identifier: CommunicationUser | CallingApplication | UnknownIdentifier | PhoneNumber): string => {
     if (isCommunicationUser(identifier)) {
       return identifier.communicationUserId;

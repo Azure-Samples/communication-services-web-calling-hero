@@ -108,8 +108,8 @@ export const initCallClient = (userId: string, unsupportedStateHandler: () => vo
 
       var callClient;
 
-      // check if chrome/ios
-      if (utils.isOnIphoneAndNotSafari()) {
+      // check if chrome on ios OR firefox browser
+      if (utils.isOnIphoneAndNotSafari() || utils.isUnsupportedBrowser()) {
         unsupportedStateHandler();
         return;
       }

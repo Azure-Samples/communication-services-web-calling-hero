@@ -2,9 +2,7 @@ name: .NET Core
 
 on:
   push:
-    branches: [ add-deploy-button ]
-  pull_request:
-    branches: [ add-deploy-button ]
+    branches: [ main ]
 
 jobs:
   build:

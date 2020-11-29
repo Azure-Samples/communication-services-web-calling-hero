@@ -5,23 +5,23 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
-    runs-on: windows-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.301
-    - name: Install dependencies
-      run: dotnet restore
-    - name: Build
-      run: |
-          tag=$(git describe --tags --abbrev=0)
-          release_name=App-$tag-win-x6
-          dotnet publish  ./Calling/Calling.csproj --no-restore -c Release -o "$release_name"
-    - name: Test
-      run: dotnet test --no-restore --verbosity normal
+  # build:
+  #   runs-on: windows-latest
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - name: Setup .NET Core
+  #     uses: actions/setup-dotnet@v1
+  #     with:
+  #       dotnet-version: 3.1.301
+  #   - name: Install dependencies
+  #     run: dotnet restore
+  #   - name: Build
+  #     run: |
+  #         tag=$(git describe --tags --abbrev=0)
+  #         release_name=App-$tag-win-x6
+  #         dotnet publish  ./Calling/Calling.csproj --no-restore -c Release -o "$release_name"
+  #   - name: Test
+  #     run: dotnet test --no-restore --verbosity normal
   release:
     name: Release
     runs-on: windows-latest
@@ -35,8 +35,6 @@ jobs:
           dotnet-version: 3.1.101
       - name: where are we
         run: pwd
-      - name: list some key files
-        run: ls -lrt
       - name: Build
         shell: bash
         run: |
@@ -44,7 +42,7 @@ jobs:
           release_name=Calling-$tag
 
           # Build everything
-          dotnet publish ./Calling/Calling.csproj --framework netcoreapp3.1 --runtime "win-x64" -c Release -o "$release_name"
+          dotnet publish ./Calling --framework netcoreapp3.1 --runtime "win-x64" -c Release -o "$release_name"
 
           7z a -tzip "${release_name}.zip" "./${release_name}/*"
 

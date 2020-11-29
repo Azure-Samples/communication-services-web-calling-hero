@@ -37,7 +37,7 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          tag=$(git describe --tags --abbrev=0)
+          tag="testTag"
           release_name="Calling-$tag"
 
           # Build everything

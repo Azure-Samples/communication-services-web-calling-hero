@@ -38,7 +38,7 @@ jobs:
         shell: bash
         run: |
           tag=TestTest
-          release_name="Calling-$tag"
+          release_name=Calling-$tag
 
           # Build everything
           dotnet publish --framework netcoreapp3.1 --runtime "win-x64 -c Release -o "$release_name"

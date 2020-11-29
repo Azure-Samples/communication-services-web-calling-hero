@@ -26,6 +26,7 @@ jobs:
     name: Release
     runs-on: windows-latest
     steps:
+    
       - name: Checkout
         uses: actions/checkout@v1
 
@@ -40,7 +41,7 @@ jobs:
         run: |
           tag=TestTest
           release_name=Calling-$tag
-
+          unset CI
           # Build everything
           dotnet publish ./Calling --framework netcoreapp3.1 --runtime "win-x64" -c Release -o "$release_name"
 

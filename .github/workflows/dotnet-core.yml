@@ -39,7 +39,7 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          tag=TestTest
+          tag=$(git describe --tags --abbrev=0)
           release_name=Calling-$tag
           unset CI
           # Build everything
@@ -53,6 +53,6 @@ jobs:
       - name: Publish
         uses: softprops/action-gh-release@v1
         with:
-          files: "Calling*"
+          files: "Calling-*"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

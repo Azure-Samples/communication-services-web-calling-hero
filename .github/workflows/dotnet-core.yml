@@ -19,7 +19,7 @@ jobs:
       run: |
           tag=$(git describe --tags --abbrev=0)
           release_name=App-$tag-win-x6
-          dotnet publish --no-restore -c Release -o "$release_name"
+          dotnet publish  ./Calling/Calling.csproj --no-restore -c Release -o "$release_name"
     - name: Test
       run: dotnet test --no-restore --verbosity normal
   release:
@@ -41,7 +41,7 @@ jobs:
           release_name=Calling-$tag
 
           # Build everything
-          dotnet publish --framework netcoreapp3.1 --runtime "win-x64" -c Release -o "$release_name"
+          dotnet publish ./Calling/Calling.csproj --framework netcoreapp3.1 --runtime "win-x64" -c Release -o "$release_name"
 
           7z a -tzip "${release_name}.zip" "./${release_name}/*"
 

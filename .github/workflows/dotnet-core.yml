@@ -37,7 +37,7 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          tag="testtest"
+          tag=TestTest
           release_name="Calling-$tag"
 
           # Build everything

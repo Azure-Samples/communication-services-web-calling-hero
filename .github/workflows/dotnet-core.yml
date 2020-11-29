@@ -1,8 +1,8 @@
 name: .NET Core
 
 on:
-  push:
-    branches: [ main ]
+  release:
+    name: Release
 
 jobs:
   # build:

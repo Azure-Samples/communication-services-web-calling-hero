@@ -26,7 +26,7 @@ jobs:
           release_name=Calling-$tag
           unset CI
           # Build everything
-          dotnet publish ./Calling -c Release -o "$release_name"
+          dotnet publish ./Calling -c Release
 
           7z a -tzip "${release_name}.zip" "./${release_name}/*"
 

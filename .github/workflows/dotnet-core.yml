@@ -43,7 +43,7 @@ jobs:
           release_name=Calling-$tag
           unset CI
           # Build everything
-          dotnet publish ./Calling --framework netcoreapp3.1 --runtime "win-x64" -c Release -o "$release_name" /p:PublishTrimmed=true
+          dotnet publish ./Calling -c Release -o "$release_name"
 
           7z a -tzip "${release_name}.zip" "./${release_name}/*"
 

@@ -5,26 +5,9 @@ on:
     name: Release
 
 jobs:
-  # build:
-  #   runs-on: windows-latest
-  #   steps:
-  #   - uses: actions/checkout@v2
-  #   - name: Setup .NET Core
-  #     uses: actions/setup-dotnet@v1
-  #     with:
-  #       dotnet-version: 3.1.301
-  #   - name: Install dependencies
-  #     run: dotnet restore
-  #   - name: Build
-  #     run: |
-  #         tag=$(git describe --tags --abbrev=0)
-  #         release_name=App-$tag-win-x6
-  #         dotnet publish  ./Calling/Calling.csproj --no-restore -c Release -o "$release_name"
-  #   - name: Test
-  #     run: dotnet test --no-restore --verbosity normal
   release:
     name: Release
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
     
       - name: Checkout

@@ -1,14 +1,10 @@
-## How to try it out
-- Click on this button
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Falex-kwan%2Fcommunication-services-web-calling-hero%2Fadd-deploy-button%2Fdeploy%2Fazuredeploy.json)
-- Sign into Azure
-- Use your azure subscription to deploy this web application
 
 # Group Calling Sample
 
 This is a sample application to show how the ACS Calling Web SDK can be used to build a group calling experience. 
 The client-side application is a React based user interface which uses Redux for handling complex state while leveraging Microsoft Fluent UI. 
-Powering this front-end is a C# web application powered by ASP.net Core to connect this application with Azure Communication Services.
+Powering this front-end is a C# web application powered by ASP.net Core to connect this application with Azure CommWunication Services.
 
 Additional documentation for this sample can be found on [Microsoft Docs](https://docs.microsoft.com/azure/communication-services/samples/calling-hero-sample).
 
@@ -21,7 +17,6 @@ Additional documentation for this sample can be found on [Microsoft Docs](https:
 - [Visual Studio (2019 and above)](https://visualstudio.microsoft.com/vs/)
 - [.NET Core 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1) (Make sure to install version that corresponds with your visual studio instance, 32 vs 64 bit)
 - Create an Azure Communication Services resource. For details, see [Create an Azure Communication Resource](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource). You'll need to record your resource **connection string** for this quickstart.
-
 
 ## Code structure
 

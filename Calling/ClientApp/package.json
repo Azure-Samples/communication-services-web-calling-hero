@@ -19,6 +19,7 @@
     "merge": "^1.2.1",
     "node-forge": "0.10.0",
     "oidc-client": "^1.9.0",
+    "prettier": "2.0.5",
     "preval.macro": "^5.0.0",
     "react": "^16.8.0",
     "react-dom": "^16.8.0",
@@ -31,28 +32,27 @@
     "redux-thunk": "^2.3.0",
     "rimraf": "^2.6.2",
     "source-map-explorer": "^2.5.0",
+    "typescript": "^3.7.5",
     "uuid": "^8.1.0"
   },
   "devDependencies": {
     "ajv": "^6.9.1",
     "cross-env": "^5.2.0",
-    "typescript": "^3.7.5",
     "eslint": "^6.8.0",
     "eslint-config-react-app": "^5.2.0",
     "eslint-plugin-flowtype": "^4.6.0",
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.18.3",
-    "nan": "^2.14.1",
-    "prettier": "2.0.5"
+    "nan": "^2.14.1"
   },
   "eslintConfig": {
     "extends": "react-app"
   },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
-    "start": "rimraf ./build && react-scripts start",
-    "build": "react-scripts build",
+    "start": "npm install typescript -g && npm install react-scripts -g && rimraf ./build && react-scripts start",
+    "build": "npm install typescript -g && npm install react-scripts -g && react-scripts build",
     "test": "cross-env CI=true react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "prettier": "prettier --write --config .prettierrc **/*.js **/*.ts",

@@ -14,7 +14,7 @@
     },
     "packageUrl": {
       "type": "string",
-      "defaultValue": "https://github.com/alex-kwan/communication-services-web-calling-hero/releases/download/ef8922f/CallingPrototype.zip"
+      "defaultValue": "https://github.com/alex-kwan/communication-services-web-calling-hero/releases/download/a29ad5b/Calling-a29ad5b.zip"
     }
   },
   "variables": {

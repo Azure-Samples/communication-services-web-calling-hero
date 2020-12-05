@@ -14,7 +14,7 @@
     },
     "packageUrl": {
       "type": "string",
-      "defaultValue": "https://github.com/alex-kwan/communication-services-web-calling-hero/releases/download/a29ad5b/Calling-a29ad5b.zip"
+      "defaultValue": "https://github.com/Azure-Samples/communication-services-web-calling-hero/releases/download/157c66b/Calling-157c66b.zip"
     }
   },
   "variables": {

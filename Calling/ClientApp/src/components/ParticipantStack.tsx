@@ -11,6 +11,7 @@ import { RemoteParticipant, Call } from '@azure/communication-calling';
 import { CallingApplication, CommunicationUser } from '@azure/communication-common';
 import { ParticipantStream } from 'core/reducers';
 import { utils } from '../Utils/Utils';
+import { MicIcon, MicOffIcon } from '@fluentui/react-icons-northstar';
 
 export interface ParticipantStackProps {
   userId: string;
@@ -26,6 +27,7 @@ export interface CallParticipant {
   participant: RemoteParticipant | undefined;
   state: string;
   isScreenSharing: boolean;
+  isSpeaking: boolean;
 }
 
 const onRenderItem = (item: any) => (
@@ -36,6 +38,7 @@ const onRenderItem = (item: any) => (
       size={PersonaSize.size32}
       presence={item.state === 'Connected' ? PersonaPresence.online : PersonaPresence.offline}
     />
+    {item.isSpeaking ? <MicIcon size="medium" /> : <MicOffIcon size="medium" />}
     {item.isScreenSharing && <FontIcon className={iconStyle} iconName="ScreenCast" />}
   </>
 );
@@ -72,7 +75,8 @@ export default (props: ParticipantStackProps): JSX.Element => {
       name: participant.displayName ?? utils.getId(participant.identifier),
       participant: participant,
       state: participant.state,
-      isScreenSharing: isScreenSharing
+      isScreenSharing: isScreenSharing,
+      isSpeaking: participant.isSpeaking
     };
   });
   participants.push({
@@ -80,7 +84,8 @@ export default (props: ParticipantStackProps): JSX.Element => {
     name: `${props.userId} (You)`,
     participant: undefined,
     state: 'Connected',
-    isScreenSharing: activeScreenShareStream ? utils.getId(screenShareStream.user.identifier) === props.userId : false
+    isScreenSharing: activeScreenShareStream ? utils.getId(screenShareStream.user.identifier) === props.userId : false,
+    isSpeaking: !props.call.isMicrophoneMuted
   });
   return (
     <Stack className={participantStackStyle} tokens={participantStackTokens}>

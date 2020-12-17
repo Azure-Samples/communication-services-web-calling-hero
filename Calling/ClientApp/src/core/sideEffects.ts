@@ -17,7 +17,7 @@ import {
 import { AzureCommunicationUserCredential, CommunicationUser, CallingApplication } from '@azure/communication-common';
 import { Dispatch } from 'redux';
 import { utils } from '../Utils/Utils';
-import { callAdded, callRemoved, setCallState, setParticipants, setCallAgent } from './actions/calls';
+import { callAdded, callRemoved, setCallState, setParticipants, setCallAgent, callRetried } from './actions/calls';
 import { setMic, setShareScreen, resetControls } from './actions/controls';
 import {
   setAudioDeviceInfo,
@@ -179,8 +179,10 @@ export const initCallClient = (userId: string, unsupportedStateHandler: () => vo
           dispatch(setCallState(addedCall.state));
         });
         e.removed.forEach((removedCall) => {
-          console.log('callRemoved', removedCall);
           const state = getState();
+
+          dispatch(callRetried(state.calls.attempts + 1));
+
           if (state.calls.call && state.calls.call === removedCall) {
             dispatch(callRemoved(removedCall, state.calls.group));
             dispatch(resetControls());

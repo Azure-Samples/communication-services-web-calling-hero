@@ -7,7 +7,8 @@ import {
   SET_GROUP,
   SET_PARTICIPANTS,
   CallTypes,
-  SET_CALL_AGENT
+  SET_CALL_AGENT,
+  CALL_RETRIED
 } from '../actions/calls';
 
 export interface CallsState {
@@ -18,6 +19,7 @@ export interface CallsState {
   incomingCallEndReason: CallEndReason | undefined;
   groupCallEndReason: CallEndReason | undefined;
   remoteParticipants: RemoteParticipant[];
+  attempts: number
 }
 
 const initialState: CallsState = {
@@ -27,7 +29,8 @@ const initialState: CallsState = {
   incomingCallEndReason: undefined,
   groupCallEndReason: undefined,
   remoteParticipants: [],
-  group: ''
+  group: '',
+  attempts: 0
 };
 
 export const callsReducer: Reducer<CallsState, CallTypes> = (state = initialState, action: CallTypes): CallsState => {
@@ -50,6 +53,8 @@ export const callsReducer: Reducer<CallsState, CallTypes> = (state = initialStat
       return { ...state, remoteParticipants: action.remoteParticipants };
     case SET_GROUP:
       return { ...state, group: action.group };
+    case CALL_RETRIED:
+      return { ...state, attempts:action.attempts} 
     default:
       return state;
   }

@@ -62,8 +62,10 @@ export default (props: GroupCallProps): JSX.Element => {
 
   useEffect(() => {
     if (attempts > 3) {
-      props.setAttempts(0);
       props.endCallHandler();
+      // after we switch the screen on the next tick we want to 
+      // set the attempts back to 0
+      setTimeout(()=> props.setAttempts(0), 0)
     }
     if (callAgent && !call) {
       joinGroup();

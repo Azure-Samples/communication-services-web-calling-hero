@@ -50,15 +50,21 @@ export interface GroupCallProps {
   isGroup(): void;
   joinGroup(): void;
   endCallHandler(): void;
+  attempts: number;
+  setAttempts(attempts: number): void;
 }
 
 export default (props: GroupCallProps): JSX.Element => {
   const [selectedPane, setSelectedPane] = useState(CommandPanelTypes.None);
   const activeScreenShare = props.screenShareStreams && props.screenShareStreams.length === 1;
 
-  const { callAgent, call, groupId, joinGroup } = props;
+  const { callAgent, call, groupId, joinGroup, attempts } = props;
 
   useEffect(() => {
+    if (attempts > 3) {
+      props.setAttempts(0);
+      props.endCallHandler();
+    }
     if (callAgent && !call) {
       joinGroup();
       document.title = `${groupId} group call sample`;

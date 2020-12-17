@@ -82,6 +82,8 @@ const App = () => {
     } else if (page === 'endCall') {
       return (
         <EndCall
+          message={ store.getState().calls.attempts > 3 ? 'Unable to join the call' : 
+          'You left the call'}
           rejoinHandler={() => {
             setPage('call');
           }}

@@ -14,19 +14,19 @@ import {
 } from './styles/EndCall.styles';
 
 export interface EndCallProps {
+  message: string;
   rejoinHandler(): void;
   homeHandler(): void;
 }
 
 export default (props: EndCallProps): JSX.Element => {
-  const leftCall = 'You left the call';
   const goHomePage = 'Go to homepage';
   const rejoinCall = 'Rejoin call';
 
   return (
     <Stack verticalAlign="center" tokens={mainStackTokens} className={endCallContainerStyle}>
       <Stack tokens={upperStackTokens}>
-        <div className={endCallTitleStyle}>{leftCall}</div>
+        <div className={endCallTitleStyle}>{props.message}</div>
         <Stack horizontal tokens={buttonsStackTokens}>
           <PrimaryButton className={buttonStyle} onClick={props.rejoinHandler}>
             <VideoCameraEmphasisIcon className={videoCameraIconStyle} size="medium" />

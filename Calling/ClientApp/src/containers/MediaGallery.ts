@@ -4,6 +4,7 @@ import { State } from '../core/reducers';
 
 const mapStateToProps = (state: State) => ({
   userId: state.sdk.userId,
+  displayName: state.sdk.displayName,
   remoteParticipants: state.calls.remoteParticipants,
   localVideoStream: state.streams.localVideoStream
 });

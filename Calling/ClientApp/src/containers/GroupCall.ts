@@ -8,7 +8,7 @@ import { State } from '../core/reducers';
 import { callRetried } from 'core/actions/calls';
 
 const mapStateToProps = (state: State, props: GroupCallProps) => ({
-  userId: state.sdk.userId || props.userId,
+  userId: state.sdk.userId,
   callAgent: state.calls.callAgent,
   group: state.calls.group,
   screenWidth: props.screenWidth,

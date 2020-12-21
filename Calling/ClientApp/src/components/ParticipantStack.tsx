@@ -15,6 +15,7 @@ import { MicIcon, MicOffIcon } from '@fluentui/react-icons-northstar';
 
 export interface ParticipantStackProps {
   userId: string;
+  displayName: string;
   call: Call;
   callState: string;
   screenShareStreams: ParticipantStream[];
@@ -81,7 +82,7 @@ export default (props: ParticipantStackProps): JSX.Element => {
   });
   participants.push({
     key: `${props.userId} (You)`,
-    name: `${props.userId} (You)`,
+    name: `${props.displayName} (You)`,
     participant: undefined,
     state: 'Connected',
     isScreenSharing: activeScreenShareStream ? utils.getId(screenShareStream.user.identifier) === props.userId : false,

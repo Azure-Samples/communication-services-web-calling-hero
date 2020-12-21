@@ -28,6 +28,7 @@ import {
   setVideoDeviceList,
   setDeviceManager
 } from './actions/devices';
+import { setUserId } from './actions/sdk';
 import { addScreenShareStream, resetStreams, removeScreenShareStream } from './actions/streams';
 import { State } from './reducers';
 
@@ -97,10 +98,10 @@ export const updateDevices = () => {
   };
 };
 
-export const initCallClient = (userId: string, unsupportedStateHandler: () => void, endCallHandler: () => void) => {
+export const initCallClient = (unsupportedStateHandler: () => void, endCallHandler: () => void) => {
   return async (dispatch: Dispatch, getState: () => State) => {
     try {
-      const tokenResponse = await utils.getTokenForUser(userId);
+      const tokenResponse = await utils.getTokenForUser();
 
       const options: CallClientOptions = {};
 
@@ -132,7 +133,8 @@ export const initCallClient = (userId: string, unsupportedStateHandler: () => vo
         return;
       }
 
-      callAgent.updateDisplayName(userId);
+      // We want to set the user id when we have it officially from the server
+      dispatch(setUserId(tokenResponse.value.user.id))
 
       let deviceManager: DeviceManager = await callClient.getDeviceManager();
 

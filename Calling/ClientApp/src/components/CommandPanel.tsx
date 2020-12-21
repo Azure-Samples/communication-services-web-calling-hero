@@ -1,7 +1,7 @@
 import React from 'react';
 import NewLocalSettings from './LocalSettings';
 import ParticipantStack from '../containers/ParticipantStack';
-import { VideoDeviceInfo, AudioDeviceInfo } from '@azure/communication-calling';
+import { VideoDeviceInfo, AudioDeviceInfo, DeviceManager } from '@azure/communication-calling';
 import { Stack } from '@fluentui/react';
 import {
   fullHeightStyles,
@@ -20,6 +20,7 @@ export interface CommandPanelProps {
   setSelectedPane: any;
   setVideoDeviceInfo(device: VideoDeviceInfo): void;
   setAudioDeviceInfo(device: AudioDeviceInfo): void;
+  deviceManager: DeviceManager;
 }
 export enum CommandPanelTypes {
   None = 'none',
@@ -55,6 +56,7 @@ export default (props: CommandPanelProps): JSX.Element => {
               videoDeviceInfo={props.videoDeviceInfo}
               setVideoDeviceInfo={props.setVideoDeviceInfo}
               setAudioDeviceInfo={props.setAudioDeviceInfo}
+              deviceManager={props.deviceManager}
             />
           </div>
           </Stack.Item>

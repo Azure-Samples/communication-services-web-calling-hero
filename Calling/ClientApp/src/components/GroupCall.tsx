@@ -21,7 +21,8 @@ import {
   AudioDeviceInfo,
   VideoDeviceInfo,
   RemoteParticipant,
-  CallAgent
+  CallAgent,
+  DeviceManager
 } from '@azure/communication-calling';
 import { ParticipantStream } from 'core/reducers/index.js';
 
@@ -52,6 +53,7 @@ export interface GroupCallProps {
   endCallHandler(): void;
   attempts: number;
   setAttempts(attempts: number): void;
+  deviceManager: DeviceManager;
 }
 
 export default (props: GroupCallProps): JSX.Element => {

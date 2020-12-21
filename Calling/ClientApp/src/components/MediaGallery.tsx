@@ -7,6 +7,7 @@ import RemoteStreamMedia from './RemoteStreamMedia';
 
 export interface MediaGalleryProps {
   userId: string;
+  displayName: string;
   remoteParticipants: RemoteParticipant[];
   localVideoStream: LocalVideoStream;
 }
@@ -23,7 +24,7 @@ export default (props: MediaGalleryProps): JSX.Element => {
     (participants) => (participants && participants.length > 0 ? Math.ceil(Math.sqrt(participants.length + 1)) : 1),
     []
   );
-  const getMediaGalleryTilesForParticipants = (participants: RemoteParticipant[], userId: string) => {
+  const getMediaGalleryTilesForParticipants = (participants: RemoteParticipant[], userId: string, displayName: string) => {
     // create a RemoteStreamMedia component for every remote participant
     const remoteParticipantsMediaGalleryItems = participants.map((participant) => (
       <div className={mediaGalleryStyle}>
@@ -38,7 +39,7 @@ export default (props: MediaGalleryProps): JSX.Element => {
     // create a LocalStreamMedia component for the local participant
     const localParticipantMediaGalleryItem = (
       <div key={userId} className={mediaGalleryStyle}>
-        <LocalStreamMedia label={userId} stream={props.localVideoStream} />
+        <LocalStreamMedia label={displayName} stream={props.localVideoStream} />
       </div>
     );
 
@@ -61,7 +62,7 @@ export default (props: MediaGalleryProps): JSX.Element => {
         gridTemplateColumns: `repeat(${gridCol}, 1fr)`
       }}
     >
-      {getMediaGalleryTilesForParticipants(props.remoteParticipants, props.userId)}
+      {getMediaGalleryTilesForParticipants(props.remoteParticipants, props.userId, props.displayName)}
     </div>
   );
 };

@@ -34,8 +34,6 @@ const App = () => {
     return () => window.removeEventListener('resize', setWindowWidth);
   }, []);
 
-  const createUserId = () => 'user' + Math.ceil(Math.random() * 1000);
-
   const getGroupIdFromUrl = () => {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get('groupId');
@@ -66,7 +64,6 @@ const App = () => {
           unsupportedStateHandler={() => setPage('error')}
           endCallHandler={() => setPage('endCall')}
           groupId={getGroupId()}
-          userId={createUserId()}
           screenWidth={screenWidth}
         />
       );
@@ -75,7 +72,6 @@ const App = () => {
         <GroupCall
           endCallHandler={() => setPage('endCall')}
           groupId={getGroupId()}
-          userId={createUserId()}
           screenWidth={screenWidth}
         />
       );

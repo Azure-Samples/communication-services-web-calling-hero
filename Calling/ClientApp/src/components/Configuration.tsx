@@ -28,8 +28,8 @@ export interface ConfigurationScreenProps {
   groupId: string;
   callAgent: CallAgent;
   deviceManager: DeviceManager;
-  setUserId(userId: string): void;
-  initCallClient(userId: string, unsupportedStateHandler: () => void, endCallhandler: () => void): void;
+  setDisplayName(displayName: string): void;
+  initCallClient(unsupportedStateHandler: () => void, endCallhandler: () => void): void;
   setGroup(groupId: string): void;
   startCallHandler(): void;
   unsupportedStateHandler: () => void;
@@ -51,14 +51,15 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
   const spinnerLabel = 'Initializing call client...';
   const buttonText = 'Start call';
 
-  const [name, setName] = useState(props.userId);
+  const createUserId = () => 'user' + Math.ceil(Math.random() * 1000);
+
+  const [name, setName] = useState(createUserId());
   const [emptyWarning, setEmptyWarning] = useState(false);
 
-  const { userId, groupId, setUserId, initCallClient, setGroup, unsupportedStateHandler, endCallHandler } = props;
+  const {groupId, setDisplayName, initCallClient, setGroup, unsupportedStateHandler, endCallHandler} = props;
 
   useEffect(() => {
-    setUserId(userId);
-    initCallClient(userId, unsupportedStateHandler, endCallHandler);
+    initCallClient(unsupportedStateHandler, endCallHandler);
     setGroup(groupId);
   }, []);
 
@@ -102,8 +103,10 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
                     setEmptyWarning(true);
                   } else {
                     setEmptyWarning(false);
-                    props.setUserId(name);
+                    // update the local display name for all of the other participants to see
                     props.callAgent.updateDisplayName(name);
+                    // update the local display name for local rendering
+                    setDisplayName(name);
                     props.startCallHandler();
                   }
                 }}

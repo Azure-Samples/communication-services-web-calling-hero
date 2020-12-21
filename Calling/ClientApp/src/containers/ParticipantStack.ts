@@ -6,6 +6,7 @@ import { CommunicationUser, CallingApplication } from '@azure/communication-comm
 
 const mapStateToProps = (state: State) => ({
   userId: state.sdk.userId,
+  displayName: state.sdk.displayName,
   call: state.calls.call,
   callState: state.calls.callState,
   remoteParticipants: state.calls.remoteParticipants,

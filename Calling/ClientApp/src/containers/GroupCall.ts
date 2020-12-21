@@ -9,6 +9,7 @@ import { callRetried } from 'core/actions/calls';
 
 const mapStateToProps = (state: State, props: GroupCallProps) => ({
   userId: state.sdk.userId || props.userId,
+  deviceManager: state.devices.deviceManager,
   callAgent: state.calls.callAgent,
   group: state.calls.group,
   screenWidth: props.screenWidth,
@@ -46,7 +47,9 @@ const mapStateToProps = (state: State, props: GroupCallProps) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
   mute: () => dispatch(setMicrophone(false)),
-  setAudioDeviceInfo: (deviceInfo: AudioDeviceInfo) => dispatch(setAudioDeviceInfo(deviceInfo)),
+  setAudioDeviceInfo: (deviceInfo: AudioDeviceInfo) => { 
+    dispatch(setAudioDeviceInfo(deviceInfo))
+  },
   setVideoDeviceInfo: (deviceInfo: VideoDeviceInfo) => {
     dispatch(setVideoDeviceInfo(deviceInfo));
   },

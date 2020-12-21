@@ -91,6 +91,7 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
                 videoDeviceInfo={props.videoDeviceInfo}
                 setVideoDeviceInfo={props.setVideoDeviceInfo}
                 setAudioDeviceInfo={props.setAudioDeviceInfo}
+                deviceManager={props.deviceManager}
               />
             </div>
             <div>

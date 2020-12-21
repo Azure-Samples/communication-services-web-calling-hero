@@ -28,9 +28,8 @@ export interface ConfigurationScreenProps {
   groupId: string;
   callAgent: CallAgent;
   deviceManager: DeviceManager;
-  setUserId(userId: string): void;
   setDisplayName(displayName: string): void;
-  initCallClient(userId: string, unsupportedStateHandler: () => void, endCallhandler: () => void): void;
+  initCallClient(unsupportedStateHandler: () => void, endCallhandler: () => void): void;
   setGroup(groupId: string): void;
   startCallHandler(): void;
   unsupportedStateHandler: () => void;
@@ -52,15 +51,15 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
   const spinnerLabel = 'Initializing call client...';
   const buttonText = 'Start call';
 
-  const [name, setName] = useState(props.userId);
+  const createUserId = () => 'user' + Math.ceil(Math.random() * 1000);
+
+  const [name, setName] = useState(createUserId());
   const [emptyWarning, setEmptyWarning] = useState(false);
 
-  const { userId, groupId, setUserId, setDisplayName, initCallClient, setGroup, unsupportedStateHandler, endCallHandler } = props;
+  const {groupId, setDisplayName, initCallClient, setGroup, unsupportedStateHandler, endCallHandler} = props;
 
   useEffect(() => {
-    // we want to set this user id so we can use it to identify the local user
-    setUserId(userId);
-    initCallClient(userId, unsupportedStateHandler, endCallHandler);
+    initCallClient(unsupportedStateHandler, endCallHandler);
     setGroup(groupId);
   }, []);
 

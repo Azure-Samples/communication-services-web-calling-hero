@@ -60,7 +60,7 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
     setUserId(userId);
     initCallClient(userId, unsupportedStateHandler, endCallHandler);
     setGroup(groupId);
-  }, [userId, groupId, setUserId, initCallClient, setGroup, unsupportedStateHandler, endCallHandler]);
+  }, []);
 
   return (
     <Stack className={mainContainerStyle} horizontalAlign="center" verticalAlign="center">

@@ -1,6 +1,7 @@
 import { CallEndReason, Call, RemoteParticipant, CallAgent } from '@azure/communication-calling';
 
 const SET_CALL_AGENT = 'SET_CALL_AGENT';
+const RESET_CALLS = 'RESET_CALLS';
 const SET_GROUP = 'SET_GROUP';
 const CALL_ADDED = 'CALL_ADDED';
 const CALL_REMOVED = 'CALL_REMOVED';
@@ -12,6 +13,11 @@ interface SetCallAgentAction {
   type: typeof SET_CALL_AGENT;
   callAgent: CallAgent;
 }
+
+interface ResetCallsAction {
+  type: typeof RESET_CALLS;
+}
+
 interface SetGroupAction {
   type: typeof SET_GROUP;
   group: any;
@@ -50,6 +56,12 @@ export const setCallAgent = (callAgent: CallAgent): SetCallAgentAction => {
     callAgent
   };
 };
+
+export const resetCalls = (): ResetCallsAction => {
+  return {
+    type: RESET_CALLS
+  }
+}
 
 export const setGroup = (groupId: string): SetGroupAction => {
   return {
@@ -95,10 +107,11 @@ export const callRetried = (attempts: number) : CallRetriedAction => {
   }
 }
 
-export { SET_CALL_AGENT, SET_GROUP, CALL_ADDED, CALL_REMOVED, SET_CALL_STATE, SET_PARTICIPANTS, CALL_RETRIED };
+export { SET_CALL_AGENT, RESET_CALLS, SET_GROUP, CALL_ADDED, CALL_REMOVED, SET_CALL_STATE, SET_PARTICIPANTS, CALL_RETRIED };
 
 export type CallTypes =
   | SetCallAgentAction
+  | ResetCallsAction
   | SetParticipantsAction
   | SetCallStateAction
   | SetGroupAction

@@ -1,6 +1,7 @@
 import { AudioDeviceInfo, VideoDeviceInfo, DeviceManager } from '@azure/communication-calling';
 
 const SET_DEVICE_MANAGER = 'SET_DEVICE_MANAGER';
+const RESET_DEVICES = 'RESET_DEVICES';
 const SET_AUDIO_DEVICE_INFO = 'SET_AUDIO_DEVICE_INFO';
 const SET_VIDEO_DEVICE_INFO = 'SET_VIDEO_DEVICE_INFO';
 const SET_AUDIO_DEVICE_LIST = 'SET_AUDIO_DEVICE_LIST';
@@ -11,6 +12,10 @@ const SET_CAMERA_PERMISSION = 'SET_CAMERA_PERMISSION';
 interface SetDeviceManagerAction {
   type: typeof SET_DEVICE_MANAGER;
   deviceManager: DeviceManager;
+}
+
+interface ResetDevicesAction {
+  type: typeof RESET_DEVICES;
 }
 
 interface SetMicrophonePermission {
@@ -49,6 +54,12 @@ export const setDeviceManager = (deviceManager: DeviceManager): SetDeviceManager
     deviceManager
   };
 };
+
+export const resetDevices = (): ResetDevicesAction => {
+  return {
+    type: RESET_DEVICES
+  }
+}
 
 export const setMicrophonePermission = (microphonePermission: string): SetMicrophonePermission => {
   return {
@@ -93,6 +104,7 @@ export const setVideoDeviceList = (videoDeviceList: VideoDeviceInfo[]): SetVideo
 };
 export {
   SET_DEVICE_MANAGER,
+  RESET_DEVICES,
   SET_AUDIO_DEVICE_INFO,
   SET_VIDEO_DEVICE_INFO,
   SET_VIDEO_DEVICE_LIST,
@@ -103,6 +115,7 @@ export {
 
 export type DeviceTypes =
   | SetDeviceManagerAction
+  | ResetDevicesAction
   | SetAudioDeviceAction
   | SetVideoDeviceAction
   | SetMicrophonePermission

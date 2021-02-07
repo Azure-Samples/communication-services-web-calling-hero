@@ -287,6 +287,23 @@ const updateVideoDevices = async (deviceManager: DeviceManager, dispatch: Dispat
   }
 };
 
+// export const unsubscribeToCallAgent = async(getState: () => State) => {
+//   const callAgent = getState().calls.callAgent;
+//   (callAgent as any).eventEmitter.removeAllListeners();
+
+//   return async (dispatch: Dispatch) => {
+//     dispatch(clearCallAgent());
+//   }
+// }
+// export const unsubscribeToDeviceManager = async(getState: () => State) => {
+//   const deviceManager = getState().devices.deviceManager;
+//   (deviceManager as any).eventEmitter.removeAllListeners();
+
+//   return async (dispatch: Dispatch) => {
+//     dispatch(clearDeviceManager());
+//   }
+// }
+
 const subscribeToDeviceManager = async (deviceManager: DeviceManager, dispatch: Dispatch, getState: () => State) => {
   // listen for any new events
   deviceManager.on('permissionStateChanged', async () => {

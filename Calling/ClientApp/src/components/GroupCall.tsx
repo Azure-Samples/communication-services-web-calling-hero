@@ -21,7 +21,8 @@ import {
   AudioDeviceInfo,
   VideoDeviceInfo,
   RemoteParticipant,
-  CallAgent
+  CallAgent,
+  DeviceManager
 } from '@azure/communication-calling';
 import { ParticipantStream } from 'core/reducers/index.js';
 
@@ -30,6 +31,7 @@ export interface GroupCallProps {
   groupId: string;
   call: Call;
   callAgent: CallAgent;
+  deviceManager: DeviceManager;
   mic: boolean;
   remoteParticipants: RemoteParticipant[];
   streams: ParticipantStream[];
@@ -46,10 +48,13 @@ export interface GroupCallProps {
   setAudioDeviceInfo(deviceInfo: AudioDeviceInfo): void;
   setVideoDeviceInfo(deviceInfo: VideoDeviceInfo): void;
   setLocalVideoStream(stream: LocalVideoStream | undefined): void;
+  unsubscribeToCallAgent(callAgent: CallAgent): void;
+  unsubscribeToDeviceManager(deviceManager: DeviceManager): void;
   mute(): void;
   isGroup(): void;
   joinGroup(): void;
   endCallHandler(): void;
+  endCallTest(): void;
   attempts: number;
   setAttempts(attempts: number): void;
 }
@@ -79,7 +84,11 @@ export default (props: GroupCallProps): JSX.Element => {
         <Header
           selectedPane={selectedPane}
           setSelectedPane={setSelectedPane}
-          endCallHandler={props.endCallHandler}
+          endCallHandler={() => { 
+            props.unsubscribeToDeviceManager(props.deviceManager);
+            props.unsubscribeToCallAgent(props.callAgent);
+            props.endCallHandler(); 
+          }}
           screenWidth={props.screenWidth}
         />
       </Stack.Item>

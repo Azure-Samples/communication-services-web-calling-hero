@@ -2,14 +2,15 @@ import { connect } from 'react-redux';
 import GroupCall, { GroupCallProps } from '../components/GroupCall';
 import { joinGroup, setMicrophone } from '../core/sideEffects';
 import { setLocalVideoStream } from '../core/actions/streams';
-import { setVideoDeviceInfo, setAudioDeviceInfo } from '../core/actions/devices';
-import { AudioDeviceInfo, VideoDeviceInfo, LocalVideoStream } from '@azure/communication-calling';
+import { setVideoDeviceInfo, setAudioDeviceInfo, resetDevices } from '../core/actions/devices';
+import { AudioDeviceInfo, VideoDeviceInfo, LocalVideoStream, DeviceManager, CallAgent } from '@azure/communication-calling';
 import { State } from '../core/reducers';
-import { callRetried } from 'core/actions/calls';
+import { callRetried, resetCalls } from 'core/actions/calls';
 
 const mapStateToProps = (state: State, props: GroupCallProps) => ({
   userId: state.sdk.userId,
   callAgent: state.calls.callAgent,
+  deviceManager: state.devices.deviceManager,
   group: state.calls.group,
   screenWidth: props.screenWidth,
   call: state.calls.call,
@@ -41,8 +42,8 @@ const mapStateToProps = (state: State, props: GroupCallProps) => ({
   audioDeviceList: state.devices.audioDeviceList,
   cameraPermission: state.devices.cameraPermission,
   microphonePermission: state.devices.microphonePermission,
-  attempts: state.calls.attempts
-});
+  attempts: state.calls.attempts,
+  });
 
 const mapDispatchToProps = (dispatch: any) => ({
   mute: () => dispatch(setMicrophone(false)),
@@ -51,7 +52,16 @@ const mapDispatchToProps = (dispatch: any) => ({
     dispatch(setVideoDeviceInfo(deviceInfo));
   },
   setLocalVideoStream: (localVideoStream: LocalVideoStream) => dispatch(setLocalVideoStream(localVideoStream)),
-  setAttempts: (attempts: number) => dispatch(callRetried(attempts))
+  setAttempts: (attempts: number) => dispatch(callRetried(attempts)),
+  unsubscribeToDeviceManager: (deviceManager: DeviceManager) => {
+    (deviceManager as any)['_eventEmitter'].removeAllListeners();
+    dispatch(resetDevices())
+  },
+  unsubscribeToCallAgent: (callAgent: CallAgent) => {
+    (callAgent as any)['_eventEmitter'].removeAllListeners();
+    callAgent.dispose();
+    dispatch(resetCalls())
+  }
 });
 
 const connector: any = connect(mapStateToProps, mapDispatchToProps);

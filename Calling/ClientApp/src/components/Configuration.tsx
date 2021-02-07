@@ -40,6 +40,7 @@ export interface ConfigurationScreenProps {
   setAudioDeviceInfo(device: AudioDeviceInfo): void;
   setMic(mic: boolean): void;
   setLocalVideoStream(stream: LocalVideoStream | undefined): void;
+  resetCallAgent(callAgent: CallAgent): void;
   localVideoRendererIsBusy: boolean;
   videoDeviceInfo: VideoDeviceInfo;
   audioDeviceInfo: AudioDeviceInfo;
@@ -60,7 +61,7 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
 
   useEffect(() => {
     initCallClient(unsupportedStateHandler, endCallHandler);
-    setGroup(groupId);
+    // setGroup(groupId);
   }, []);
 
   return (
@@ -97,12 +98,19 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
             <div>
               <PrimaryButton
                 className={buttonStyle}
-                onClick={() => {
+                onClick={async () => {
                   if (!name) {
                     setEmptyWarning(true);
                   } else {
                     setEmptyWarning(false);
+
+                    await props.resetCallAgent(props.callAgent);
+                    initCallClient(unsupportedStateHandler, endCallHandler);
+                    // kill current call agent and device manager
+                    // create it again
+                    // continue on
                     // update the local display name for all of the other participants to see
+                    setGroup(groupId);
                     props.callAgent.updateDisplayName(name);
                     // update the local display name for local rendering
                     setDisplayName(name);

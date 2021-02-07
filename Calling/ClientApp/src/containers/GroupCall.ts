@@ -6,6 +6,7 @@ import { setVideoDeviceInfo, setAudioDeviceInfo, resetDevices } from '../core/ac
 import { AudioDeviceInfo, VideoDeviceInfo, LocalVideoStream, DeviceManager, CallAgent } from '@azure/communication-calling';
 import { State } from '../core/reducers';
 import { callRetried, resetCalls } from 'core/actions/calls';
+import { resetSdk } from 'core/actions/sdk';
 
 const mapStateToProps = (state: State, props: GroupCallProps) => ({
   userId: state.sdk.userId,
@@ -53,15 +54,15 @@ const mapDispatchToProps = (dispatch: any) => ({
   },
   setLocalVideoStream: (localVideoStream: LocalVideoStream) => dispatch(setLocalVideoStream(localVideoStream)),
   setAttempts: (attempts: number) => dispatch(callRetried(attempts)),
-  unsubscribeToDeviceManager: (deviceManager: DeviceManager) => {
+  reset: (deviceManager: DeviceManager, callAgent: CallAgent) => {
     (deviceManager as any)['_eventEmitter'].removeAllListeners();
-    dispatch(resetDevices())
-  },
-  unsubscribeToCallAgent: (callAgent: CallAgent) => {
     (callAgent as any)['_eventEmitter'].removeAllListeners();
     callAgent.dispose();
+
     dispatch(resetCalls())
-  }
+    dispatch(resetDevices())
+    dispatch(resetSdk());
+  },
 });
 
 const connector: any = connect(mapStateToProps, mapDispatchToProps);

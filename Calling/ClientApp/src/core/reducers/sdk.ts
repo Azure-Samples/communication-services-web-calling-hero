@@ -1,13 +1,15 @@
 import { Reducer } from 'redux';
-import { SET_USERID, SdkTypes, SET_DISPLAY_NAME, RESET_SDK } from '../actions/sdk';
+import { SET_USERID, SdkTypes, SET_DISPLAY_NAME, RESET_SDK, SET_TOKEN } from '../actions/sdk';
 
 export interface SdkState {
   userId?: string;
   displayName: string
+  token: string
 }
 
 const initialState: SdkState = {
-  displayName: ''
+  displayName: '',
+  token: ''
 };
 
 export const sdkReducer: Reducer<SdkState, SdkTypes> = (state = initialState, action: SdkTypes): SdkState => {
@@ -18,6 +20,8 @@ export const sdkReducer: Reducer<SdkState, SdkTypes> = (state = initialState, ac
       return { ...state, displayName: action.displayName }
     case RESET_SDK:
       return initialState;
+    case SET_TOKEN:
+      return { ...state, token: action.token };
     default:
       return state;
   }

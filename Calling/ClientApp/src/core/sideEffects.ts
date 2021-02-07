@@ -28,7 +28,7 @@ import {
   setVideoDeviceList,
   setDeviceManager
 } from './actions/devices';
-import { setUserId } from './actions/sdk';
+import { setToken, setUserId } from './actions/sdk';
 import { addScreenShareStream, resetStreams, removeScreenShareStream } from './actions/streams';
 import { State } from './reducers';
 
@@ -100,14 +100,24 @@ export const updateDevices = () => {
 
 export const initCallClient = (unsupportedStateHandler: () => void, endCallHandler: () => void) => {
   return async (dispatch: Dispatch, getState: () => State) => {
+    const state: State = getState();
     try {
-      const tokenResponse = await utils.getTokenForUser();
+      let token = state.sdk.token;
 
       const options: CallClientOptions = {};
 
-      const userToken = tokenResponse.value.token;
+      // in the case we haven't gotten a token yet
+      // we can infer if we don't have a token we dont have a userid
+      // please note this sample doesn't include refresh token capabilities
+      if (token === '') {
+        const tokenResponse = await utils.getTokenForUser();
+        const userToken = tokenResponse.value.token;
+        dispatch(setUserId(tokenResponse.value.user.id))
+        dispatch(setToken(userToken));
+        token = userToken;
+      }
 
-      var callClient;
+      let callClient;
 
       // check if chrome on ios OR firefox browser
       if (utils.isOnIphoneAndNotSafari() || utils.isUnsupportedBrowser()) {
@@ -126,15 +136,12 @@ export const initCallClient = (unsupportedStateHandler: () => void, endCallHandl
         return;
       }
 
-      const tokenCredential = new AzureCommunicationUserCredential(userToken);
+      const tokenCredential = new AzureCommunicationUserCredential(token);
       let callAgent: CallAgent = await callClient.createCallAgent(tokenCredential);
 
       if (callAgent === undefined) {
         return;
       }
-
-      // We want to set the user id when we have it officially from the server
-      dispatch(setUserId(tokenResponse.value.user.id))
 
       let deviceManager: DeviceManager = await callClient.getDeviceManager();
 

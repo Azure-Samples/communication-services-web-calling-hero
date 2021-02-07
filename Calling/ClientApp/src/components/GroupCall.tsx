@@ -48,8 +48,7 @@ export interface GroupCallProps {
   setAudioDeviceInfo(deviceInfo: AudioDeviceInfo): void;
   setVideoDeviceInfo(deviceInfo: VideoDeviceInfo): void;
   setLocalVideoStream(stream: LocalVideoStream | undefined): void;
-  unsubscribeToCallAgent(callAgent: CallAgent): void;
-  unsubscribeToDeviceManager(deviceManager: DeviceManager): void;
+  reset(deviceManager: DeviceManager, callAgent: CallAgent): void;
   mute(): void;
   isGroup(): void;
   joinGroup(): void;
@@ -85,8 +84,7 @@ export default (props: GroupCallProps): JSX.Element => {
           selectedPane={selectedPane}
           setSelectedPane={setSelectedPane}
           endCallHandler={() => { 
-            props.unsubscribeToDeviceManager(props.deviceManager);
-            props.unsubscribeToCallAgent(props.callAgent);
+            props.reset(props.deviceManager, props.callAgent);
             props.endCallHandler(); 
           }}
           screenWidth={props.screenWidth}

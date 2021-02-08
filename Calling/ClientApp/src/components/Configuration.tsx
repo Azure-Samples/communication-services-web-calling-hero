@@ -104,6 +104,8 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
                   } else {
                     setEmptyWarning(false);
 
+                    // since we can only set the display name when we are creating a call agent
+                    // we need to dispose of the current call agent and create a new one with the name
                     await props.resetCallAgent(props.callAgent);
                     await initCallClient(name, unsupportedStateHandler, endCallHandler);
                     setDisplayName(name);

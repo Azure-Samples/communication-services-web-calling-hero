@@ -60,8 +60,7 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
   const {groupId, setDisplayName, initCallClient, setGroup, unsupportedStateHandler, endCallHandler} = props;
 
   useEffect(() => {
-    initCallClient('aDisplayNameYouShouldntSee', unsupportedStateHandler, endCallHandler);
-    // setGroup(groupId);
+    initCallClient('', unsupportedStateHandler, endCallHandler);
   }, []);
 
   return (
@@ -93,6 +92,7 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
                 videoDeviceInfo={props.videoDeviceInfo}
                 setVideoDeviceInfo={props.setVideoDeviceInfo}
                 setAudioDeviceInfo={props.setAudioDeviceInfo}
+                deviceManager={props.deviceManager}
               />
             </div>
             <div>
@@ -103,7 +103,6 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
                     setEmptyWarning(true);
                   } else {
                     setEmptyWarning(false);
-
                     // since we can only set the display name when we are creating a call agent
                     // we need to dispose of the current call agent and create a new one with the name
                     await props.resetCallAgent(props.callAgent);

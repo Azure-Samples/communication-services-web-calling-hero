@@ -48,7 +48,9 @@ const mapStateToProps = (state: State, props: GroupCallProps) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
   mute: () => dispatch(setMicrophone(false)),
-  setAudioDeviceInfo: (deviceInfo: AudioDeviceInfo) => dispatch(setAudioDeviceInfo(deviceInfo)),
+  setAudioDeviceInfo: (deviceInfo: AudioDeviceInfo) => { 
+    dispatch(setAudioDeviceInfo(deviceInfo))
+  },
   setVideoDeviceInfo: (deviceInfo: VideoDeviceInfo) => {
     dispatch(setVideoDeviceInfo(deviceInfo));
   },

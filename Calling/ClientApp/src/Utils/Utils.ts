@@ -1,13 +1,13 @@
 // © Microsoft Corporation. All rights reserved.
 import { AudioDeviceInfo, VideoDeviceInfo, RemoteVideoStream } from '@azure/communication-calling';
 import {
-  CommunicationUser,
+  CommunicationUserIdentifier,
   UnknownIdentifier,
-  CallingApplication,
-  PhoneNumber,
-  isCommunicationUser,
-  isCallingApplication,
-  isPhoneNumber
+  CallingApplicationIdentifier,
+  PhoneNumberIdentifier,
+  isCommunicationUserIdentifier,
+  isCallingApplicationIdentifier,
+  isPhoneNumberIdentifier
 } from '@azure/communication-common';
 import preval from 'preval.macro';
 
@@ -41,12 +41,12 @@ export const utils = {
       ? true
       : false;
   },
-  getId: (identifier: CommunicationUser | CallingApplication | UnknownIdentifier | PhoneNumber): string => {
-    if (isCommunicationUser(identifier)) {
+  getId: (identifier: CommunicationUserIdentifier | CallingApplicationIdentifier | UnknownIdentifier | PhoneNumberIdentifier): string => {
+    if (isCommunicationUserIdentifier(identifier)) {
       return identifier.communicationUserId;
-    } else if (isCallingApplication(identifier)) {
+    } else if (isCallingApplicationIdentifier(identifier)) {
       return identifier.callingApplicationId;
-    } else if (isPhoneNumber(identifier)) {
+    } else if (isPhoneNumberIdentifier(identifier)) {
       return identifier.phoneNumber;
     } else {
       return identifier.id;

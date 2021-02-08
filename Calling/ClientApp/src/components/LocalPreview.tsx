@@ -92,14 +92,14 @@ export default (props: LocalPreviewProps): JSX.Element => {
             // }
           }}
           styles={toggleStyle}
-          disabled={!props.videoDeviceInfo || props.videoDeviceList.length == 0}
+          disabled={!props.videoDeviceInfo || props.videoDeviceList.length === 0}
           onChange={handleLocalVideoOnOff}
           ariaLabel="Video Icon"
         />
         <MicIcon size="medium" />
         <Toggle
           styles={toggleStyle} 
-          disabled={!props.audioDeviceInfo || props.audioDeviceList.length == 0}
+          disabled={!props.audioDeviceInfo || props.audioDeviceList.length === 0}
           onChange={handleLocalMicOnOff} ariaLabel="Microphone Icon"/>
       </Stack>
     </Stack>

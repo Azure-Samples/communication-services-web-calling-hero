@@ -14,7 +14,7 @@ import {
   CallClient,
   HangupCallOptions
 } from '@azure/communication-calling';
-import { AzureCommunicationUserCredential, CommunicationUser, CallingApplication } from '@azure/communication-common';
+import { AzureCommunicationTokenCredential, CallingApplicationIdentifier, CommunicationUserIdentifier} from '@azure/communication-common'
 import { Dispatch } from 'redux';
 import { utils } from '../Utils/Utils';
 import { callAdded, callRemoved, setCallState, setParticipants, setCallAgent, callRetried } from './actions/calls';
@@ -136,7 +136,7 @@ export const initCallClient = (unsupportedStateHandler: () => void, endCallHandl
         return;
       }
 
-      const tokenCredential = new AzureCommunicationUserCredential(token);
+      const tokenCredential = new AzureCommunicationTokenCredential(token);
       let callAgent: CallAgent = await callClient.createCallAgent(tokenCredential);
 
       if (callAgent === undefined) {
@@ -219,11 +219,11 @@ export const joinGroup = async (callAgent: CallAgent, context: GroupCallContext,
   }
 };
 
-export const addParticipant = async (call: Call, user: CommunicationUser | CallingApplication) => {
+export const addParticipant = async (call: Call, user: CommunicationUserIdentifier | CallingApplicationIdentifier) => {
   call.addParticipant(user);
 };
 
-export const removeParticipant = async (call: Call, user: CommunicationUser | CallingApplication) => {
+export const removeParticipant = async (call: Call, user: CommunicationUserIdentifier | CallingApplicationIdentifier) => {
   call.removeParticipant(user).catch((e: CommunicationError) => console.error(e));
 };
 

@@ -18,7 +18,7 @@ const mapStateToProps = (state: State, props: GroupCallProps) => ({
   shareScreen: state.controls.shareScreen,
   mic: state.controls.mic,
   groupCallEndReason: state.calls.groupCallEndReason,
-  isGroup: () => state.calls.call && !state.calls.call.isIncoming && !!state.calls.group,
+  isGroup: () => state.calls.call && state.calls.call.direction !== 'Incoming' && !!state.calls.group,
   joinGroup: () => {
     state.calls.callAgent &&
       joinGroup(

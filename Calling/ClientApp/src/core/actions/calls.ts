@@ -81,8 +81,8 @@ export const callRemoved = (removedCall: Call, group: string): CallRemovedAction
   return {
     type: CALL_REMOVED,
     call: undefined,
-    incomingCallEndReason: removedCall.isIncoming ? removedCall.callEndReason : undefined,
-    groupCallEndReason: !removedCall.isIncoming && !!group ? removedCall.callEndReason : undefined
+    incomingCallEndReason: removedCall.direction === 'Incoming' ? removedCall.callEndReason : undefined,
+    groupCallEndReason: removedCall.direction !== 'Incoming' && !!group ? removedCall.callEndReason : undefined
   };
 };
 

@@ -7,7 +7,9 @@ import {
   PhoneNumberIdentifier,
   isCommunicationUserIdentifier,
   isCallingApplicationIdentifier,
-  isPhoneNumberIdentifier
+  isPhoneNumberIdentifier,
+  MicrosoftTeamsUserIdentifier,
+  isMicrosoftTeamsUserIdentifier
 } from '@azure/communication-common';
 import preval from 'preval.macro';
 
@@ -41,13 +43,15 @@ export const utils = {
       ? true
       : false;
   },
-  getId: (identifier: CommunicationUserIdentifier | CallingApplicationIdentifier | UnknownIdentifier | PhoneNumberIdentifier): string => {
+  getId: (identifier: CommunicationUserIdentifier | CallingApplicationIdentifier | UnknownIdentifier | PhoneNumberIdentifier | MicrosoftTeamsUserIdentifier): string => {
     if (isCommunicationUserIdentifier(identifier)) {
       return identifier.communicationUserId;
     } else if (isCallingApplicationIdentifier(identifier)) {
       return identifier.callingApplicationId;
     } else if (isPhoneNumberIdentifier(identifier)) {
       return identifier.phoneNumber;
+    } else if (isMicrosoftTeamsUserIdentifier(identifier)) {
+      return identifier.microsoftTeamsUserId
     } else {
       return identifier.id;
     }

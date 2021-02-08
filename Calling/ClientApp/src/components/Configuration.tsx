@@ -29,7 +29,7 @@ export interface ConfigurationScreenProps {
   callAgent: CallAgent;
   deviceManager: DeviceManager;
   setDisplayName(displayName: string): void;
-  initCallClient(unsupportedStateHandler: () => void, endCallhandler: () => void): void;
+  initCallClient(displayName: string, unsupportedStateHandler: () => void, endCallhandler: () => void): void;
   setGroup(groupId: string): void;
   startCallHandler(): void;
   unsupportedStateHandler: () => void;
@@ -60,7 +60,7 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
   const {groupId, setDisplayName, initCallClient, setGroup, unsupportedStateHandler, endCallHandler} = props;
 
   useEffect(() => {
-    initCallClient(unsupportedStateHandler, endCallHandler);
+    initCallClient('aDisplayNameYouShouldntSee', unsupportedStateHandler, endCallHandler);
     // setGroup(groupId);
   }, []);
 
@@ -105,15 +105,10 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
                     setEmptyWarning(false);
 
                     await props.resetCallAgent(props.callAgent);
-                    initCallClient(unsupportedStateHandler, endCallHandler);
-                    // kill current call agent and device manager
-                    // create it again
-                    // continue on
+                    await initCallClient(name, unsupportedStateHandler, endCallHandler);
+                    setDisplayName(name);
                     // update the local display name for all of the other participants to see
                     setGroup(groupId);
-                    props.callAgent.updateDisplayName(name);
-                    // update the local display name for local rendering
-                    setDisplayName(name);
                     props.startCallHandler();
                   }
                 }}

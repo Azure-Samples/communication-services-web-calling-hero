@@ -3,7 +3,7 @@ import {
   Call,
   CallClientOptions,
   CommunicationError,
-  GroupCallContext,
+  GroupCallLocator,
   JoinCallOptions,
   DeviceManager,
   DeviceAccess,
@@ -98,7 +98,7 @@ export const updateDevices = () => {
   };
 };
 
-export const initCallClient = (unsupportedStateHandler: () => void, endCallHandler: () => void) => {
+export const initCallClient = (name: string, unsupportedStateHandler: () => void, endCallHandler: () => void) => {
   return async (dispatch: Dispatch, getState: () => State) => {
     const state: State = getState();
     try {
@@ -137,7 +137,7 @@ export const initCallClient = (unsupportedStateHandler: () => void, endCallHandl
       }
 
       const tokenCredential = new AzureCommunicationTokenCredential(token);
-      let callAgent: CallAgent = await callClient.createCallAgent(tokenCredential);
+      let callAgent: CallAgent = await callClient.createCallAgent(tokenCredential, { displayName: name })
 
       if (callAgent === undefined) {
         return;
@@ -153,8 +153,8 @@ export const initCallClient = (unsupportedStateHandler: () => void, endCallHandl
       callAgent.on('callsUpdated', (e: { added: Call[]; removed: Call[] }): void => {
         e.added.forEach((addedCall) => {
           const state = getState();
-          if (state.calls.call && addedCall.isIncoming) {
-            addedCall.reject();
+          if (state.calls.call && addedCall.direction === 'Incoming') {
+            addedCall.hangUp();
             return;
           }
 
@@ -210,7 +210,7 @@ export const endCall = async (call: Call, options: HangupCallOptions) => {
   call.hangUp(options).catch((e: CommunicationError) => console.error(e));
 };
 
-export const joinGroup = async (callAgent: CallAgent, context: GroupCallContext, callOptions: JoinCallOptions) => {
+export const joinGroup = async (callAgent: CallAgent, context: GroupCallLocator, callOptions: JoinCallOptions) => {
   try {
     await callAgent.join(context, callOptions);
   } catch (e) {

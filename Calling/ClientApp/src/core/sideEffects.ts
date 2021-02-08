@@ -14,7 +14,11 @@ import {
   CallClient,
   HangupCallOptions
 } from '@azure/communication-calling';
-import { AzureCommunicationTokenCredential, CallingApplicationIdentifier, CommunicationUserIdentifier} from '@azure/communication-common'
+import {
+  AzureCommunicationTokenCredential,
+  CallingApplicationIdentifier,
+  CommunicationUserIdentifier
+} from '@azure/communication-common';
 import { Dispatch } from 'redux';
 import { utils } from '../Utils/Utils';
 import { callAdded, callRemoved, setCallState, setParticipants, setCallAgent, callRetried } from './actions/calls';
@@ -112,7 +116,7 @@ export const initCallClient = (name: string, unsupportedStateHandler: () => void
       if (token === '') {
         const tokenResponse = await utils.getTokenForUser();
         const userToken = tokenResponse.value.token;
-        dispatch(setUserId(tokenResponse.value.user.id))
+        dispatch(setUserId(tokenResponse.value.user.id));
         dispatch(setToken(userToken));
         token = userToken;
       }
@@ -137,7 +141,7 @@ export const initCallClient = (name: string, unsupportedStateHandler: () => void
       }
 
       const tokenCredential = new AzureCommunicationTokenCredential(token);
-      let callAgent: CallAgent = await callClient.createCallAgent(tokenCredential, { displayName: name })
+      let callAgent: CallAgent = await callClient.createCallAgent(tokenCredential, { displayName: name });
 
       if (callAgent === undefined) {
         return;
@@ -223,7 +227,10 @@ export const addParticipant = async (call: Call, user: CommunicationUserIdentifi
   call.addParticipant(user);
 };
 
-export const removeParticipant = async (call: Call, user: CommunicationUserIdentifier | CallingApplicationIdentifier) => {
+export const removeParticipant = async (
+  call: Call,
+  user: CommunicationUserIdentifier | CallingApplicationIdentifier
+) => {
   call.removeParticipant(user).catch((e: CommunicationError) => console.error(e));
 };
 

@@ -39,11 +39,16 @@ export const utils = {
     return window.innerWidth < 700 || window.innerHeight < 400;
   },
   isUnsupportedBrowser() {
-    return window.navigator.userAgent.match(/(Firefox)/g)
-      ? true
-      : false;
+    return window.navigator.userAgent.match(/(Firefox)/g) ? true : false;
   },
-  getId: (identifier: CommunicationUserIdentifier | CallingApplicationIdentifier | UnknownIdentifier | PhoneNumberIdentifier | MicrosoftTeamsUserIdentifier): string => {
+  getId: (
+    identifier:
+      | CommunicationUserIdentifier
+      | CallingApplicationIdentifier
+      | UnknownIdentifier
+      | PhoneNumberIdentifier
+      | MicrosoftTeamsUserIdentifier
+  ): string => {
     if (isCommunicationUserIdentifier(identifier)) {
       return identifier.communicationUserId;
     } else if (isCallingApplicationIdentifier(identifier)) {
@@ -51,7 +56,7 @@ export const utils = {
     } else if (isPhoneNumberIdentifier(identifier)) {
       return identifier.phoneNumber;
     } else if (isMicrosoftTeamsUserIdentifier(identifier)) {
-      return identifier.microsoftTeamsUserId
+      return identifier.microsoftTeamsUserId;
     } else {
       return identifier.id;
     }

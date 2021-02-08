@@ -58,8 +58,8 @@ export const setDeviceManager = (deviceManager: DeviceManager): SetDeviceManager
 export const resetDevices = (): ResetDevicesAction => {
   return {
     type: RESET_DEVICES
-  }
-}
+  };
+};
 
 export const setMicrophonePermission = (microphonePermission: string): SetMicrophonePermission => {
   return {

@@ -3,7 +3,13 @@ import GroupCall, { GroupCallProps } from '../components/GroupCall';
 import { joinGroup, setMicrophone } from '../core/sideEffects';
 import { setLocalVideoStream } from '../core/actions/streams';
 import { setVideoDeviceInfo, setAudioDeviceInfo, resetDevices } from '../core/actions/devices';
-import { AudioDeviceInfo, VideoDeviceInfo, LocalVideoStream, DeviceManager, CallAgent } from '@azure/communication-calling';
+import {
+  AudioDeviceInfo,
+  VideoDeviceInfo,
+  LocalVideoStream,
+  DeviceManager,
+  CallAgent
+} from '@azure/communication-calling';
 import { State } from '../core/reducers';
 import { callRetried, resetCalls } from 'core/actions/calls';
 import { resetSdk } from 'core/actions/sdk';
@@ -43,13 +49,13 @@ const mapStateToProps = (state: State, props: GroupCallProps) => ({
   audioDeviceList: state.devices.audioDeviceList,
   cameraPermission: state.devices.cameraPermission,
   microphonePermission: state.devices.microphonePermission,
-  attempts: state.calls.attempts,
-  });
+  attempts: state.calls.attempts
+});
 
 const mapDispatchToProps = (dispatch: any) => ({
   mute: () => dispatch(setMicrophone(false)),
-  setAudioDeviceInfo: (deviceInfo: AudioDeviceInfo) => { 
-    dispatch(setAudioDeviceInfo(deviceInfo))
+  setAudioDeviceInfo: (deviceInfo: AudioDeviceInfo) => {
+    dispatch(setAudioDeviceInfo(deviceInfo));
   },
   setVideoDeviceInfo: (deviceInfo: VideoDeviceInfo) => {
     dispatch(setVideoDeviceInfo(deviceInfo));
@@ -61,10 +67,10 @@ const mapDispatchToProps = (dispatch: any) => ({
     (callAgent as any)['_eventEmitter'].removeAllListeners();
     callAgent.dispose();
 
-    dispatch(resetCalls())
-    dispatch(resetDevices())
+    dispatch(resetCalls());
+    dispatch(resetDevices());
     dispatch(resetSdk());
-  },
+  }
 });
 
 const connector: any = connect(mapStateToProps, mapDispatchToProps);

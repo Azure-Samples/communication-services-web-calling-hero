@@ -40,19 +40,15 @@ export const setToken = (token: string): SetTokenAction => {
   return {
     type: SET_TOKEN,
     token
-  }
-}
+  };
+};
 
 export const resetSdk = (): ResetSDKAction => {
   return {
     type: RESET_SDK
-  }
-}
+  };
+};
 
 export { SET_USERID, SET_DISPLAY_NAME, RESET_SDK, SET_TOKEN };
 
-export type SdkTypes =
-  | SetUserIdAction
-  | SetDisplayNameAction
-  | ResetSDKAction
-  | SetTokenAction;
+export type SdkTypes = SetUserIdAction | SetDisplayNameAction | ResetSDKAction | SetTokenAction;

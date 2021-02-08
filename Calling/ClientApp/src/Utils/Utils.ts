@@ -17,7 +17,7 @@ export const utils = {
   getAppServiceUrl: (): string => {
     return window.location.origin;
   },
-  getTokenForUser: async (): Promise<any> => {
+  getTokenForUser: async (): Promise<void> => {
     const response = await fetch('/userToken');
     if (response.ok) {
       return response.json();
@@ -30,15 +30,15 @@ export const utils = {
   isSelectedVideoDeviceInList(selected: VideoDeviceInfo, list: VideoDeviceInfo[]): boolean {
     return list.filter((item) => item.name === selected.name).length > 0;
   },
-  isMobileSession() {
+  isMobileSession(): boolean {
     return window.navigator.userAgent.match(/(iPad|iPhone|iPod|Android|webOS|BlackBerry|Windows Phone)/g)
       ? true
       : false;
   },
-  isSmallScreen() {
+  isSmallScreen(): boolean {
     return window.innerWidth < 700 || window.innerHeight < 400;
   },
-  isUnsupportedBrowser() {
+  isUnsupportedBrowser(): boolean {
     return window.navigator.userAgent.match(/(Firefox)/g) ? true : false;
   },
   getId: (
@@ -62,8 +62,7 @@ export const utils = {
     }
   },
   getStreamId: (userId: string, stream: RemoteVideoStream): string => {
-    var id = (stream as any)['id'];
-    return `${userId}-${id}-${stream.type}`;
+    return `${userId}-${ stream.id}-${stream.type}`;
   },
   /*
    * TODO:
@@ -77,7 +76,7 @@ export const utils = {
     }
     return false;
   },
-  getBuildTime: () => {
+  getBuildTime: (): string => {
     const dateTimeStamp = preval`module.exports = new Date().toLocaleString();`;
     return dateTimeStamp;
   }

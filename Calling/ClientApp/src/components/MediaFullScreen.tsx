@@ -22,11 +22,11 @@ export default (props: MediaFullScreenProps): JSX.Element => {
 
   const renderStream = async () => {
     if (activeScreenShareStream && activeScreenShareStream.stream) {
-      let stream: RemoteVideoStream = activeScreenShareStream.stream;
-      var renderer: Renderer = new Renderer(stream);
+      const stream: RemoteVideoStream = activeScreenShareStream.stream;
+      const renderer: Renderer = new Renderer(stream);
       rendererView = await renderer.createView({ scalingMode: 'Fit' });
 
-      let container = document.getElementById(fullScreenStreamMediaId);
+      const container = document.getElementById(fullScreenStreamMediaId);
       if (container && container.childElementCount === 0) {
         setLoading(false);
         container.appendChild(rendererView.target);

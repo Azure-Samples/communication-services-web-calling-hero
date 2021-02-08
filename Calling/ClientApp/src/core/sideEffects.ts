@@ -37,7 +37,7 @@ import { addScreenShareStream, resetStreams, removeScreenShareStream } from './a
 import { State } from './reducers';
 
 export const setMicrophone = (mic: boolean) => {
-  return async (dispatch: Dispatch, getState: () => State) => {
+  return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
     const state = getState();
 
     if (state === undefined || state.calls.call === undefined) {
@@ -60,7 +60,7 @@ export const setMicrophone = (mic: boolean) => {
 };
 
 export const setShareUnshareScreen = (shareScreen: boolean) => {
-  return async (dispatch: Dispatch, getState: () => State) => {
+  return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
     const state = getState();
 
     if (state === undefined || state.calls.call === undefined) {
@@ -82,10 +82,116 @@ export const setShareUnshareScreen = (shareScreen: boolean) => {
   };
 };
 
+const subscribeToParticipant = (
+  participant: RemoteParticipant,
+  call: Call,
+  dispatch: Dispatch
+): void => {
+  const userId = utils.getId(participant.identifier);
+  participant.on('participantStateChanged', () => {
+    console.log('participant stateChanged', userId, participant.state);
+    dispatch(setParticipants([...call.remoteParticipants.values()]));
+  });
+
+  participant.on('isSpeakingChanged', () => {
+    dispatch(setParticipants([...call.remoteParticipants.values()]));
+  });
+
+  participant.on('videoStreamsUpdated', (e): void => {
+    e.added.forEach((addedStream) => {
+      if (addedStream.type === 'Video') {
+        return;
+      }
+      addedStream.on('availabilityChanged', () => {
+        if (addedStream.isAvailable) {
+          dispatch(addScreenShareStream(addedStream, participant));
+        } else {
+          dispatch(removeScreenShareStream(addedStream, participant));
+        }
+      });
+
+      if (addedStream.isAvailable) {
+        dispatch(addScreenShareStream(addedStream, participant));
+      }
+    });
+  });
+};
+
+const updateAudioDevices = async (deviceManager: DeviceManager, dispatch: Dispatch, getState: () => State): Promise<void> => {
+  const microphoneList: AudioDeviceInfo[] = await deviceManager.getMicrophoneList();
+  dispatch(setAudioDeviceList(microphoneList));
+
+  const state = getState();
+  if (state.devices.audioDeviceInfo === undefined && microphoneList.length > 0) {
+    dispatch(setAudioDeviceInfo(microphoneList[0]));
+    deviceManager.setMicrophone(microphoneList[0]);
+  } else if (
+    state.devices.audioDeviceInfo &&
+    !utils.isSelectedAudioDeviceInList(state.devices.audioDeviceInfo, microphoneList)
+  ) {
+    deviceManager.setMicrophone(state.devices.audioDeviceInfo);
+  }
+};
+
+const updateVideoDevices = async (deviceManager: DeviceManager, dispatch: Dispatch, getState: () => State): Promise<void> => {
+  const cameraList: VideoDeviceInfo[] = deviceManager.getCameraList();
+  dispatch(setVideoDeviceList(cameraList));
+
+  const state = getState();
+  if (state.devices.videoDeviceInfo === undefined) {
+    dispatch(setVideoDeviceInfo(cameraList[0]));
+  } else if (
+    state.devices.videoDeviceInfo &&
+    !utils.isSelectedVideoDeviceInList(state.devices.videoDeviceInfo, cameraList)
+  ) {
+    dispatch(setVideoDeviceInfo(state.devices.videoDeviceInfo));
+  }
+};
+
+const subscribeToDeviceManager = async (deviceManager: DeviceManager, dispatch: Dispatch, getState: () => State): Promise<void> => {
+  // listen for any new events
+  deviceManager.on('permissionStateChanged', async (): Promise<void> => {
+    const cameraPermissionState: PermissionState = await deviceManager.getPermissionState('Camera');
+    dispatch(setCameraPermission(cameraPermissionState));
+
+    const microphonePermissionState: PermissionState = await deviceManager.getPermissionState('Microphone');
+    dispatch(setMicrophonePermission(microphonePermissionState));
+  });
+
+  deviceManager.on('videoDevicesUpdated', async () => {
+    updateVideoDevices(deviceManager, dispatch, getState);
+  });
+
+  deviceManager.on('audioDevicesUpdated', async () => {
+    updateAudioDevices(deviceManager, dispatch, getState);
+  });
+
+  deviceManager.askDevicePermission(true, true).then((e: DeviceAccess) => {
+    if (e.audio !== undefined) {
+      if (e.audio) {
+        dispatch(setMicrophonePermission('Granted'));
+
+        updateAudioDevices(deviceManager, dispatch, getState);
+      } else {
+        dispatch(setMicrophonePermission('Denied'));
+      }
+    }
+
+    if (e.video !== undefined) {
+      if (e.video) {
+        dispatch(setCameraPermission('Granted'));
+        updateVideoDevices(deviceManager, dispatch, getState);
+      } else {
+        dispatch(setCameraPermission('Denied'));
+      }
+    }
+  });
+};
+
 export const updateDevices = () => {
-  return async (dispatch: Dispatch, getState: () => State) => {
-    let state = getState();
-    let deviceManager = state.devices.deviceManager;
+  return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
+    const state = getState();
+    const deviceManager = state.devices.deviceManager;
 
     if (deviceManager == null) {
       console.error('no device manager available');
@@ -102,8 +208,8 @@ export const updateDevices = () => {
   };
 };
 
-export const initCallClient = (name: string, unsupportedStateHandler: () => void, endCallHandler: () => void) => {
-  return async (dispatch: Dispatch, getState: () => State) => {
+export const initCallClient = (name: string, unsupportedStateHandler: () => void) => {
+  return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
     const state: State = getState();
     try {
       let token = state.sdk.token;
@@ -141,13 +247,13 @@ export const initCallClient = (name: string, unsupportedStateHandler: () => void
       }
 
       const tokenCredential = new AzureCommunicationTokenCredential(token);
-      let callAgent: CallAgent = await callClient.createCallAgent(tokenCredential, { displayName: name });
+      const callAgent: CallAgent = await callClient.createCallAgent(tokenCredential, { displayName: name });
 
       if (callAgent === undefined) {
         return;
       }
 
-      let deviceManager: DeviceManager = await callClient.getDeviceManager();
+      const deviceManager: DeviceManager = await callClient.getDeviceManager();
 
       dispatch(setDeviceManager(deviceManager));
       dispatch(setCallAgent(callAgent));
@@ -210,11 +316,11 @@ export const initCallClient = (name: string, unsupportedStateHandler: () => void
 };
 
 // what does the forEveryone parameter really mean?
-export const endCall = async (call: Call, options: HangupCallOptions) => {
-  call.hangUp(options).catch((e: CommunicationError) => console.error(e));
+export const endCall = async (call: Call, options: HangupCallOptions): Promise<void> => {
+  await call.hangUp(options).catch((e: CommunicationError) => console.error(e));
 };
 
-export const joinGroup = async (callAgent: CallAgent, context: GroupCallLocator, callOptions: JoinCallOptions) => {
+export const joinGroup = async (callAgent: CallAgent, context: GroupCallLocator, callOptions: JoinCallOptions): Promise<void> => {
   try {
     await callAgent.join(context, callOptions);
   } catch (e) {
@@ -223,137 +329,13 @@ export const joinGroup = async (callAgent: CallAgent, context: GroupCallLocator,
   }
 };
 
-export const addParticipant = async (call: Call, user: CommunicationUserIdentifier | CallingApplicationIdentifier) => {
-  call.addParticipant(user);
+export const addParticipant = async (call: Call, user: CommunicationUserIdentifier | CallingApplicationIdentifier): Promise<void> => {
+  await call.addParticipant(user);
 };
 
 export const removeParticipant = async (
   call: Call,
   user: CommunicationUserIdentifier | CallingApplicationIdentifier
-) => {
-  call.removeParticipant(user).catch((e: CommunicationError) => console.error(e));
-};
-
-const subscribeToParticipant = (
-  participant: RemoteParticipant,
-  call: Call,
-  dispatch: Dispatch,
-  getState: () => State
-) => {
-  const userId = utils.getId(participant.identifier);
-  participant.on('participantStateChanged', () => {
-    console.log('participant stateChanged', userId, participant.state);
-    dispatch(setParticipants([...call.remoteParticipants.values()]));
-  });
-
-  participant.on('isSpeakingChanged', () => {
-    dispatch(setParticipants([...call.remoteParticipants.values()]));
-  });
-
-  participant.on('videoStreamsUpdated', (e): void => {
-    e.added.forEach((addedStream) => {
-      if (addedStream.type === 'Video') {
-        return;
-      }
-      addedStream.on('availabilityChanged', () => {
-        if (addedStream.isAvailable) {
-          dispatch(addScreenShareStream(addedStream, participant));
-        } else {
-          dispatch(removeScreenShareStream(addedStream, participant));
-        }
-      });
-
-      if (addedStream.isAvailable) {
-        dispatch(addScreenShareStream(addedStream, participant));
-      }
-    });
-  });
-};
-
-const updateAudioDevices = async (deviceManager: DeviceManager, dispatch: Dispatch, getState: () => State) => {
-  const microphoneList: AudioDeviceInfo[] = await deviceManager.getMicrophoneList();
-  dispatch(setAudioDeviceList(microphoneList));
-
-  const state = getState();
-  if (state.devices.audioDeviceInfo === undefined && microphoneList.length > 0) {
-    dispatch(setAudioDeviceInfo(microphoneList[0]));
-    deviceManager.setMicrophone(microphoneList[0]);
-  } else if (
-    state.devices.audioDeviceInfo &&
-    !utils.isSelectedAudioDeviceInList(state.devices.audioDeviceInfo, microphoneList)
-  ) {
-    deviceManager.setMicrophone(state.devices.audioDeviceInfo);
-  }
-};
-
-const updateVideoDevices = async (deviceManager: DeviceManager, dispatch: Dispatch, getState: () => State) => {
-  const cameraList: VideoDeviceInfo[] = deviceManager.getCameraList();
-  dispatch(setVideoDeviceList(cameraList));
-
-  const state = getState();
-  if (state.devices.videoDeviceInfo === undefined) {
-    dispatch(setVideoDeviceInfo(cameraList[0]));
-  } else if (
-    state.devices.videoDeviceInfo &&
-    !utils.isSelectedVideoDeviceInList(state.devices.videoDeviceInfo, cameraList)
-  ) {
-    dispatch(setVideoDeviceInfo(state.devices.videoDeviceInfo));
-  }
-};
-
-// export const unsubscribeToCallAgent = async(getState: () => State) => {
-//   const callAgent = getState().calls.callAgent;
-//   (callAgent as any).eventEmitter.removeAllListeners();
-
-//   return async (dispatch: Dispatch) => {
-//     dispatch(clearCallAgent());
-//   }
-// }
-// export const unsubscribeToDeviceManager = async(getState: () => State) => {
-//   const deviceManager = getState().devices.deviceManager;
-//   (deviceManager as any).eventEmitter.removeAllListeners();
-
-//   return async (dispatch: Dispatch) => {
-//     dispatch(clearDeviceManager());
-//   }
-// }
-
-const subscribeToDeviceManager = async (deviceManager: DeviceManager, dispatch: Dispatch, getState: () => State) => {
-  // listen for any new events
-  deviceManager.on('permissionStateChanged', async () => {
-    const cameraPermissionState: PermissionState = await deviceManager.getPermissionState('Camera');
-    dispatch(setCameraPermission(cameraPermissionState));
-
-    const microphonePermissionState: PermissionState = await deviceManager.getPermissionState('Microphone');
-    dispatch(setMicrophonePermission(microphonePermissionState));
-  });
-
-  deviceManager.on('videoDevicesUpdated', async () => {
-    updateVideoDevices(deviceManager, dispatch, getState);
-  });
-
-  deviceManager.on('audioDevicesUpdated', async () => {
-    updateAudioDevices(deviceManager, dispatch, getState);
-  });
-
-  deviceManager.askDevicePermission(true, true).then((e: DeviceAccess) => {
-    if (e.audio !== undefined) {
-      if (e.audio) {
-        dispatch(setMicrophonePermission('Granted'));
-
-        updateAudioDevices(deviceManager, dispatch, getState);
-      } else {
-        dispatch(setMicrophonePermission('Denied'));
-      }
-    }
-
-    if (e.video !== undefined) {
-      if (e.video) {
-        dispatch(setCameraPermission('Granted'));
-        updateVideoDevices(deviceManager, dispatch, getState);
-      } else {
-        dispatch(setCameraPermission('Denied'));
-      }
-    }
-  });
+): Promise<void> => {
+  await call.removeParticipant(user).catch((e: CommunicationError) => console.error(e));
 };

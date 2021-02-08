@@ -16,7 +16,7 @@ export interface RemoteStreamMediaProps {
 export default (props: RemoteStreamMediaProps): JSX.Element => {
   let rendererView: RendererView;
 
-  let streamId = props.stream ? utils.getStreamId(props.label, props.stream) : `${props.label} - no stream`;
+  const streamId = props.stream ? utils.getStreamId(props.label, props.stream) : `${props.label} - no stream`;
 
   const [available, setAvailable] = useState(false);
 
@@ -29,12 +29,12 @@ export default (props: RemoteStreamMediaProps): JSX.Element => {
   const stream = props.stream;
 
   const renderStream = async () => {
-    var container = document.getElementById(streamId);
+    const container = document.getElementById(streamId);
 
     if (container && props.stream && props.stream.isAvailable) {
       setAvailable(true);
 
-      var renderer: Renderer = new Renderer(props.stream);
+      const renderer: Renderer = new Renderer(props.stream);
       rendererView = await renderer.createView({ scalingMode: 'Crop' });
 
       // we need to check if the stream is available still and if the id is what we expect

@@ -20,7 +20,7 @@ interface ResetCallsAction {
 
 interface SetGroupAction {
   type: typeof SET_GROUP;
-  group: any;
+  group: string;
 }
 
 interface CallAddedAction {

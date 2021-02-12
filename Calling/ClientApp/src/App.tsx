@@ -93,7 +93,7 @@ const App = () => {
       window.document.title = 'Unsupported browser';
       return (
         <>
-          <a href="https://aka.ms/ACS-CallingSupport#calling-client-library-browser-support">Learn more</a>&nbsp;about
+          <a href="https://docs.microsoft.com/en-us/azure/communication-services/concepts/voice-video-calling/calling-sdk-features#calling-client-library-browser-support">Learn more</a>&nbsp;about
           browsers and platforms supported by the web calling sdk
         </>
       );
@@ -104,16 +104,12 @@ const App = () => {
     setPage('configuration');
   }
 
-  if (utils.isMobileSession() || utils.isSmallScreen()) {
-    console.log('ACS Calling sample: This is experimental behaviour');
-  }
-
   return <Provider store={store}>{getContent()}</Provider>;
 };
 
 window.setTimeout(() => {
   try {
-    console.log(`ACS sample group calling app: ${lastUpdated}`);
+    console.log(`Azure Communication Services sample group calling app: ${lastUpdated}`);
   } catch (e) {}
 }, 0);
 

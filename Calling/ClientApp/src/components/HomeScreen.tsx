@@ -56,7 +56,7 @@ export default (props: HomeScreenProps): JSX.Element => {
                 </li>
                 <li className={listItemStyle}>
                     <Icon className={iconStyle} iconName={iconName} /> {listItems[3]}{' '}
-                    <a href="https://aka.ms/ACS-CallingSample">sample</a>
+                    <a href="https://docs.microsoft.com/en-us/azure/communication-services/samples/calling-hero-sample?pivots=platform-web">sample</a>
                 </li>
             </ul>
         </Stack>
@@ -66,7 +66,7 @@ export default (props: HomeScreenProps): JSX.Element => {
         </PrimaryButton>
       </Stack>
       <Image
-        alt="Welcome to the ACS Calling sample app"
+        alt="Welcome to the Azure Communication Services Calling sample app"
         className={imgStyle}
         styles={imageStyleProps}
         {...imageProps}

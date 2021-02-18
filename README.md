@@ -49,7 +49,7 @@ Additional documentation for this sample can be found on [Microsoft Docs](https:
 
 2. The app shows an "Unsupported browser" screen but I am on a [supported browser](https://docs.microsoft.com/en-us/azure/communication-services/concepts/voice-video-calling/calling-sdk-features#calling-client-library-browser-support).
 
-	If you're app is being served over a hostname other then localhost, you must serve traffic over https and not http.
+	If your app is being served over a hostname other then localhost, you must serve traffic over https and not http.
 
 ## Publish to Azure
 

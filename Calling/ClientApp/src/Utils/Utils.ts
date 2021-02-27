@@ -63,7 +63,7 @@ export const utils = {
     }
   },
   getStreamId: (userId: string, stream: RemoteVideoStream): string => {
-    return `${userId}-${ stream.id}-${stream.type}`;
+    return `${userId}-${ stream.id}-${stream.mediaStreamType}`;
   },
   /*
    * TODO:

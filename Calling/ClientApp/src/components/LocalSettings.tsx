@@ -51,7 +51,7 @@ export default (props: LocalSettingsProps): JSX.Element => {
           onChange={(...args) => {
             const index = args[2] ?? 0;
             props.setAudioDeviceInfo(props.audioDeviceList[index]);
-            props.deviceManager.setMicrophone(props.audioDeviceList[index])
+            props.deviceManager.selectMicrophone(props.audioDeviceList[index])
           }}
         />
       </Stack>

@@ -7,12 +7,11 @@ import {
   JoinCallOptions,
   DeviceManager,
   DeviceAccess,
-  PermissionState,
   RemoteParticipant,
   VideoDeviceInfo,
   CallAgent,
   CallClient,
-  HangupCallOptions
+  HangUpOptions,
 } from '@azure/communication-calling';
 import {
   AzureCommunicationTokenCredential,
@@ -89,7 +88,7 @@ const subscribeToParticipant = (
   dispatch: Dispatch
 ): void => {
   const userId = utils.getId(participant.identifier);
-  participant.on('participantStateChanged', () => {
+  participant.on('stateChanged', () => {
     console.log('participant stateChanged', userId, participant.state);
     dispatch(setParticipants([...call.remoteParticipants.values()]));
   });
@@ -100,10 +99,10 @@ const subscribeToParticipant = (
 
   participant.on('videoStreamsUpdated', (e): void => {
     e.added.forEach((addedStream) => {
-      if (addedStream.type === 'Video') {
+      if (addedStream.mediaStreamType === 'Video') {
         return;
       }
-      addedStream.on('availabilityChanged', () => {
+      addedStream.on('isAvailableChanged', () => {
         if (addedStream.isAvailable) {
           dispatch(addScreenShareStream(addedStream, participant));
         } else {
@@ -119,23 +118,23 @@ const subscribeToParticipant = (
 };
 
 const updateAudioDevices = async (deviceManager: DeviceManager, dispatch: Dispatch, getState: () => State): Promise<void> => {
-  const microphoneList: AudioDeviceInfo[] = await deviceManager.getMicrophoneList();
+  const microphoneList: AudioDeviceInfo[] = await deviceManager.getMicrophones();
   dispatch(setAudioDeviceList(microphoneList));
 
   const state = getState();
   if (state.devices.audioDeviceInfo === undefined && microphoneList.length > 0) {
     dispatch(setAudioDeviceInfo(microphoneList[0]));
-    deviceManager.setMicrophone(microphoneList[0]);
+    deviceManager.selectMicrophone(microphoneList[0]);
   } else if (
     state.devices.audioDeviceInfo &&
     !utils.isSelectedAudioDeviceInList(state.devices.audioDeviceInfo, microphoneList)
   ) {
-    deviceManager.setMicrophone(state.devices.audioDeviceInfo);
+    deviceManager.selectMicrophone(state.devices.audioDeviceInfo);
   }
 };
 
 const updateVideoDevices = async (deviceManager: DeviceManager, dispatch: Dispatch, getState: () => State): Promise<void> => {
-  const cameraList: VideoDeviceInfo[] = deviceManager.getCameraList();
+  const cameraList: VideoDeviceInfo[] = await deviceManager.getCameras();
   dispatch(setVideoDeviceList(cameraList));
 
   const state = getState();
@@ -151,14 +150,6 @@ const updateVideoDevices = async (deviceManager: DeviceManager, dispatch: Dispat
 
 const subscribeToDeviceManager = async (deviceManager: DeviceManager, dispatch: Dispatch, getState: () => State): Promise<void> => {
   // listen for any new events
-  deviceManager.on('permissionStateChanged', async (): Promise<void> => {
-    const cameraPermissionState: PermissionState = await deviceManager.getPermissionState('Camera');
-    dispatch(setCameraPermission(cameraPermissionState));
-
-    const microphonePermissionState: PermissionState = await deviceManager.getPermissionState('Microphone');
-    dispatch(setMicrophonePermission(microphonePermissionState));
-  });
-
   deviceManager.on('videoDevicesUpdated', async () => {
     updateVideoDevices(deviceManager, dispatch, getState);
   });
@@ -199,11 +190,11 @@ export const updateDevices = () => {
       return;
     }
 
-    const cameraList: VideoDeviceInfo[] = await deviceManager.getCameraList();
+    const cameraList: VideoDeviceInfo[] = await deviceManager.getCameras();
 
     dispatch(setVideoDeviceList(cameraList));
 
-    const microphoneList: AudioDeviceInfo[] = await deviceManager.getMicrophoneList();
+    const microphoneList: AudioDeviceInfo[] = await deviceManager.getMicrophones();
 
     dispatch(setAudioDeviceList(microphoneList));
   };
@@ -272,7 +263,7 @@ export const initCallClient = (name: string, unsupportedStateHandler: () => void
 
           dispatch(callAdded(addedCall));
 
-          addedCall.on('callStateChanged', (): void => {
+          addedCall.on('stateChanged', (): void => {
             dispatch(setCallState(addedCall.state));
           });
 
@@ -318,7 +309,7 @@ export const initCallClient = (name: string, unsupportedStateHandler: () => void
 };
 
 // what does the forEveryone parameter really mean?
-export const endCall = async (call: Call, options: HangupCallOptions): Promise<void> => {
+export const endCall = async (call: Call, options: HangUpOptions): Promise<void> => {
   await call.hangUp(options).catch((e: CommunicationError) => console.error(e));
 };
 

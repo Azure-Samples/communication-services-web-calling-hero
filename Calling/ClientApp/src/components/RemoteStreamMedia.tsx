@@ -55,7 +55,7 @@ export default (props: RemoteStreamMediaProps): JSX.Element => {
       return;
     }
 
-    stream.on('availabilityChanged', renderStream);
+    stream.on('isAvailableChanged', renderStream);
 
     if (stream.isAvailable) {
       renderStream();

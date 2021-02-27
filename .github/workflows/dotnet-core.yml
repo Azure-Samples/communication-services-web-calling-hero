@@ -2,7 +2,8 @@ name: .NET Core
 
 on:
   release:
-    name: Release
+    types: [created]
+    name: Release  
 
 jobs:
   release:
@@ -17,18 +18,15 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 3.1.101
-      - name: where are we
-        run: pwd
       - name: Build
         shell: bash
         run: |
-          tag=$(git describe --tags --abbrev=0)
-          release_name=Calling-$tag
+          release_name=Group-Calling
           unset CI
           # Build everything
           dotnet publish ./Calling -c Release -o "$release_name"
 
-          7z a -tzip "${release_name}.zip" "./${release_name}/*"
+          7z a -tzip "group-calling.zip" "./${release_name}/*"
 
           # Delete output directory
           rm -r "$release_name"
@@ -36,6 +34,6 @@ jobs:
       - name: Publish
         uses: softprops/action-gh-release@v1
         with:
-          files: "Calling-*"
+          files: "group-calling.zip"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

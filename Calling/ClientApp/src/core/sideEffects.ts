@@ -158,7 +158,7 @@ const subscribeToDeviceManager = async (deviceManager: DeviceManager, dispatch: 
     updateAudioDevices(deviceManager, dispatch, getState);
   });
 
-  deviceManager.askDevicePermission(true, true).then((e: DeviceAccess) => {
+  deviceManager.askDevicePermission({audio: true, video: true}).then((e: DeviceAccess) => {
     if (e.audio !== undefined) {
       if (e.audio) {
         dispatch(setMicrophonePermission('Granted'));

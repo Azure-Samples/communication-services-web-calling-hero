@@ -2,7 +2,7 @@
 
 # Group Calling Sample
 
-This is a sample application to show how the ACS Calling Web SDK can be used to build a group calling experience. 
+This is a sample application to show how the Azure Communication Services Calling Web SDK can be used to build a group calling experience. 
 The client-side application is a React based user interface which uses Redux for handling complex state while leveraging Microsoft Fluent UI. 
 Powering this front-end is a C# web application powered by ASP.NET Core to connect this application with Azure Communication Services.
 
@@ -24,9 +24,9 @@ Additional documentation for this sample can be found on [Microsoft Docs](https:
 	- ./Calling/ClientApp/src
 		- ./Calling/ClientApp/src/Components : React components to help build the client app calling experience
 		- ./Calling/ClientApp/src/Containers : Connects the redux functionality to the React components
-		- ./Calling/ClientApp/src/Core : Containers a redux wrapper around the ACS Web Calling SDK
+		- ./Calling/ClientApp/src/Core : Containers a redux wrapper around the Azure Communication Services Web Calling SDK
 	- ./ClientApp/src/index.js : Entry point for the client app
-- ./Calling/Controllers : Server app core logic for client app to get a token to use with the ACS Web Calling SDK
+- ./Calling/Controllers : Server app core logic for client app to get a token to use with the Azure Communication Services Web Calling SDK
 - ./Calling/Program.cs : Entry point for the server app program logic
 - ./Calling/Startup.cs : Entry point for the server app startup logic
 
@@ -49,7 +49,7 @@ Additional documentation for this sample can be found on [Microsoft Docs](https:
 
 2. The app shows an "Unsupported browser" screen but I am on a [supported browser](https://docs.microsoft.com/en-us/azure/communication-services/concepts/voice-video-calling/calling-sdk-features#calling-client-library-browser-support).
 
-	If you're app is being served over a hostname other then localhost, you must serve traffic over https and not http.
+	If your app is being served over a hostname other then localhost, you must serve traffic over https and not http.
 
 ## Publish to Azure
 

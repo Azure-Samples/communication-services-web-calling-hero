@@ -29,7 +29,7 @@ export interface ConfigurationScreenProps {
   callAgent: CallAgent;
   deviceManager: DeviceManager;
   setDisplayName(displayName: string): void;
-  initCallClient(unsupportedStateHandler: () => void, endCallhandler: () => void): void;
+  initCallClient(displayName: string, unsupportedStateHandler: () => void): void;
   setGroup(groupId: string): void;
   startCallHandler(): void;
   unsupportedStateHandler: () => void;
@@ -40,6 +40,7 @@ export interface ConfigurationScreenProps {
   setAudioDeviceInfo(device: AudioDeviceInfo): void;
   setMic(mic: boolean): void;
   setLocalVideoStream(stream: LocalVideoStream | undefined): void;
+  resetCallAgent(callAgent: CallAgent): void;
   localVideoRendererIsBusy: boolean;
   videoDeviceInfo: VideoDeviceInfo;
   audioDeviceInfo: AudioDeviceInfo;
@@ -56,11 +57,10 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
   const [name, setName] = useState(createUserId());
   const [emptyWarning, setEmptyWarning] = useState(false);
 
-  const {groupId, setDisplayName, initCallClient, setGroup, unsupportedStateHandler, endCallHandler} = props;
+  const {groupId, setDisplayName, initCallClient, setGroup, unsupportedStateHandler} = props;
 
   useEffect(() => {
-    initCallClient(unsupportedStateHandler, endCallHandler);
-    setGroup(groupId);
+    initCallClient('', unsupportedStateHandler);
   }, []);
 
   return (
@@ -92,20 +92,24 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
                 videoDeviceInfo={props.videoDeviceInfo}
                 setVideoDeviceInfo={props.setVideoDeviceInfo}
                 setAudioDeviceInfo={props.setAudioDeviceInfo}
+                deviceManager={props.deviceManager}
               />
             </div>
             <div>
               <PrimaryButton
                 className={buttonStyle}
-                onClick={() => {
+                onClick={async () => {
                   if (!name) {
                     setEmptyWarning(true);
                   } else {
                     setEmptyWarning(false);
-                    // update the local display name for all of the other participants to see
-                    props.callAgent.updateDisplayName(name);
-                    // update the local display name for local rendering
+                    // since we can only set the display name when we are creating a call agent
+                    // we need to dispose of the current call agent and create a new one with the name
+                    await props.resetCallAgent(props.callAgent);
+                    await initCallClient(name, unsupportedStateHandler);
                     setDisplayName(name);
+                    // update the local display name for all of the other participants to see
+                    setGroup(groupId);
                     props.startCallHandler();
                   }
                 }}

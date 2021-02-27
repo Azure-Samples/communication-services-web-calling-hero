@@ -1,6 +1,7 @@
 import { CallEndReason, Call, RemoteParticipant, CallAgent } from '@azure/communication-calling';
 
 const SET_CALL_AGENT = 'SET_CALL_AGENT';
+const RESET_CALLS = 'RESET_CALLS';
 const SET_GROUP = 'SET_GROUP';
 const CALL_ADDED = 'CALL_ADDED';
 const CALL_REMOVED = 'CALL_REMOVED';
@@ -12,9 +13,14 @@ interface SetCallAgentAction {
   type: typeof SET_CALL_AGENT;
   callAgent: CallAgent;
 }
+
+interface ResetCallsAction {
+  type: typeof RESET_CALLS;
+}
+
 interface SetGroupAction {
   type: typeof SET_GROUP;
-  group: any;
+  group: string;
 }
 
 interface CallAddedAction {
@@ -51,6 +57,12 @@ export const setCallAgent = (callAgent: CallAgent): SetCallAgentAction => {
   };
 };
 
+export const resetCalls = (): ResetCallsAction => {
+  return {
+    type: RESET_CALLS
+  };
+};
+
 export const setGroup = (groupId: string): SetGroupAction => {
   return {
     type: SET_GROUP,
@@ -69,8 +81,8 @@ export const callRemoved = (removedCall: Call, group: string): CallRemovedAction
   return {
     type: CALL_REMOVED,
     call: undefined,
-    incomingCallEndReason: removedCall.isIncoming ? removedCall.callEndReason : undefined,
-    groupCallEndReason: !removedCall.isIncoming && !!group ? removedCall.callEndReason : undefined
+    incomingCallEndReason: removedCall.direction === 'Incoming' ? removedCall.callEndReason : undefined,
+    groupCallEndReason: removedCall.direction !== 'Incoming' && !!group ? removedCall.callEndReason : undefined
   };
 };
 
@@ -88,17 +100,27 @@ export const setParticipants = (participants: RemoteParticipant[]): SetParticipa
   };
 };
 
-export const callRetried = (attempts: number) : CallRetriedAction => {
+export const callRetried = (attempts: number): CallRetriedAction => {
   return {
     type: CALL_RETRIED,
     attempts: attempts
-  }
-}
+  };
+};
 
-export { SET_CALL_AGENT, SET_GROUP, CALL_ADDED, CALL_REMOVED, SET_CALL_STATE, SET_PARTICIPANTS, CALL_RETRIED };
+export {
+  SET_CALL_AGENT,
+  RESET_CALLS,
+  SET_GROUP,
+  CALL_ADDED,
+  CALL_REMOVED,
+  SET_CALL_STATE,
+  SET_PARTICIPANTS,
+  CALL_RETRIED
+};
 
 export type CallTypes =
   | SetCallAgentAction
+  | ResetCallsAction
   | SetParticipantsAction
   | SetCallStateAction
   | SetGroupAction

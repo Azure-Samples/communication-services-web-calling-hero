@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Azure;
 using Azure.Communication;
-using Azure.Communication.Administration;
-using Azure.Communication.Administration.Models;
+using Azure.Communication.Identity;
+using Azure.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
@@ -31,14 +31,17 @@ namespace Calling
         {
             try
             {
-                Response<CommunicationUser> userResponse = await _client.CreateUserAsync();
-                CommunicationUser user = userResponse.Value;
-                Response<CommunicationUserToken> tokenResponse =
-                    await _client.IssueTokenAsync(user, scopes: new[] { CommunicationTokenScope.VoIP });
-                string token = tokenResponse.Value.Token;
-                DateTimeOffset expiresOn = tokenResponse.Value.ExpiresOn;
-                return this.Ok(tokenResponse);
-            } 
+                Response<(CommunicationUserIdentifier, AccessToken)> response = await _client.CreateUserWithTokenAsync(scopes: new[] { CommunicationTokenScope.VoIP });
+                
+                var clientResponse = new
+                {
+                    user = response.Value.Item1,
+                    token = response.Value.Item2.Token,
+                    expiresOn = response.Value.Item2.ExpiresOn
+                };
+                
+                return this.Ok(clientResponse);
+            }
             catch (RequestFailedException ex)
             {
                 Console.WriteLine($"Error occured while Generating Token: {ex}");

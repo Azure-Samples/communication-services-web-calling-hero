@@ -26,10 +26,10 @@ export default (props: LocalStreamMediaProps): JSX.Element => {
   useEffect(() => {
     (async () => {
       if (props.stream) {
-        var renderer: Renderer = new Renderer(props.stream);
+        const renderer: Renderer = new Renderer(props.stream);
         rendererView = await renderer.createView({ scalingMode: 'Crop' });
 
-        var container = document.getElementById(Constants.LOCAL_VIDEO_PREVIEW_ID);
+        const container = document.getElementById(Constants.LOCAL_VIDEO_PREVIEW_ID);
 
         if (container && container.childElementCount === 0) {
           container.appendChild(rendererView.target);

@@ -1,10 +1,11 @@
 // © Microsoft Corporation. All rights reserved.
 import React from 'react';
 import { Stack, Dropdown, IDropdownOption } from '@fluentui/react';
-import { VideoDeviceInfo, AudioDeviceInfo } from '@azure/communication-calling';
+import { VideoDeviceInfo, AudioDeviceInfo, DeviceManager } from '@azure/communication-calling';
 import { localSettingsContainer, dropDownStyles, micStackTokens, mainStackTokens } from './styles/LocalSettings.styles';
 
 export interface LocalSettingsProps {
+  deviceManager: DeviceManager;
   videoDeviceList: VideoDeviceInfo[];
   audioDeviceList: AudioDeviceInfo[];
   videoDeviceInfo: VideoDeviceInfo;
@@ -50,6 +51,7 @@ export default (props: LocalSettingsProps): JSX.Element => {
           onChange={(...args) => {
             const index = args[2] ?? 0;
             props.setAudioDeviceInfo(props.audioDeviceList[index]);
+            props.deviceManager.selectMicrophone(props.audioDeviceList[index])
           }}
         />
       </Stack>

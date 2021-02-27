@@ -59,7 +59,7 @@ export default (props: HeaderProps): JSX.Element => {
       props.setLocalVideoStream(undefined);
     } else {
       if (props.videoDeviceInfo) {
-        var localVideoStream = new LocalVideoStream(props.videoDeviceInfo);
+        const localVideoStream = new LocalVideoStream(props.videoDeviceInfo);
         props.setLocalVideoStream(localVideoStream);
         props.call.startVideo(localVideoStream);
       }

@@ -30,7 +30,7 @@ export interface LocalPreviewProps {
   localVideoStream: LocalVideoStream;
 }
 
-var rendererView: RendererView;
+let rendererView: RendererView;
 
 export default (props: LocalPreviewProps): JSX.Element => {
   const imageProps = {
@@ -40,7 +40,7 @@ export default (props: LocalPreviewProps): JSX.Element => {
   };
 
   const handleLocalVideoOnOff = (_ev: React.MouseEvent<HTMLElement>, checked = false): void => {
-    var stream = new LocalVideoStream(props.videoDeviceInfo);
+    const stream = new LocalVideoStream(props.videoDeviceInfo);
     props.setLocalVideoStream(checked ? stream : undefined);
   };
   const handleLocalMicOnOff = (_ev: React.MouseEvent<HTMLElement>, checked = false): void => {
@@ -50,10 +50,10 @@ export default (props: LocalPreviewProps): JSX.Element => {
   useEffect(() => {
     (async () => {
       if (props.localVideoStream) {
-        var renderer: Renderer = new Renderer(props.localVideoStream);
+        const renderer: Renderer = new Renderer(props.localVideoStream);
         rendererView = await renderer.createView({ scalingMode: 'Crop' });
 
-        var container = document.getElementById(Constants.CONFIGURATION_LOCAL_VIDEO_PREVIEW_ID);
+        const container = document.getElementById(Constants.CONFIGURATION_LOCAL_VIDEO_PREVIEW_ID);
 
         if (container && container.childElementCount === 0) {
           container.appendChild(rendererView.target);
@@ -92,14 +92,14 @@ export default (props: LocalPreviewProps): JSX.Element => {
             // }
           }}
           styles={toggleStyle}
-          disabled={!props.videoDeviceInfo || props.videoDeviceList.length == 0}
+          disabled={!props.videoDeviceInfo || props.videoDeviceList.length === 0}
           onChange={handleLocalVideoOnOff}
           ariaLabel="Video Icon"
         />
         <MicIcon size="medium" />
         <Toggle
           styles={toggleStyle} 
-          disabled={!props.audioDeviceInfo || props.audioDeviceList.length == 0}
+          disabled={!props.audioDeviceInfo || props.audioDeviceList.length === 0}
           onChange={handleLocalMicOnOff} ariaLabel="Microphone Icon"/>
       </Stack>
     </Stack>

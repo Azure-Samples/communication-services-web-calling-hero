@@ -8,7 +8,7 @@ import {
   iconStyle
 } from './styles/ParticipantStack.styles';
 import { RemoteParticipant, Call } from '@azure/communication-calling';
-import { CallingApplication, CommunicationUser } from '@azure/communication-common';
+import { CallingApplicationIdentifier, CommunicationUserIdentifier } from '@azure/communication-common';
 import { ParticipantStream } from 'core/reducers';
 import { utils } from '../Utils/Utils';
 import { MicIcon, MicOffIcon } from '@fluentui/react-icons-northstar';
@@ -20,7 +20,7 @@ export interface ParticipantStackProps {
   callState: string;
   screenShareStreams: ParticipantStream[];
   remoteParticipants: RemoteParticipant[];
-  removeParticipant(user: CommunicationUser | CallingApplication | undefined): void;
+  removeParticipant(user: CommunicationUserIdentifier | CallingApplicationIdentifier | undefined): void;
 }
 export interface CallParticipant {
   key: string;
@@ -54,7 +54,7 @@ const onRenderOverflowButton = (overflowItems: any) => (
 );
 const getParticipants = (
   participants: CallParticipant[],
-  removeParticipant: (user: CommunicationUser | CallingApplication | undefined) => void
+  removeParticipant: (user: CommunicationUserIdentifier | CallingApplicationIdentifier | undefined) => void
 ) =>
   participants.map((item, i) => (
     <OverflowSet

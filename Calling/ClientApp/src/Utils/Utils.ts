@@ -11,13 +11,14 @@ import {
   MicrosoftTeamsUserIdentifier,
   isMicrosoftTeamsUserIdentifier
 } from '@azure/communication-common';
+import { CommunicationUserToken } from '@azure/communication-identity';
 import preval from 'preval.macro';
 
 export const utils = {
   getAppServiceUrl: (): string => {
     return window.location.origin;
   },
-  getTokenForUser: async (): Promise<void> => {
+  getTokenForUser: async (): Promise<CommunicationUserToken> => {
     const response = await fetch('/userToken');
     if (response.ok) {
       return response.json();

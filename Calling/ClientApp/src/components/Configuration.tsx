@@ -29,7 +29,7 @@ export interface ConfigurationScreenProps {
   callAgent: CallAgent;
   deviceManager: DeviceManager;
   setDisplayName(displayName: string): void;
-  initCallClient(displayName: string, unsupportedStateHandler: () => void, endCallhandler: () => void): void;
+  initCallClient(displayName: string, unsupportedStateHandler: () => void): void;
   setGroup(groupId: string): void;
   startCallHandler(): void;
   unsupportedStateHandler: () => void;
@@ -57,10 +57,10 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
   const [name, setName] = useState(createUserId());
   const [emptyWarning, setEmptyWarning] = useState(false);
 
-  const {groupId, setDisplayName, initCallClient, setGroup, unsupportedStateHandler, endCallHandler} = props;
+  const {groupId, setDisplayName, initCallClient, setGroup, unsupportedStateHandler} = props;
 
   useEffect(() => {
-    initCallClient('', unsupportedStateHandler, endCallHandler);
+    initCallClient('', unsupportedStateHandler);
   }, []);
 
   return (
@@ -106,7 +106,7 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
                     // since we can only set the display name when we are creating a call agent
                     // we need to dispose of the current call agent and create a new one with the name
                     await props.resetCallAgent(props.callAgent);
-                    await initCallClient(name, unsupportedStateHandler, endCallHandler);
+                    await initCallClient(name, unsupportedStateHandler);
                     setDisplayName(name);
                     // update the local display name for all of the other participants to see
                     setGroup(groupId);

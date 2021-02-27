@@ -19,6 +19,7 @@ import {
   CallingApplicationIdentifier,
   CommunicationUserIdentifier
 } from '@azure/communication-common';
+import { CommunicationUserToken } from '@azure/communication-identity';
 import { Dispatch } from 'redux';
 import { utils } from '../Utils/Utils';
 import { callAdded, callRemoved, setCallState, setParticipants, setCallAgent, callRetried } from './actions/calls';
@@ -220,9 +221,10 @@ export const initCallClient = (name: string, unsupportedStateHandler: () => void
       // we can infer if we don't have a token we dont have a userid
       // please note this sample doesn't include refresh token capabilities
       if (token === '') {
-        const tokenResponse = await utils.getTokenForUser();
-        const userToken = tokenResponse.value.token;
-        dispatch(setUserId(tokenResponse.value.user.id));
+        const tokenResponse: CommunicationUserToken = await utils.getTokenForUser();
+        console.log('[test] '+ JSON.stringify(tokenResponse))
+        const userToken = tokenResponse.token;
+        dispatch(setUserId(tokenResponse.user.communicationUserId));
         dispatch(setToken(userToken));
         token = userToken;
       }
@@ -281,7 +283,7 @@ export const initCallClient = (name: string, unsupportedStateHandler: () => void
           addedCall.on('remoteParticipantsUpdated', (ev): void => {
             ev.added.forEach((addedRemoteParticipant) => {
               console.log('participantAdded', addedRemoteParticipant);
-              subscribeToParticipant(addedRemoteParticipant, addedCall, dispatch, getState);
+              subscribeToParticipant(addedRemoteParticipant, addedCall, dispatch);
               dispatch(setParticipants([...addedCall.remoteParticipants.values()]));
             });
 
@@ -293,7 +295,7 @@ export const initCallClient = (name: string, unsupportedStateHandler: () => void
           });
 
           const rp = [...addedCall.remoteParticipants.values()];
-          rp.forEach((v) => subscribeToParticipant(v, addedCall, dispatch, getState));
+          rp.forEach((v) => subscribeToParticipant(v, addedCall, dispatch));
           dispatch(setParticipants(rp));
           dispatch(setCallState(addedCall.state));
         });

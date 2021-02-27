@@ -29,8 +29,8 @@ const mapDispatchToProps = (dispatch: any) => ({
   setMic: (mic: boolean) => dispatch(setMic(mic)),
   setAudioDeviceInfo: (deviceInfo: AudioDeviceInfo) => dispatch(setAudioDeviceInfo(deviceInfo)),
   setVideoDeviceInfo: (deviceInfo: VideoDeviceInfo) => dispatch(setVideoDeviceInfo(deviceInfo)),
-  initCallClient: (displayName: string, unsupportedStateHandler: () => void, endCallHandler: () => void) =>
-    dispatch(initCallClient(displayName, unsupportedStateHandler, endCallHandler)),
+  initCallClient: (displayName: string, unsupportedStateHandler: () => void) =>
+    dispatch(initCallClient(displayName, unsupportedStateHandler)),
   setDisplayName: (displayName: string) => dispatch(setDisplayName(displayName)),
   setGroup: (groupId: string) => dispatch(setGroup(groupId)),
   updateDevices: () => dispatch(updateDevices()),

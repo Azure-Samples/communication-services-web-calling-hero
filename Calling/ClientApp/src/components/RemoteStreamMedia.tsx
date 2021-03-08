@@ -22,8 +22,7 @@ export default (props: RemoteStreamMediaProps): JSX.Element => {
 
   const imageProps = {
     src: staticMediaSVG.toString(),
-    imageFit: ImageFit.contain,
-    maximizeFrame: true
+    imageFit: ImageFit.contain
   };
 
   const {label, stream} = props;
@@ -68,7 +67,7 @@ export default (props: RemoteStreamMediaProps): JSX.Element => {
   return (
     <div className={mediaContainer}>
       <div style={{ display: activeStreamBeingRendered ? 'block' : 'none' }} className={mediaContainer} id={streamId} />
-      <Image style={{ display: activeStreamBeingRendered ? 'none' : 'block' }} {...imageProps} />
+      <Image {...imageProps} style={{ display: activeStreamBeingRendered ? 'none' : 'block' }} />
       <Label className={videoHint}>{label}</Label>
     </div>
   );

@@ -15,8 +15,9 @@ export const videoHint = mergeStyles({
   position: 'absolute',
   padding: '0.25rem',
   whiteSpace: 'nowrap',
-  maxWidth: '40%',
-  borderRadius: 4
+  maxWidth: '95%',
+  borderRadius: 4,
+  textOverflow: 'ellipsis'
 });
 export const mediaContainer = mergeStyles({
   position: 'relative',

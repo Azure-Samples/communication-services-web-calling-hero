@@ -15,12 +15,11 @@ export interface LocalStreamMediaProps {
 export default (props: LocalStreamMediaProps): JSX.Element => {
   let rendererView: RendererView;
 
-  const [available, setAvailable] = useState(false);
+  const [activeStreamBeingRendered, setActiveStreamBeingRendered] = useState(false);
 
   const imageProps = {
     src: staticMediaSVG.toString(),
-    imageFit: ImageFit.contain,
-    maximizeFrame: true
+    imageFit: ImageFit.contain
   };
 
   useEffect(() => {
@@ -33,12 +32,12 @@ export default (props: LocalStreamMediaProps): JSX.Element => {
 
         if (container && container.childElementCount === 0) {
           container.appendChild(rendererView.target);
-          setAvailable(true);
+          setActiveStreamBeingRendered(true);
         }
       } else {
         if (rendererView) {
           rendererView.dispose();
-          setAvailable(false);
+          setActiveStreamBeingRendered(false);
         }
       }
     })();
@@ -46,7 +45,7 @@ export default (props: LocalStreamMediaProps): JSX.Element => {
     return () => {
       if (rendererView) {
         rendererView.dispose();
-        setAvailable(false);
+        setActiveStreamBeingRendered(false);
       }
     };
   }, [props.stream]);
@@ -54,11 +53,11 @@ export default (props: LocalStreamMediaProps): JSX.Element => {
   return (
     <div className={mediaContainer}>
       <div
-        style={{ display: available ? 'block' : 'none' }}
+        style={{ display: activeStreamBeingRendered ? 'block' : 'none' }}
         className={localVideoContainerStyle}
         id={Constants.LOCAL_VIDEO_PREVIEW_ID}
       />
-      <Image style={{ display: available ? 'none' : 'block' }} {...imageProps} />
+      <Image {...imageProps}  style={{ display: activeStreamBeingRendered ? 'none' : 'block' }}/>
       <Label className={videoHint}>{props.label}</Label>
     </div>
   );

@@ -25,14 +25,15 @@ const mapStateToProps = (state: State, props: GroupCallProps) => ({
   mic: state.controls.mic,
   groupCallEndReason: state.calls.groupCallEndReason,
   isGroup: () => state.calls.call && state.calls.call.direction !== 'Incoming' && !!state.calls.group,
-  joinGroup: () => {
+  joinGroup: async () => {
     state.calls.callAgent &&
-      joinGroup(
+      await joinGroup(
         state.calls.callAgent,
         {
           groupId: state.calls.group
         },
         {
+          videoOptions: { localVideoStreams: state.streams.localVideoStream ? [state.streams.localVideoStream] : undefined },
           audioOptions: { muted: !state.controls.mic }
         }
       );

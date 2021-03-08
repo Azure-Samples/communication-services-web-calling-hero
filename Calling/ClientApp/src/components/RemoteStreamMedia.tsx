@@ -18,7 +18,7 @@ export default (props: RemoteStreamMediaProps): JSX.Element => {
 
   const streamId = props.stream ? utils.getStreamId(props.label, props.stream) : `${props.label} - no stream`;
 
-  const [available, setAvailable] = useState(false);
+  const [activeStreamBeingRendered, setActiveStreamBeingRendered] = useState(false);
 
   const imageProps = {
     src: staticMediaSVG.toString(),
@@ -26,23 +26,26 @@ export default (props: RemoteStreamMediaProps): JSX.Element => {
     maximizeFrame: true
   };
 
-  const stream = props.stream;
+  const {label, stream} = props;
 
   const renderStream = async () => {
     const container = document.getElementById(streamId);
-
     if (container && props.stream && props.stream.isAvailable) {
-      setAvailable(true);
+      // if we are already rendering a stream we don't want to start rendering the same stream
+      if (activeStreamBeingRendered) {
+        return;
+      }
 
+      // set the flag that a stream is being rendered
+      setActiveStreamBeingRendered(true);
       const renderer: Renderer = new Renderer(props.stream);
-      rendererView = await renderer.createView({ scalingMode: 'Crop' });
-
-      // we need to check if the stream is available still and if the id is what we expect
+      // this can block a really long time if we fail to be subscribed to the call and it has to retry
+      const rendererView = await renderer.createView({ scalingMode: 'Crop' });
       if (container && container.childElementCount === 0) {
         container.appendChild(rendererView.target);
       }
     } else {
-      setAvailable(false);
+      setActiveStreamBeingRendered(false);
 
       if (rendererView) {
         rendererView.dispose();
@@ -58,15 +61,15 @@ export default (props: RemoteStreamMediaProps): JSX.Element => {
     stream.on('isAvailableChanged', renderStream);
 
     if (stream.isAvailable) {
-      renderStream();
+        renderStream();
     }
   }, [stream, renderStream]);
 
   return (
     <div className={mediaContainer}>
-      <div style={{ display: available ? 'block' : 'none' }} className={mediaContainer} id={streamId} />
-      <Image style={{ display: available ? 'none' : 'block' }} {...imageProps} />
-      <Label className={videoHint}>{props.label}</Label>
+      <div style={{ display: activeStreamBeingRendered ? 'block' : 'none' }} className={mediaContainer} id={streamId} />
+      <Image style={{ display: activeStreamBeingRendered ? 'none' : 'block' }} {...imageProps} />
+      <Label className={videoHint}>{label}</Label>
     </div>
   );
 };

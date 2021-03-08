@@ -11,7 +11,7 @@ import {
   VideoDeviceInfo,
   CallAgent,
   CallClient,
-  HangUpOptions,
+  HangUpOptions
 } from '@azure/communication-calling';
 import {
   AzureCommunicationTokenCredential,
@@ -99,21 +99,19 @@ const subscribeToParticipant = (
 
   participant.on('videoStreamsUpdated', (e): void => {
     e.added.forEach((addedStream) => {
-      if (addedStream.mediaStreamType === 'Video') {
-        return;
-      }
-      addedStream.on('isAvailableChanged', () => {
-        if (addedStream.isAvailable) {
-          dispatch(addScreenShareStream(addedStream, participant));
-        } else {
-          dispatch(removeScreenShareStream(addedStream, participant));
-        }
-      });
-
-      if (addedStream.isAvailable) {
-        dispatch(addScreenShareStream(addedStream, participant));
+      if (addedStream.mediaStreamType === 'ScreenSharing') {
+        addedStream.on('isAvailableChanged', () => {
+          if (addedStream.isAvailable) {
+            dispatch(addScreenShareStream(addedStream, participant));
+          } else {
+            dispatch(removeScreenShareStream(addedStream, participant));
+          }
+        });
+  
+        if (addedStream.isAvailable) { dispatch(addScreenShareStream(addedStream, participant)); }
       }
     });
+    dispatch(setParticipants([...call.remoteParticipants.values()]));
   });
 };
 
@@ -158,7 +156,7 @@ const subscribeToDeviceManager = async (deviceManager: DeviceManager, dispatch: 
     updateAudioDevices(deviceManager, dispatch, getState);
   });
 
-  deviceManager.askDevicePermission({audio: true, video: true}).then((e: DeviceAccess) => {
+  deviceManager.askDevicePermission({ audio: true,  video: true}).then((e: DeviceAccess) => {
     if (e.audio !== undefined) {
       if (e.audio) {
         dispatch(setMicrophonePermission('Granted'));
@@ -213,7 +211,6 @@ export const initCallClient = (name: string, unsupportedStateHandler: () => void
       // please note this sample doesn't include refresh token capabilities
       if (token === '') {
         const tokenResponse: CommunicationUserToken = await utils.getTokenForUser();
-        console.log('[test] '+ JSON.stringify(tokenResponse))
         const userToken = tokenResponse.token;
         dispatch(setUserId(tokenResponse.user.communicationUserId));
         dispatch(setToken(userToken));
@@ -267,28 +264,30 @@ export const initCallClient = (name: string, unsupportedStateHandler: () => void
             dispatch(setCallState(addedCall.state));
           });
 
+          dispatch(setCallState(addedCall.state));
+
           addedCall.on('isScreenSharingOnChanged', (): void => {
             dispatch(setShareScreen(addedCall.isScreenSharingOn));
           });
 
+          dispatch(setShareScreen(addedCall.isScreenSharingOn))
+          
+          // if remote participants have changed, subscribe to the added remote participants
           addedCall.on('remoteParticipantsUpdated', (ev): void => {
-            ev.added.forEach((addedRemoteParticipant) => {
-              console.log('participantAdded', addedRemoteParticipant);
+            // for each of the added remote participants, subscribe to events and then just update as well in case the update has already happened
+              ev.added.forEach((addedRemoteParticipant) => {
               subscribeToParticipant(addedRemoteParticipant, addedCall, dispatch);
-              dispatch(setParticipants([...addedCall.remoteParticipants.values()]));
+              dispatch(setParticipants([...state.calls.remoteParticipants, addedRemoteParticipant]))
             });
 
-            // we don't use the actual value we are just going to reset the remoteParticipants based on the call
-            if (ev.removed.length > 0) {
-              console.log('participantRemoved');
-              dispatch(setParticipants([...addedCall.remoteParticipants.values()]));
-            }
+          
+
+            ev.removed.forEach((removedRemoteParticipant) => {
+              dispatch(setParticipants([...state.calls.remoteParticipants.filter(remoteParticipant => { return remoteParticipant !== removedRemoteParticipant }) ]))
+            });
           });
 
-          const rp = [...addedCall.remoteParticipants.values()];
-          rp.forEach((v) => subscribeToParticipant(v, addedCall, dispatch));
-          dispatch(setParticipants(rp));
-          dispatch(setCallState(addedCall.state));
+          dispatch(setParticipants([...state.calls.remoteParticipants]));
         });
         e.removed.forEach((removedCall) => {
           const state = getState();

@@ -22,6 +22,7 @@ import {
 
 export interface LocalPreviewProps {
   setMic(mic: boolean): void;
+  mic: boolean;
   setLocalVideoStream(device: LocalVideoStream | undefined): void;
   videoDeviceInfo: VideoDeviceInfo;
   audioDeviceInfo: AudioDeviceInfo;
@@ -86,11 +87,8 @@ export default (props: LocalPreviewProps): JSX.Element => {
       >
         <CallVideoIcon size="medium" />
         <Toggle
-          onKeyDownCapture={(e) => {
-            // if (e.keyCode === 13 && props.localVideoRendererIsBusy) {
-            //     e.preventDefault();
-            // }
-          }}
+          onKeyDownCapture={(e) => {}}
+          checked={props.localVideoStream !== undefined}
           styles={toggleStyle}
           disabled={!props.videoDeviceInfo || props.videoDeviceList.length === 0}
           onChange={handleLocalVideoOnOff}
@@ -98,6 +96,7 @@ export default (props: LocalPreviewProps): JSX.Element => {
         />
         <MicIcon size="medium" />
         <Toggle
+          checked={props.mic}
           styles={toggleStyle} 
           disabled={!props.audioDeviceInfo || props.audioDeviceList.length === 0}
           onChange={handleLocalMicOnOff} ariaLabel="Microphone Icon"/>

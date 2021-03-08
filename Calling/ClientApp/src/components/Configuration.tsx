@@ -38,6 +38,7 @@ export interface ConfigurationScreenProps {
   audioDeviceList: AudioDeviceInfo[];
   setVideoDeviceInfo(device: VideoDeviceInfo): void;
   setAudioDeviceInfo(device: AudioDeviceInfo): void;
+  mic: boolean;
   setMic(mic: boolean): void;
   setLocalVideoStream(stream: LocalVideoStream | undefined): void;
   resetCallAgent(callAgent: CallAgent): void;
@@ -74,6 +75,7 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
           tokens={props.screenWidth > 750 ? configurationStackTokens : undefined}
         >
           <LocalPreview
+            mic={props.mic}
             setMic={props.setMic}
             setLocalVideoStream={props.setLocalVideoStream}
             videoDeviceInfo={props.videoDeviceInfo}

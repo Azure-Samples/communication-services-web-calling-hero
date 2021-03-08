@@ -56,7 +56,6 @@ export interface GroupCallProps {
   endCallTest(): void;
   attempts: number;
   setAttempts(attempts: number): void;
-  deviceManager: DeviceManager;
 }
 
 export default (props: GroupCallProps): JSX.Element => {

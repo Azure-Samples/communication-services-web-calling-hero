@@ -73,7 +73,6 @@ export default (props: GroupCallProps): JSX.Element => {
     }
     if (callAgent && !call) {
       joinGroup();
-      document.title = `${groupId} group call sample`;
     }
   }, [callAgent, call, groupId, joinGroup]);
 

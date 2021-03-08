@@ -27,7 +27,7 @@ export default (props: RemoteStreamMediaProps): JSX.Element => {
 
   const {label, stream} = props;
 
-  const renderStream = async () => {
+  const renderRemoteStream = async () => {
     const container = document.getElementById(streamId);
     if (container && props.stream && props.stream.isAvailable) {
       // if we are already rendering a stream we don't want to start rendering the same stream
@@ -57,12 +57,12 @@ export default (props: RemoteStreamMediaProps): JSX.Element => {
       return;
     }
 
-    stream.on('isAvailableChanged', renderStream);
+    stream.on('isAvailableChanged', renderRemoteStream);
 
     if (stream.isAvailable) {
-        renderStream();
+      renderRemoteStream();
     }
-  }, [stream, renderStream]);
+  }, [stream, renderRemoteStream]);
 
   return (
     <div className={mediaContainer}>

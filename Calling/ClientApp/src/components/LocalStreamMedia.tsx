@@ -22,32 +22,27 @@ export default (props: LocalStreamMediaProps): JSX.Element => {
     imageFit: ImageFit.contain
   };
 
-  useEffect(() => {
-    (async () => {
-      if (props.stream) {
-        const renderer: Renderer = new Renderer(props.stream);
-        rendererView = await renderer.createView({ scalingMode: 'Crop' });
+  const renderLocalStream = async () => {
+    if (props.stream) {
+      const renderer: Renderer = new Renderer(props.stream);
+      rendererView = await renderer.createView({ scalingMode: 'Crop' });
 
-        const container = document.getElementById(Constants.LOCAL_VIDEO_PREVIEW_ID);
+      const container = document.getElementById(Constants.LOCAL_VIDEO_PREVIEW_ID);
 
-        if (container && container.childElementCount === 0) {
-          container.appendChild(rendererView.target);
-          setActiveStreamBeingRendered(true);
-        }
-      } else {
-        if (rendererView) {
-          rendererView.dispose();
-          setActiveStreamBeingRendered(false);
-        }
+      if (container && container.childElementCount === 0) {
+        container.appendChild(rendererView.target);
+        setActiveStreamBeingRendered(true);
       }
-    })();
-
-    return () => {
+    } else {
       if (rendererView) {
         rendererView.dispose();
         setActiveStreamBeingRendered(false);
       }
-    };
+    }
+  }
+
+  useEffect(() => {
+    renderLocalStream();
   }, [props.stream]);
 
   return (

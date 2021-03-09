@@ -1,15 +1,7 @@
 // © Microsoft Corporation. All rights reserved.
 import { AudioDeviceInfo, VideoDeviceInfo, RemoteVideoStream } from '@azure/communication-calling';
 import {
-  CommunicationUserIdentifier,
-  UnknownIdentifier,
-  CallingApplicationIdentifier,
-  PhoneNumberIdentifier,
-  isCommunicationUserIdentifier,
-  isCallingApplicationIdentifier,
-  isPhoneNumberIdentifier,
-  MicrosoftTeamsUserIdentifier,
-  isMicrosoftTeamsUserIdentifier
+  CommunicationIdentifierKind
 } from '@azure/communication-common';
 import { CommunicationUserToken } from '@azure/communication-identity';
 import preval from 'preval.macro';
@@ -42,28 +34,22 @@ export const utils = {
   isUnsupportedBrowser(): boolean {
     return window.navigator.userAgent.match(/(Firefox)/g) ? true : false;
   },
-  getId: (
-    identifier:
-      | CommunicationUserIdentifier
-      | CallingApplicationIdentifier
-      | UnknownIdentifier
-      | PhoneNumberIdentifier
-      | MicrosoftTeamsUserIdentifier
-  ): string => {
-    if (isCommunicationUserIdentifier(identifier)) {
-      return identifier.communicationUserId;
-    } else if (isCallingApplicationIdentifier(identifier)) {
-      return identifier.callingApplicationId;
-    } else if (isPhoneNumberIdentifier(identifier)) {
-      return identifier.phoneNumber;
-    } else if (isMicrosoftTeamsUserIdentifier(identifier)) {
-      return identifier.microsoftTeamsUserId;
-    } else {
-      return identifier.id;
+  getId: (identifier: CommunicationIdentifierKind): string => {
+    switch(identifier.kind) {
+      case 'communicationUser':
+        return identifier.communicationUserId;
+      case 'callingApplication':
+        return identifier.callingApplicationId;
+      case 'phoneNumber':
+        return identifier.phoneNumber;
+      case 'microsoftTeamsUser':
+        return identifier.microsoftTeamsUserId;
+      case 'unknown':
+        return identifier.id;
     }
   },
   getStreamId: (userId: string, stream: RemoteVideoStream): string => {
-    return `${userId}-${ stream.id}-${stream.mediaStreamType}`;
+    return `${userId}-${stream.id}-${stream.mediaStreamType}`;
   },
   /*
    * TODO:

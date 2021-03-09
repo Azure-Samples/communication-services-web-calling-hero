@@ -7,7 +7,6 @@ import {
   AudioDeviceInfo,
   VideoDeviceInfo,
   LocalVideoStream,
-  DeviceManager,
   CallAgent
 } from '@azure/communication-calling';
 import { State } from '../core/reducers';
@@ -63,11 +62,8 @@ const mapDispatchToProps = (dispatch: any) => ({
   },
   setLocalVideoStream: (localVideoStream: LocalVideoStream) => dispatch(setLocalVideoStream(localVideoStream)),
   setAttempts: (attempts: number) => dispatch(callRetried(attempts)),
-  reset: (deviceManager: DeviceManager, callAgent: CallAgent) => {
-    (deviceManager as any)['_eventEmitter'].removeAllListeners();
-    (callAgent as any)['_eventEmitter'].removeAllListeners();
+  reset: (callAgent: CallAgent) => {
     callAgent.dispose();
-
     dispatch(resetCalls());
     dispatch(resetDevices());
     dispatch(resetSdk());

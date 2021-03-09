@@ -25,7 +25,7 @@ export default (props: LocalStreamMediaProps): JSX.Element => {
   const renderLocalStream = async () => {
     if (props.stream) {
       const renderer: Renderer = new Renderer(props.stream);
-      rendererView = await renderer.createView({ scalingMode: 'Crop' });
+      rendererView = await renderer.createView({ scalingMode: 'Crop', isMirrored: true });
 
       const container = document.getElementById(Constants.LOCAL_VIDEO_PREVIEW_ID);
 

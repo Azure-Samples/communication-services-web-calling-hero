@@ -15,8 +15,8 @@ import {
 } from '@azure/communication-calling';
 import {
   AzureCommunicationTokenCredential,
-  CallingApplicationIdentifier,
-  CommunicationUserIdentifier
+  CallingApplicationKind,
+  CommunicationUserKind
 } from '@azure/communication-common';
 import { CommunicationUserToken } from '@azure/communication-identity';
 import { Dispatch } from 'redux';
@@ -87,9 +87,7 @@ const subscribeToParticipant = (
   call: Call,
   dispatch: Dispatch
 ): void => {
-  const userId = utils.getId(participant.identifier);
   participant.on('stateChanged', () => {
-    console.log('participant stateChanged', userId, participant.state);
     dispatch(setParticipants([...call.remoteParticipants.values()]));
   });
 
@@ -321,13 +319,13 @@ export const joinGroup = async (callAgent: CallAgent, context: GroupCallLocator,
   }
 };
 
-export const addParticipant = async (call: Call, user: CommunicationUserIdentifier | CallingApplicationIdentifier): Promise<void> => {
+export const addParticipant = async (call: Call, user: CommunicationUserKind | CallingApplicationKind): Promise<void> => {
   await call.addParticipant(user);
 };
 
 export const removeParticipant = async (
   call: Call,
-  user: CommunicationUserIdentifier | CallingApplicationIdentifier
+  user: CommunicationUserKind | CallingApplicationKind
 ): Promise<void> => {
   await call.removeParticipant(user).catch((e: CommunicationError) => console.error(e));
 };

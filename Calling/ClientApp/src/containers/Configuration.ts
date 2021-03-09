@@ -35,7 +35,6 @@ const mapDispatchToProps = (dispatch: any) => ({
   setGroup: (groupId: string) => dispatch(setGroup(groupId)),
   updateDevices: () => dispatch(updateDevices()),
   resetCallAgent: async (callAgent: CallAgent) => {
-    (callAgent as any)['_eventEmitter'].removeAllListeners();
     await callAgent.dispose();
     dispatch(resetCalls());
   }

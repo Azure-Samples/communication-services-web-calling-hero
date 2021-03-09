@@ -31,13 +31,14 @@ namespace Calling
         {
             try
             {
-                Response<(CommunicationUserIdentifier, AccessToken)> response = await _client.CreateUserWithTokenAsync(scopes: new[] { CommunicationTokenScope.VoIP });
-                
+                Response<(CommunicationUserIdentifier User, AccessToken Token)> response = await _client.CreateUserWithTokenAsync(scopes: new[] { CommunicationTokenScope.VoIP });
+
+                var responseValue = response.Value;
                 var clientResponse = new
                 {
-                    user = response.Value.Item1,
-                    token = response.Value.Item2.Token,
-                    expiresOn = response.Value.Item2.ExpiresOn
+                    user = responseValue.User,
+                    token = responseValue.Token.Token,
+                    expiresOn = responseValue.Token.ExpiresOn
                 };
                 
                 return this.Ok(clientResponse);

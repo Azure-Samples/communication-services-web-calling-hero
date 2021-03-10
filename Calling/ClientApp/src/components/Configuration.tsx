@@ -28,7 +28,6 @@ export interface ConfigurationScreenProps {
   groupId: string;
   callAgent: CallAgent;
   deviceManager: DeviceManager;
-  setDisplayName(displayName: string): void;
   setupCallClient(unsupportedStateHandler: () => void): void;
   setupCallAgent(displayName: string): void;
   setGroup(groupId: string): void;
@@ -58,7 +57,7 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
   const [name, setName] = useState(createUserId());
   const [emptyWarning, setEmptyWarning] = useState(false);
 
-  const {groupId, setupCallClient, setupCallAgent, setGroup, unsupportedStateHandler, setDisplayName} = props;
+  const {groupId, setupCallClient, setupCallAgent, setGroup, unsupportedStateHandler} = props;
 
   useEffect(() => {
     setupCallClient(unsupportedStateHandler);
@@ -106,8 +105,6 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
                   } else {
                     setEmptyWarning(false);
                     await setupCallAgent(name);
-                    setDisplayName(name);
-                    // update the local display name for all of the other participants to see
                     setGroup(groupId);
                     props.startCallHandler();
                   }

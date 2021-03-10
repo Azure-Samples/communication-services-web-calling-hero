@@ -1,7 +1,6 @@
 import { connect } from 'react-redux';
 import ConfigurationScreen, { ConfigurationScreenProps } from '../components/Configuration';
 import { setGroup } from '../core/actions/calls';
-import { setDisplayName } from '../core/actions/sdk';
 import { setVideoDeviceInfo, setAudioDeviceInfo } from '../core/actions/devices';
 import { initCallAgent, initCallClient, updateDevices } from '../core/sideEffects';
 import { setMic } from '../core/actions/controls';
@@ -33,7 +32,6 @@ const mapDispatchToProps = (dispatch: any) => ({
     dispatch(initCallClient( unsupportedStateHandler)),
   setupCallAgent: (displayName: string) =>
     dispatch(initCallAgent(displayName)),
-  setDisplayName: (displayName: string) => dispatch(setDisplayName(displayName)),
   setGroup: (groupId: string) => dispatch(setGroup(groupId)),
   updateDevices: () => dispatch(updateDevices()),
 });

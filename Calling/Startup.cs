@@ -68,7 +68,7 @@ namespace Calling
                 if (env.IsDevelopment())
                 {
                     spa.Options.StartupTimeout = TimeSpan.FromSeconds(120);
-                    spa.UseReactDevelopmentServer(npmScript: "start --max_old_space_size=4096");
+                    spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
         }

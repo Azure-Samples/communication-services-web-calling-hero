@@ -62,19 +62,19 @@ export default (props: GroupCallProps): JSX.Element => {
   const [selectedPane, setSelectedPane] = useState(CommandPanelTypes.None);
   const activeScreenShare = props.screenShareStreams && props.screenShareStreams.length === 1;
 
-  const { callAgent, call, groupId, joinGroup, attempts } = props;
+  const { callAgent, call, groupId, joinGroup, attempts, setAttempts, endCallHandler } = props;
 
   useEffect(() => {
     if (attempts > 3) {
-      props.endCallHandler();
+      endCallHandler();
       // after we switch the screen on the next tick we want to 
       // set the attempts back to 0
-      setTimeout(()=> props.setAttempts(0), 0)
+      setTimeout(()=> setAttempts(0), 0)
     }
     if (callAgent && !call) {
       joinGroup();
     }
-  }, [callAgent, call, groupId, joinGroup]);
+  }, [callAgent, call, groupId, joinGroup, endCallHandler, attempts, setAttempts]);
 
   return (
     <Stack horizontalAlign="center" verticalAlign="center" styles={containerStyles}>

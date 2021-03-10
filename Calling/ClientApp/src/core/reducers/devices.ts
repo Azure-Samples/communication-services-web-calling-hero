@@ -2,7 +2,6 @@ import { Reducer } from 'redux';
 import { AudioDeviceInfo, VideoDeviceInfo, DeviceManager } from '@azure/communication-calling';
 import {
   SET_DEVICE_MANAGER,
-  RESET_DEVICES,
   SET_AUDIO_DEVICE_INFO,
   SET_AUDIO_DEVICE_LIST,
   SET_CAMERA_PERMISSION,
@@ -39,8 +38,6 @@ export const devicesReducer: Reducer<DevicesState, DeviceTypes> = (
   switch (action.type) {
     case SET_DEVICE_MANAGER:
       return { ...state, deviceManager: action.deviceManager };
-    case RESET_DEVICES:
-      return initialState;
     case SET_VIDEO_DEVICE_INFO:
       return { ...state, videoDeviceInfo: action.videoDeviceInfo };
     case SET_AUDIO_DEVICE_INFO:

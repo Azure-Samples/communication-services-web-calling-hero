@@ -1,6 +1,5 @@
 const SET_MIC = 'SET_MIC';
 const SET_SHARE_SCREEN = 'SET_SHARE_SCREEN';
-const RESET_CONTROLS = 'RESET_CONTROLS';
 
 interface SetMicAction {
   type: typeof SET_MIC;
@@ -10,10 +9,6 @@ interface SetMicAction {
 interface SetShareScreenAction {
   type: typeof SET_SHARE_SCREEN;
   shareScreen: boolean;
-}
-
-interface ResetControlsAction {
-  type: typeof RESET_CONTROLS;
 }
 
 export const setMic = (mic: boolean): SetMicAction => {
@@ -30,12 +25,6 @@ export const setShareScreen = (shareScreen: boolean): SetShareScreenAction => {
   };
 };
 
-export const resetControls = (): ResetControlsAction => {
-  return {
-    type: RESET_CONTROLS
-  };
-};
+export { SET_MIC, SET_SHARE_SCREEN };
 
-export { SET_MIC, SET_SHARE_SCREEN, RESET_CONTROLS };
-
-export type ControlTypes = SetMicAction | SetShareScreenAction | ResetControlsAction;
+export type ControlTypes = SetMicAction | SetShareScreenAction;

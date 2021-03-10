@@ -22,9 +22,11 @@ export default (props: LocalStreamMediaProps): JSX.Element => {
     imageFit: ImageFit.contain
   };
 
+  const { stream, label } = props;
+
   const renderLocalStream = async () => {
-    if (props.stream) {
-      const renderer: Renderer = new Renderer(props.stream);
+    if (stream) {
+      const renderer: Renderer = new Renderer(stream);
       rendererView = await renderer.createView({ scalingMode: 'Crop', isMirrored: true });
 
       const container = document.getElementById(Constants.LOCAL_VIDEO_PREVIEW_ID);
@@ -43,7 +45,7 @@ export default (props: LocalStreamMediaProps): JSX.Element => {
 
   useEffect(() => {
     renderLocalStream();
-  }, [props.stream]);
+  }, [stream, renderLocalStream]);
 
   return (
     <div className={mediaContainer}>
@@ -53,7 +55,7 @@ export default (props: LocalStreamMediaProps): JSX.Element => {
         id={Constants.LOCAL_VIDEO_PREVIEW_ID}
       />
       <Image {...imageProps}  style={{ display: activeStreamBeingRendered ? 'none' : 'block' }}/>
-      <Label className={videoHint}>{props.label}</Label>
+      <Label className={videoHint}>{label}</Label>
     </div>
   );
 };

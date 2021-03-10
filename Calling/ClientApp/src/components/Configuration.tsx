@@ -29,7 +29,8 @@ export interface ConfigurationScreenProps {
   callAgent: CallAgent;
   deviceManager: DeviceManager;
   setDisplayName(displayName: string): void;
-  initCallClient(displayName: string, unsupportedStateHandler: () => void): void;
+  setupCallClient(unsupportedStateHandler: () => void): void;
+  setupCallAgent(displayName: string): void;
   setGroup(groupId: string): void;
   startCallHandler(): void;
   unsupportedStateHandler: () => void;
@@ -41,7 +42,6 @@ export interface ConfigurationScreenProps {
   mic: boolean;
   setMic(mic: boolean): void;
   setLocalVideoStream(stream: LocalVideoStream | undefined): void;
-  resetCallAgent(callAgent: CallAgent): void;
   localVideoRendererIsBusy: boolean;
   videoDeviceInfo: VideoDeviceInfo;
   audioDeviceInfo: AudioDeviceInfo;
@@ -58,11 +58,11 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
   const [name, setName] = useState(createUserId());
   const [emptyWarning, setEmptyWarning] = useState(false);
 
-  const {groupId, setDisplayName, initCallClient, setGroup, unsupportedStateHandler} = props;
+  const {groupId, setupCallClient, setupCallAgent, setGroup, unsupportedStateHandler, setDisplayName} = props;
 
   useEffect(() => {
-    initCallClient('', unsupportedStateHandler);
-  }, []);
+    setupCallClient(unsupportedStateHandler);
+  }, [setupCallClient, unsupportedStateHandler]);
 
   return (
     <Stack className={mainContainerStyle} horizontalAlign="center" verticalAlign="center">
@@ -105,10 +105,7 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
                     setEmptyWarning(true);
                   } else {
                     setEmptyWarning(false);
-                    // since we can only set the display name when we are creating a call agent
-                    // we need to dispose of the current call agent and create a new one with the name
-                    await props.resetCallAgent(props.callAgent);
-                    await initCallClient(name, unsupportedStateHandler);
+                    await setupCallAgent(name);
                     setDisplayName(name);
                     // update the local display name for all of the other participants to see
                     setGroup(groupId);

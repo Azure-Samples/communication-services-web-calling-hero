@@ -8,8 +8,7 @@ import {
   SET_PARTICIPANTS,
   CallTypes,
   SET_CALL_AGENT,
-  CALL_RETRIED,
-  RESET_CALLS
+  CALL_RETRIED
 } from '../actions/calls';
 
 export interface CallsState {
@@ -38,8 +37,6 @@ export const callsReducer: Reducer<CallsState, CallTypes> = (state = initialStat
   switch (action.type) {
     case SET_CALL_AGENT:
       return { ...state, callAgent: action.callAgent };
-    case RESET_CALLS:
-      return initialState;
     case CALL_ADDED:
       return { ...state, call: action.call };
     case CALL_REMOVED:

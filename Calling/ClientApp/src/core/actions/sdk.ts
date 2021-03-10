@@ -1,7 +1,6 @@
 const SET_USERID = 'SET_USERID';
 const SET_DISPLAY_NAME = 'SET_DISPLAY_NAME';
 const SET_TOKEN = 'SET_TOKEN';
-const RESET_SDK = 'RESET_SDK';
 
 interface SetUserIdAction {
   type: typeof SET_USERID;
@@ -16,10 +15,6 @@ interface SetDisplayNameAction {
 interface SetTokenAction {
   type: typeof SET_TOKEN;
   token: string;
-}
-
-interface ResetSDKAction {
-  type: typeof RESET_SDK;
 }
 
 export const setUserId = (userId: string): SetUserIdAction => {
@@ -43,12 +38,6 @@ export const setToken = (token: string): SetTokenAction => {
   };
 };
 
-export const resetSdk = (): ResetSDKAction => {
-  return {
-    type: RESET_SDK
-  };
-};
+export { SET_USERID, SET_DISPLAY_NAME, SET_TOKEN };
 
-export { SET_USERID, SET_DISPLAY_NAME, RESET_SDK, SET_TOKEN };
-
-export type SdkTypes = SetUserIdAction | SetDisplayNameAction | ResetSDKAction | SetTokenAction;
+export type SdkTypes = SetUserIdAction | SetDisplayNameAction | SetTokenAction;

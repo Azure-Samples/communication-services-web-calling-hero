@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import GroupCall, { GroupCallProps } from '../components/GroupCall';
 import { joinGroup, setMicrophone } from '../core/sideEffects';
 import { setLocalVideoStream } from '../core/actions/streams';
-import { setVideoDeviceInfo, setAudioDeviceInfo, resetDevices } from '../core/actions/devices';
+import { setVideoDeviceInfo, setAudioDeviceInfo } from '../core/actions/devices';
 import {
   AudioDeviceInfo,
   VideoDeviceInfo,
@@ -10,8 +10,7 @@ import {
   CallAgent
 } from '@azure/communication-calling';
 import { State } from '../core/reducers';
-import { callRetried, resetCalls } from 'core/actions/calls';
-import { resetSdk } from 'core/actions/sdk';
+import { callRetried } from 'core/actions/calls';
 
 const mapStateToProps = (state: State, props: GroupCallProps) => ({
   userId: state.sdk.userId,
@@ -26,6 +25,7 @@ const mapStateToProps = (state: State, props: GroupCallProps) => ({
   isGroup: () => state.calls.call && state.calls.call.direction !== 'Incoming' && !!state.calls.group,
   joinGroup: async () => {
     state.calls.callAgent &&
+    
       await joinGroup(
         state.calls.callAgent,
         {
@@ -64,9 +64,6 @@ const mapDispatchToProps = (dispatch: any) => ({
   setAttempts: (attempts: number) => dispatch(callRetried(attempts)),
   reset: (callAgent: CallAgent) => {
     callAgent.dispose();
-    dispatch(resetCalls());
-    dispatch(resetDevices());
-    dispatch(resetSdk());
   }
 });
 

@@ -1,12 +1,12 @@
 import { connect } from 'react-redux';
 import ConfigurationScreen, { ConfigurationScreenProps } from '../components/Configuration';
-import { resetCalls, setGroup } from '../core/actions/calls';
+import { setGroup } from '../core/actions/calls';
 import { setDisplayName } from '../core/actions/sdk';
 import { setVideoDeviceInfo, setAudioDeviceInfo } from '../core/actions/devices';
-import { initCallClient, updateDevices } from '../core/sideEffects';
+import { initCallAgent, initCallClient, updateDevices } from '../core/sideEffects';
 import { setMic } from '../core/actions/controls';
 import { State } from '../core/reducers';
-import { AudioDeviceInfo, VideoDeviceInfo, LocalVideoStream, CallAgent } from '@azure/communication-calling';
+import { AudioDeviceInfo, VideoDeviceInfo, LocalVideoStream } from '@azure/communication-calling';
 import { setLocalVideoStream } from '../core/actions/streams';
 
 const mapStateToProps = (state: State, props: ConfigurationScreenProps) => ({
@@ -29,15 +29,13 @@ const mapDispatchToProps = (dispatch: any) => ({
   setMic: (mic: boolean) => dispatch(setMic(mic)),
   setAudioDeviceInfo: (deviceInfo: AudioDeviceInfo) => dispatch(setAudioDeviceInfo(deviceInfo)),
   setVideoDeviceInfo: (deviceInfo: VideoDeviceInfo) => dispatch(setVideoDeviceInfo(deviceInfo)),
-  initCallClient: (displayName: string, unsupportedStateHandler: () => void) =>
-    dispatch(initCallClient(displayName, unsupportedStateHandler)),
+  setupCallClient: (unsupportedStateHandler: () => void) =>
+    dispatch(initCallClient( unsupportedStateHandler)),
+  setupCallAgent: (displayName: string) =>
+    dispatch(initCallAgent(displayName)),
   setDisplayName: (displayName: string) => dispatch(setDisplayName(displayName)),
   setGroup: (groupId: string) => dispatch(setGroup(groupId)),
   updateDevices: () => dispatch(updateDevices()),
-  resetCallAgent: async (callAgent: CallAgent) => {
-    await callAgent.dispose();
-    dispatch(resetCalls());
-  }
 });
 
 const connector: any = connect(mapStateToProps, mapDispatchToProps);

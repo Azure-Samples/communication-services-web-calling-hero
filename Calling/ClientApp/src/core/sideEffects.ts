@@ -22,7 +22,7 @@ import { CommunicationUserToken } from '@azure/communication-identity';
 import { Dispatch } from 'redux';
 import { utils } from '../Utils/Utils';
 import { callAdded, callRemoved, setCallState, setParticipants, setCallAgent, callRetried } from './actions/calls';
-import { setMic, setShareScreen, resetControls } from './actions/controls';
+import { setMic, setShareScreen } from './actions/controls';
 import {
   setAudioDeviceInfo,
   setAudioDeviceList,
@@ -33,8 +33,9 @@ import {
   setDeviceManager
 } from './actions/devices';
 import { setToken, setUserId } from './actions/sdk';
-import { addScreenShareStream, resetStreams, removeScreenShareStream } from './actions/streams';
+import { addScreenShareStream, removeScreenShareStream } from './actions/streams';
 import { State } from './reducers';
+import { createClientLogger, setLogLevel } from '@azure/logger';
 
 export const setMicrophone = (mic: boolean) => {
   return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
@@ -196,25 +197,106 @@ export const updateDevices = () => {
   };
 };
 
-export const initCallClient = (name: string, unsupportedStateHandler: () => void) => {
+const createCallOptions = (): CallClientOptions => {
+  const logger = createClientLogger('Azure Communication Services - Calling Hero Sample');
+
+  setLogLevel('verbose');
+  logger.verbose.log = (...args) => { console.log(...args); };
+  logger.info.log = (...args) => { console.info(...args) ; };
+  logger.warning.log = (...args) => { console.warn(...args); };
+  logger.error.log = (...args) => { console.error(...args); };
+
+  return {
+    logger: logger
+  }
+}
+
+export const initCallAgent = (name: string) => {
   return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
     const state: State = getState();
-    try {
-      let token = state.sdk.token;
 
-      const options: CallClientOptions = {};
+    const options: CallClientOptions = createCallOptions();
+    let callClient = new CallClient(options);
 
-      // in the case we haven't gotten a token yet
-      // we can infer if we don't have a token we dont have a userid
-      // please note this sample doesn't include refresh token capabilities
-      if (token === '') {
-        const tokenResponse: CommunicationUserToken = await utils.getTokenForUser();
-        const userToken = tokenResponse.token;
-        dispatch(setUserId(tokenResponse.user.communicationUserId));
-        dispatch(setToken(userToken));
-        token = userToken;
-      }
+    let token = state.sdk.token;
+    if (token === '') {
+      const tokenResponse: CommunicationUserToken = await utils.getTokenForUser();
+      const userToken = tokenResponse.token;
+      dispatch(setUserId(tokenResponse.user.communicationUserId));
+      dispatch(setToken(userToken));
+      token = userToken;
+    }
 
+    const tokenCredential = new AzureCommunicationTokenCredential(token);
+    const callAgent: CallAgent = await callClient.createCallAgent(tokenCredential, { displayName: name });
+
+    if (callAgent === undefined) {
+      return;
+    }
+
+    dispatch(setCallAgent(callAgent));
+
+    const deviceManager: DeviceManager = await callClient.getDeviceManager();
+
+    dispatch(setDeviceManager(deviceManager));
+    subscribeToDeviceManager(deviceManager, dispatch, getState);
+
+    callAgent.on('callsUpdated', (e: { added: Call[]; removed: Call[] }): void => {
+      e.added.forEach((addedCall) => {
+        const state = getState();
+        if (state.calls.call && addedCall.direction === 'Incoming') {
+          addedCall.hangUp();
+          return;
+        }
+
+        dispatch(callAdded(addedCall));
+
+        addedCall.on('stateChanged', (): void => {
+          dispatch(setCallState(addedCall.state));
+        });
+
+        dispatch(setCallState(addedCall.state));
+
+        addedCall.on('isScreenSharingOnChanged', (): void => {
+          dispatch(setShareScreen(addedCall.isScreenSharingOn));
+        });
+
+        dispatch(setShareScreen(addedCall.isScreenSharingOn))
+        
+        // if remote participants have changed, subscribe to the added remote participants
+        addedCall.on('remoteParticipantsUpdated', (ev): void => {
+          // for each of the added remote participants, subscribe to events and then just update as well in case the update has already happened
+            ev.added.forEach((addedRemoteParticipant) => {
+            subscribeToParticipant(addedRemoteParticipant, addedCall, dispatch);
+            dispatch(setParticipants([...state.calls.remoteParticipants, addedRemoteParticipant]))
+          });
+
+        
+
+          ev.removed.forEach((removedRemoteParticipant) => {
+            dispatch(setParticipants([...state.calls.remoteParticipants.filter(remoteParticipant => { return remoteParticipant !== removedRemoteParticipant }) ]))
+          });
+        });
+
+        dispatch(setParticipants([...state.calls.remoteParticipants]));
+      });
+      e.removed.forEach((removedCall) => {
+        const state = getState();
+
+        dispatch(callRetried(state.calls.attempts + 1));
+
+        if (state.calls.call && state.calls.call === removedCall) {
+          dispatch(callRemoved(removedCall, state.calls.group));
+        }
+      });
+    });
+  }
+}
+
+export const initCallClient = (unsupportedStateHandler: () => void) => {
+  return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
+
+      const options: CallClientOptions = createCallOptions();
       let callClient;
 
       // check if chrome on ios OR firefox browser
@@ -234,76 +316,12 @@ export const initCallClient = (name: string, unsupportedStateHandler: () => void
         return;
       }
 
-      const tokenCredential = new AzureCommunicationTokenCredential(token);
-      const callAgent: CallAgent = await callClient.createCallAgent(tokenCredential, { displayName: name });
-
-      if (callAgent === undefined) {
-        return;
-      }
-
       const deviceManager: DeviceManager = await callClient.getDeviceManager();
 
       dispatch(setDeviceManager(deviceManager));
-      dispatch(setCallAgent(callAgent));
-
       subscribeToDeviceManager(deviceManager, dispatch, getState);
-
-      callAgent.on('callsUpdated', (e: { added: Call[]; removed: Call[] }): void => {
-        e.added.forEach((addedCall) => {
-          const state = getState();
-          if (state.calls.call && addedCall.direction === 'Incoming') {
-            addedCall.hangUp();
-            return;
-          }
-
-          dispatch(callAdded(addedCall));
-
-          addedCall.on('stateChanged', (): void => {
-            dispatch(setCallState(addedCall.state));
-          });
-
-          dispatch(setCallState(addedCall.state));
-
-          addedCall.on('isScreenSharingOnChanged', (): void => {
-            dispatch(setShareScreen(addedCall.isScreenSharingOn));
-          });
-
-          dispatch(setShareScreen(addedCall.isScreenSharingOn))
-          
-          // if remote participants have changed, subscribe to the added remote participants
-          addedCall.on('remoteParticipantsUpdated', (ev): void => {
-            // for each of the added remote participants, subscribe to events and then just update as well in case the update has already happened
-              ev.added.forEach((addedRemoteParticipant) => {
-              subscribeToParticipant(addedRemoteParticipant, addedCall, dispatch);
-              dispatch(setParticipants([...state.calls.remoteParticipants, addedRemoteParticipant]))
-            });
-
-          
-
-            ev.removed.forEach((removedRemoteParticipant) => {
-              dispatch(setParticipants([...state.calls.remoteParticipants.filter(remoteParticipant => { return remoteParticipant !== removedRemoteParticipant }) ]))
-            });
-          });
-
-          dispatch(setParticipants([...state.calls.remoteParticipants]));
-        });
-        e.removed.forEach((removedCall) => {
-          const state = getState();
-
-          dispatch(callRetried(state.calls.attempts + 1));
-
-          if (state.calls.call && state.calls.call === removedCall) {
-            dispatch(callRemoved(removedCall, state.calls.group));
-            dispatch(resetControls());
-            dispatch(resetStreams());
-          }
-        });
-      });
-    } catch (e) {
-      console.error(e);
-    }
   };
-};
+}
 
 // what does the forEveryone parameter really mean?
 export const endCall = async (call: Call, options: HangUpOptions): Promise<void> => {

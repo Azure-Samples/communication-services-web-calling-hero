@@ -81,7 +81,7 @@ const App = () => {
           message={ store.getState().calls.attempts > 3 ? 'Unable to join the call' : 
           'You left the call'}
           rejoinHandler={() => {
-            setPage('configuration');
+            window.location.href = window.location.href;
           }}
           homeHandler={() => {
             window.location.href = window.location.href.split('?')[0];

@@ -6,8 +6,7 @@ import { setVideoDeviceInfo, setAudioDeviceInfo } from '../core/actions/devices'
 import {
   AudioDeviceInfo,
   VideoDeviceInfo,
-  LocalVideoStream,
-  CallAgent
+  LocalVideoStream
 } from '@azure/communication-calling';
 import { State } from '../core/reducers';
 import { callRetried } from 'core/actions/calls';
@@ -62,9 +61,6 @@ const mapDispatchToProps = (dispatch: any) => ({
   },
   setLocalVideoStream: (localVideoStream: LocalVideoStream) => dispatch(setLocalVideoStream(localVideoStream)),
   setAttempts: (attempts: number) => dispatch(callRetried(attempts)),
-  reset: (callAgent: CallAgent) => {
-    callAgent.dispose();
-  }
 });
 
 const connector: any = connect(mapStateToProps, mapDispatchToProps);

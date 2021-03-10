@@ -6,7 +6,6 @@ const ADD_STREAM = 'ADD_STREAM';
 const REMOVE_STREAM = 'REMOVE_STREAM';
 const ADD_SCREENSHARE_STREAM = 'ADD_SCREENSHARE_STREAM';
 const REMOVE_SCREENSHARE_STREAM = 'REMOVE_SCREENSHARE_STREAM';
-const RESET_STREAMS = 'RESET_STREAMS';
 
 interface SetLocalStreamAction {
   type: typeof SET_LOCAL_VIDEO_STREAM;
@@ -23,10 +22,6 @@ interface RemoveScreenShareStreamAction {
   type: typeof REMOVE_SCREENSHARE_STREAM;
   stream: RemoteVideoStream;
   user: RemoteParticipant;
-}
-
-interface ResetStreamsAction {
-  type: typeof RESET_STREAMS;
 }
 
 export const setLocalVideoStream = (localVideoStream: LocalVideoStream | undefined): SetLocalStreamAction => {
@@ -58,24 +53,16 @@ export const removeScreenShareStream = (
   };
 };
 
-export const resetStreams = (): ResetStreamsAction => {
-  return {
-    type: RESET_STREAMS
-  };
-};
-
 export {
   SET_LOCAL_PREVIEW_RENDERER,
   SET_LOCAL_VIDEO_STREAM,
   ADD_STREAM,
   REMOVE_STREAM,
   ADD_SCREENSHARE_STREAM,
-  REMOVE_SCREENSHARE_STREAM,
-  RESET_STREAMS
+  REMOVE_SCREENSHARE_STREAM
 };
 
 export type StreamTypes =
   | SetLocalStreamAction
   | AddScreenShareStreamAction
-  | RemoveScreenShareStreamAction
-  | ResetStreamsAction;
+  | RemoveScreenShareStreamAction;

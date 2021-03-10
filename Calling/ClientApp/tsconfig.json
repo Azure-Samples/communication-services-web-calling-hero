@@ -38,7 +38,7 @@
     "ignoreCompilerErrors": true,
     "stripInternal": true,
     "excludeNotExported": true,
-    "name": "CpaaS SDK",
+    "name": "Azure Communication Services Calling Hero Sample",
     "readme": "none"
   },
   "include": ["src/**/*"],

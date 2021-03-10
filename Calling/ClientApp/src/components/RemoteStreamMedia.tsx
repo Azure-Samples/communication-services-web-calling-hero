@@ -16,33 +16,35 @@ export interface RemoteStreamMediaProps {
 export default (props: RemoteStreamMediaProps): JSX.Element => {
   let rendererView: RendererView;
 
-  let streamId = props.stream ? utils.getStreamId(props.label, props.stream) : `${props.label} - no stream`;
+  const streamId = props.stream ? utils.getStreamId(props.label, props.stream) : `${props.label} - no stream`;
 
-  const [available, setAvailable] = useState(false);
+  const [activeStreamBeingRendered, setActiveStreamBeingRendered] = useState(false);
 
   const imageProps = {
     src: staticMediaSVG.toString(),
-    imageFit: ImageFit.contain,
-    maximizeFrame: true
+    imageFit: ImageFit.contain
   };
 
-  const stream = props.stream;
+  const {label, stream} = props;
 
-  const renderStream = async () => {
-    var container = document.getElementById(streamId);
-
+  const renderRemoteStream = async () => {
+    const container = document.getElementById(streamId);
     if (container && props.stream && props.stream.isAvailable) {
-      setAvailable(true);
+      // if we are already rendering a stream we don't want to start rendering the same stream
+      if (activeStreamBeingRendered) {
+        return;
+      }
 
-      var renderer: Renderer = new Renderer(props.stream);
-      rendererView = await renderer.createView({ scalingMode: 'Crop' });
-
-      // we need to check if the stream is available still and if the id is what we expect
+      // set the flag that a stream is being rendered
+      setActiveStreamBeingRendered(true);
+      const renderer: Renderer = new Renderer(props.stream);
+      // this can block a really long time if we fail to be subscribed to the call and it has to retry
+      const rendererView = await renderer.createView({ scalingMode: 'Crop' });
       if (container && container.childElementCount === 0) {
         container.appendChild(rendererView.target);
       }
     } else {
-      setAvailable(false);
+      setActiveStreamBeingRendered(false);
 
       if (rendererView) {
         rendererView.dispose();
@@ -55,18 +57,18 @@ export default (props: RemoteStreamMediaProps): JSX.Element => {
       return;
     }
 
-    stream.on('availabilityChanged', renderStream);
+    stream.on('isAvailableChanged', renderRemoteStream);
 
     if (stream.isAvailable) {
-      renderStream();
+      renderRemoteStream();
     }
-  }, [stream, renderStream]);
+  }, [stream, renderRemoteStream]);
 
   return (
     <div className={mediaContainer}>
-      <div style={{ display: available ? 'block' : 'none' }} className={mediaContainer} id={streamId} />
-      <Image style={{ display: available ? 'none' : 'block' }} {...imageProps} />
-      <Label className={videoHint}>{props.label}</Label>
+      <div style={{ display: activeStreamBeingRendered ? 'block' : 'none' }} className={mediaContainer} id={streamId} />
+      <Image {...imageProps} style={{ display: activeStreamBeingRendered ? 'none' : 'block' }} />
+      <Label className={videoHint}>{label}</Label>
     </div>
   );
 };

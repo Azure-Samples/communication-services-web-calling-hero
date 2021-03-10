@@ -15,8 +15,9 @@ export const videoHint = mergeStyles({
   position: 'absolute',
   padding: '0.25rem',
   whiteSpace: 'nowrap',
-  maxWidth: '40%',
-  borderRadius: 4
+  maxWidth: '95%',
+  borderRadius: 4,
+  textOverflow: 'ellipsis'
 });
 export const mediaContainer = mergeStyles({
   position: 'relative',
@@ -27,5 +28,4 @@ export const mediaContainer = mergeStyles({
 export const localVideoContainerStyle = mergeStyles(mediaContainer, {
   width: '100%',
   height: '100%',
-  transform: 'rotateY(180deg)'
 });

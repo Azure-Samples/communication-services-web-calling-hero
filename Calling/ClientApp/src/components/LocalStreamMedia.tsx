@@ -15,51 +15,47 @@ export interface LocalStreamMediaProps {
 export default (props: LocalStreamMediaProps): JSX.Element => {
   let rendererView: RendererView;
 
-  const [available, setAvailable] = useState(false);
+  const [activeStreamBeingRendered, setActiveStreamBeingRendered] = useState(false);
 
   const imageProps = {
     src: staticMediaSVG.toString(),
-    imageFit: ImageFit.contain,
-    maximizeFrame: true
+    imageFit: ImageFit.contain
   };
 
-  useEffect(() => {
-    (async () => {
-      if (props.stream) {
-        var renderer: Renderer = new Renderer(props.stream);
-        rendererView = await renderer.createView({ scalingMode: 'Crop' });
+  const { stream, label } = props;
 
-        var container = document.getElementById(Constants.LOCAL_VIDEO_PREVIEW_ID);
+  const renderLocalStream = async () => {
+    if (stream) {
+      const renderer: Renderer = new Renderer(stream);
+      rendererView = await renderer.createView({ scalingMode: 'Crop', isMirrored: true });
 
-        if (container && container.childElementCount === 0) {
-          container.appendChild(rendererView.target);
-          setAvailable(true);
-        }
-      } else {
-        if (rendererView) {
-          rendererView.dispose();
-          setAvailable(false);
-        }
+      const container = document.getElementById(Constants.LOCAL_VIDEO_PREVIEW_ID);
+
+      if (container && container.childElementCount === 0) {
+        container.appendChild(rendererView.target);
+        setActiveStreamBeingRendered(true);
       }
-    })();
-
-    return () => {
+    } else {
       if (rendererView) {
         rendererView.dispose();
-        setAvailable(false);
+        setActiveStreamBeingRendered(false);
       }
-    };
-  }, [props.stream]);
+    }
+  }
+
+  useEffect(() => {
+    renderLocalStream();
+  }, [stream, renderLocalStream]);
 
   return (
     <div className={mediaContainer}>
       <div
-        style={{ display: available ? 'block' : 'none' }}
+        style={{ display: activeStreamBeingRendered ? 'block' : 'none' }}
         className={localVideoContainerStyle}
         id={Constants.LOCAL_VIDEO_PREVIEW_ID}
       />
-      <Image style={{ display: available ? 'none' : 'block' }} {...imageProps} />
-      <Label className={videoHint}>{props.label}</Label>
+      <Image {...imageProps}  style={{ display: activeStreamBeingRendered ? 'none' : 'block' }}/>
+      <Label className={videoHint}>{label}</Label>
     </div>
   );
 };

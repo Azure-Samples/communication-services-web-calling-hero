@@ -1,5 +1,6 @@
 const SET_USERID = 'SET_USERID';
 const SET_DISPLAY_NAME = 'SET_DISPLAY_NAME';
+const SET_TOKEN = 'SET_TOKEN';
 
 interface SetUserIdAction {
   type: typeof SET_USERID;
@@ -9,6 +10,11 @@ interface SetUserIdAction {
 interface SetDisplayNameAction {
   type: typeof SET_DISPLAY_NAME;
   displayName: string;
+}
+
+interface SetTokenAction {
+  type: typeof SET_TOKEN;
+  token: string;
 }
 
 export const setUserId = (userId: string): SetUserIdAction => {
@@ -25,8 +31,13 @@ export const setDisplayName = (displayName: string): SetDisplayNameAction => {
   };
 };
 
-export { SET_USERID, SET_DISPLAY_NAME };
+export const setToken = (token: string): SetTokenAction => {
+  return {
+    type: SET_TOKEN,
+    token
+  };
+};
 
-export type SdkTypes =
-  | SetUserIdAction
-  | SetDisplayNameAction;
+export { SET_USERID, SET_DISPLAY_NAME, SET_TOKEN };
+
+export type SdkTypes = SetUserIdAction | SetDisplayNameAction | SetTokenAction;

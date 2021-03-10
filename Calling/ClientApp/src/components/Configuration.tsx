@@ -28,8 +28,8 @@ export interface ConfigurationScreenProps {
   groupId: string;
   callAgent: CallAgent;
   deviceManager: DeviceManager;
-  setDisplayName(displayName: string): void;
-  initCallClient(unsupportedStateHandler: () => void, endCallhandler: () => void): void;
+  setupCallClient(unsupportedStateHandler: () => void): void;
+  setupCallAgent(displayName: string): void;
   setGroup(groupId: string): void;
   startCallHandler(): void;
   unsupportedStateHandler: () => void;
@@ -38,6 +38,7 @@ export interface ConfigurationScreenProps {
   audioDeviceList: AudioDeviceInfo[];
   setVideoDeviceInfo(device: VideoDeviceInfo): void;
   setAudioDeviceInfo(device: AudioDeviceInfo): void;
+  mic: boolean;
   setMic(mic: boolean): void;
   setLocalVideoStream(stream: LocalVideoStream | undefined): void;
   localVideoRendererIsBusy: boolean;
@@ -56,12 +57,11 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
   const [name, setName] = useState(createUserId());
   const [emptyWarning, setEmptyWarning] = useState(false);
 
-  const {groupId, setDisplayName, initCallClient, setGroup, unsupportedStateHandler, endCallHandler} = props;
+  const {groupId, setupCallClient, setupCallAgent, setGroup, unsupportedStateHandler} = props;
 
   useEffect(() => {
-    initCallClient(unsupportedStateHandler, endCallHandler);
-    setGroup(groupId);
-  }, []);
+    setupCallClient(unsupportedStateHandler);
+  }, [setupCallClient, unsupportedStateHandler]);
 
   return (
     <Stack className={mainContainerStyle} horizontalAlign="center" verticalAlign="center">
@@ -74,6 +74,7 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
           tokens={props.screenWidth > 750 ? configurationStackTokens : undefined}
         >
           <LocalPreview
+            mic={props.mic}
             setMic={props.setMic}
             setLocalVideoStream={props.setLocalVideoStream}
             videoDeviceInfo={props.videoDeviceInfo}
@@ -98,15 +99,13 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
             <div>
               <PrimaryButton
                 className={buttonStyle}
-                onClick={() => {
+                onClick={async () => {
                   if (!name) {
                     setEmptyWarning(true);
                   } else {
                     setEmptyWarning(false);
-                    // update the local display name for all of the other participants to see
-                    props.callAgent.updateDisplayName(name);
-                    // update the local display name for local rendering
-                    setDisplayName(name);
+                    await setupCallAgent(name);
+                    setGroup(groupId);
                     props.startCallHandler();
                   }
                 }}

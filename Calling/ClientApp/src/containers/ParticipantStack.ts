@@ -2,16 +2,16 @@ import { connect } from 'react-redux';
 import { removeParticipant } from '../core/sideEffects';
 import { State } from '../core/reducers';
 import ParticipantStack from '../components/ParticipantStack';
-import { CommunicationUser, CallingApplication } from '@azure/communication-common';
+import { CommunicationUserKind, CallingApplicationKind} from '@azure/communication-common';
 
 const mapStateToProps = (state: State) => ({
   userId: state.sdk.userId,
-  displayName: state.sdk.displayName,
+  displayName: state.calls.callAgent?.displayName,
   call: state.calls.call,
   callState: state.calls.callState,
   remoteParticipants: state.calls.remoteParticipants,
   screenShareStreams: state.streams.screenShareStreams,
-  removeParticipant: (user: CommunicationUser | CallingApplication | undefined) => {
+  removeParticipant: (user: CommunicationUserKind | CallingApplicationKind | undefined) => {
     if (state.calls.call && user) {
       removeParticipant(state.calls.call, user);
     }

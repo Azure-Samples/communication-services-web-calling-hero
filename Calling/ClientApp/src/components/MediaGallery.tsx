@@ -25,9 +25,8 @@ export default (props: MediaGalleryProps): JSX.Element => {
     []
   );
   const getMediaGalleryTilesForParticipants = (participants: RemoteParticipant[], userId: string, displayName: string) => {
-    // create a RemoteStreamMedia component for every remote participant
     const remoteParticipantsMediaGalleryItems = participants.map((participant) => (
-      <div className={mediaGalleryStyle}>
+      <div key={`${utils.getId(participant.identifier)}-tile`} className={mediaGalleryStyle}>
         <RemoteStreamMedia
           key={utils.getId(participant.identifier)}
           stream={participant.videoStreams[0]}
@@ -38,7 +37,7 @@ export default (props: MediaGalleryProps): JSX.Element => {
 
     // create a LocalStreamMedia component for the local participant
     const localParticipantMediaGalleryItem = (
-      <div key={userId} className={mediaGalleryStyle}>
+      <div key={"localParticipantTile"} className={mediaGalleryStyle}>
         <LocalStreamMedia label={displayName} stream={props.localVideoStream} />
       </div>
     );
@@ -55,7 +54,7 @@ export default (props: MediaGalleryProps): JSX.Element => {
   if (numberOfRows !== gridRow) setGridRow(numberOfRows);
 
   return (
-    <div
+    <div id="video-gallery"
       className={mediaGalleryGridStyle}
       style={{
         gridTemplateRows: `repeat(${gridRow}, minmax(0, 1fr))`,

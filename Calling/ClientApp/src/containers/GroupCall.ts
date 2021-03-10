@@ -3,29 +3,35 @@ import GroupCall, { GroupCallProps } from '../components/GroupCall';
 import { joinGroup, setMicrophone } from '../core/sideEffects';
 import { setLocalVideoStream } from '../core/actions/streams';
 import { setVideoDeviceInfo, setAudioDeviceInfo } from '../core/actions/devices';
-import { AudioDeviceInfo, VideoDeviceInfo, LocalVideoStream } from '@azure/communication-calling';
+import {
+  AudioDeviceInfo,
+  VideoDeviceInfo,
+  LocalVideoStream
+} from '@azure/communication-calling';
 import { State } from '../core/reducers';
 import { callRetried } from 'core/actions/calls';
 
 const mapStateToProps = (state: State, props: GroupCallProps) => ({
   userId: state.sdk.userId,
-  deviceManager: state.devices.deviceManager,
   callAgent: state.calls.callAgent,
+  deviceManager: state.devices.deviceManager,
   group: state.calls.group,
   screenWidth: props.screenWidth,
   call: state.calls.call,
   shareScreen: state.controls.shareScreen,
   mic: state.controls.mic,
   groupCallEndReason: state.calls.groupCallEndReason,
-  isGroup: () => state.calls.call && !state.calls.call.isIncoming && !!state.calls.group,
-  joinGroup: () => {
+  isGroup: () => state.calls.call && state.calls.call.direction !== 'Incoming' && !!state.calls.group,
+  joinGroup: async () => {
     state.calls.callAgent &&
-      joinGroup(
+    
+      await joinGroup(
         state.calls.callAgent,
         {
           groupId: state.calls.group
         },
         {
+          videoOptions: { localVideoStreams: state.streams.localVideoStream ? [state.streams.localVideoStream] : undefined },
           audioOptions: { muted: !state.controls.mic }
         }
       );
@@ -47,14 +53,14 @@ const mapStateToProps = (state: State, props: GroupCallProps) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
   mute: () => dispatch(setMicrophone(false)),
-  setAudioDeviceInfo: (deviceInfo: AudioDeviceInfo) => { 
-    dispatch(setAudioDeviceInfo(deviceInfo))
+  setAudioDeviceInfo: (deviceInfo: AudioDeviceInfo) => {
+    dispatch(setAudioDeviceInfo(deviceInfo));
   },
   setVideoDeviceInfo: (deviceInfo: VideoDeviceInfo) => {
     dispatch(setVideoDeviceInfo(deviceInfo));
   },
   setLocalVideoStream: (localVideoStream: LocalVideoStream) => dispatch(setLocalVideoStream(localVideoStream)),
-  setAttempts: (attempts: number) => dispatch(callRetried(attempts))
+  setAttempts: (attempts: number) => dispatch(callRetried(attempts)),
 });
 
 const connector: any = connect(mapStateToProps, mapDispatchToProps);

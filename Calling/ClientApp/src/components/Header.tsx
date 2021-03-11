@@ -53,15 +53,15 @@ export default (props: HeaderProps): JSX.Element => {
       : setSelectedPane(CommandPanelTypes.None);
   };
 
-  const handleLocalVideoOnOff = () => {
+  const handleLocalVideoOnOff = async () => {
     if (props.localVideoStream) {
-      props.call.stopVideo(props.localVideoStream);
+      await props.call.stopVideo(props.localVideoStream);
       props.setLocalVideoStream(undefined);
     } else {
       if (props.videoDeviceInfo) {
         const localVideoStream = new LocalVideoStream(props.videoDeviceInfo);
         props.setLocalVideoStream(localVideoStream);
-        props.call.startVideo(localVideoStream);
+        await props.call.startVideo(localVideoStream);
       }
     }
   };

@@ -37,7 +37,7 @@ export default (props: MediaGalleryProps): JSX.Element => {
 
     // create a LocalStreamMedia component for the local participant
     const localParticipantMediaGalleryItem = (
-      <div key={"localParticipantTile"} className={mediaGalleryStyle}>
+      <div key="localParticipantTile" className={mediaGalleryStyle}>
         <LocalStreamMedia label={displayName} stream={props.localVideoStream} />
       </div>
     );

@@ -9,7 +9,6 @@ import {
   LocalVideoStream
 } from '@azure/communication-calling';
 import { State } from '../core/reducers';
-import { callRetried } from 'core/actions/calls';
 
 const mapStateToProps = (state: State, props: GroupCallProps) => ({
   userId: state.sdk.userId,
@@ -47,8 +46,7 @@ const mapStateToProps = (state: State, props: GroupCallProps) => ({
   videoDeviceList: state.devices.videoDeviceList,
   audioDeviceList: state.devices.audioDeviceList,
   cameraPermission: state.devices.cameraPermission,
-  microphonePermission: state.devices.microphonePermission,
-  attempts: state.calls.attempts
+  microphonePermission: state.devices.microphonePermission
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
@@ -59,8 +57,7 @@ const mapDispatchToProps = (dispatch: any) => ({
   setVideoDeviceInfo: (deviceInfo: VideoDeviceInfo) => {
     dispatch(setVideoDeviceInfo(deviceInfo));
   },
-  setLocalVideoStream: (localVideoStream: LocalVideoStream) => dispatch(setLocalVideoStream(localVideoStream)),
-  setAttempts: (attempts: number) => dispatch(callRetried(attempts)),
+  setLocalVideoStream: (localVideoStream: LocalVideoStream) => dispatch(setLocalVideoStream(localVideoStream))
 });
 
 const connector: any = connect(mapStateToProps, mapDispatchToProps);

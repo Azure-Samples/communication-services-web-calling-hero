@@ -11,7 +11,8 @@ import {
   VideoDeviceInfo,
   CallAgent,
   CallClient,
-  HangUpOptions
+  HangUpOptions,
+  CallEndReason
 } from '@azure/communication-calling';
 import {
   AzureCommunicationTokenCredential,
@@ -21,7 +22,7 @@ import {
 import { CommunicationUserToken } from '@azure/communication-identity';
 import { Dispatch } from 'redux';
 import { utils } from '../Utils/Utils';
-import { callAdded, callRemoved, setCallState, setParticipants, setCallAgent, callRetried } from './actions/calls';
+import { callAdded, callRemoved, setCallState, setParticipants, setCallAgent } from './actions/calls';
 import { setMic, setShareScreen } from './actions/controls';
 import {
   setAudioDeviceInfo,
@@ -211,7 +212,7 @@ const createCallOptions = (): CallClientOptions => {
   }
 }
 
-export const initCallAgent = (name: string) => {
+export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndReason) => void) => {
   return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
     const state: State = getState();
 
@@ -271,8 +272,6 @@ export const initCallAgent = (name: string) => {
             dispatch(setParticipants([...state.calls.remoteParticipants, addedRemoteParticipant]))
           });
 
-        
-
           ev.removed.forEach((removedRemoteParticipant) => {
             dispatch(setParticipants([...state.calls.remoteParticipants.filter(remoteParticipant => { return remoteParticipant !== removedRemoteParticipant }) ]))
           });
@@ -282,11 +281,12 @@ export const initCallAgent = (name: string) => {
       });
       e.removed.forEach((removedCall) => {
         const state = getState();
-
-        dispatch(callRetried(state.calls.attempts + 1));
-
         if (state.calls.call && state.calls.call === removedCall) {
           dispatch(callRemoved(removedCall, state.calls.group));
+          // code 0 subcode 4521 can happen if your still registered to the call and you refresh the page
+          if (removedCall.callEndReason && removedCall.callEndReason.code !== 487 && removedCall.callEndReason.subCode !== 0) {
+            removedCall.callEndReason && callEndedHandler(removedCall.callEndReason);
+          }
         }
       });
     });

@@ -11,6 +11,7 @@ import ConfigurationScreen from './containers/Configuration';
 import { v1 as createGUID } from 'uuid';
 import { loadTheme, initializeIcons } from '@fluentui/react';
 import { utils } from './Utils/Utils';
+import { CallEndReason } from '@azure/communication-calling';
 
 const sdkVersion = require('../package.json').dependencies['@azure/communication-calling'];
 const lastUpdated = `Last Updated ${utils.getBuildTime()} with @azure/communication-calling:${sdkVersion}`;
@@ -21,6 +22,7 @@ initializeIcons();
 const store = createStore(reducer, applyMiddleware(thunk));
 const App = () => {
   const [page, setPage] = useState('home');
+  const [callEndReason, setCallEndReason] = useState<CallEndReason | undefined>();
   const [groupId, setGroupId] = useState('');
   const [screenWidth, setScreenWidth] = useState(0);
 
@@ -43,7 +45,6 @@ const App = () => {
     if (groupId) return groupId;
     const uri_gid = getGroupIdFromUrl();
     const gid = uri_gid == null || uri_gid === '' ? createGUID() : uri_gid;
-    console.log('The group id is ' + gid);
     setGroupId(gid);
     return gid;
   };
@@ -61,8 +62,8 @@ const App = () => {
       return (
         <ConfigurationScreen
           startCallHandler={() => setPage('call')}
-          unsupportedStateHandler={() => setPage('error')}
-          endCallHandler={() => setPage('endCall')}
+          unsupportedStateHandler={() => setPage('unsupported')}
+          callEndedHandler={(errorMsg: CallEndReason) => { setCallEndReason(errorMsg); setPage('error');} }
           groupId={getGroupId()}
           screenWidth={screenWidth}
         />
@@ -78,8 +79,7 @@ const App = () => {
     } else if (page === 'endCall') {
       return (
         <EndCall
-          message={ store.getState().calls.attempts > 3 ? 'Unable to join the call' : 
-          'You left the call'}
+          message={'You left the call'}
           rejoinHandler={() => {
             window.location.href = window.location.href;
           }}
@@ -88,7 +88,7 @@ const App = () => {
           }}
         />
       );
-    } else {
+    } else if (page === 'unsupported') {
       // page === 'error'
       window.document.title = 'Unsupported browser';
       return (
@@ -97,6 +97,19 @@ const App = () => {
           browsers and platforms supported by the web calling sdk
         </>
       );
+    } else if (page === 'error') {
+      window.document.title = 'Call Ended';
+      return (
+        <div>
+          <div>{`The call has ended with this error code (Code: ${callEndReason?.code} Subcode: ${callEndReason?.subCode})`}</div >
+
+          <div>
+          <a href="https://docs.microsoft.com/en-us/azure/communication-services/concepts/troubleshooting-info?tabs=csharp%2Cjavascript%2Cdotnet">Learn more</a>&nbsp;about
+          why this Azure Communication Services call has ended.</div>
+        </div>
+      );
+    } else {
+      return <></>
     }
   };
 

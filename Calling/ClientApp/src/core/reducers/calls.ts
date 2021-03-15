@@ -7,8 +7,7 @@ import {
   SET_GROUP,
   SET_PARTICIPANTS,
   CallTypes,
-  SET_CALL_AGENT,
-  CALL_RETRIED
+  SET_CALL_AGENT
 } from '../actions/calls';
 
 export interface CallsState {
@@ -53,8 +52,6 @@ export const callsReducer: Reducer<CallsState, CallTypes> = (state = initialStat
       return { ...state, remoteParticipants: action.remoteParticipants };
     case SET_GROUP:
       return { ...state, group: action.group };
-    case CALL_RETRIED:
-      return { ...state, attempts: action.attempts };
     default:
       return state;
   }

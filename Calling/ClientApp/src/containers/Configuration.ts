@@ -23,7 +23,7 @@ const mapStateToProps = (state: State, props: ConfigurationScreenProps) => ({
   microphonePermission: state.devices.microphonePermission
 });
 
-const mapDispatchToProps = (dispatch: any) => ({
+const mapDispatchToProps = (dispatch: any, props: ConfigurationScreenProps) => ({
   setLocalVideoStream: (localVideoStream: LocalVideoStream) => dispatch(setLocalVideoStream(localVideoStream)),
   setMic: (mic: boolean) => dispatch(setMic(mic)),
   setAudioDeviceInfo: (deviceInfo: AudioDeviceInfo) => dispatch(setAudioDeviceInfo(deviceInfo)),
@@ -31,7 +31,7 @@ const mapDispatchToProps = (dispatch: any) => ({
   setupCallClient: (unsupportedStateHandler: () => void) =>
     dispatch(initCallClient( unsupportedStateHandler)),
   setupCallAgent: (displayName: string) =>
-    dispatch(initCallAgent(displayName)),
+    dispatch(initCallAgent(displayName, props.callEndedHandler)),
   setGroup: (groupId: string) => dispatch(setGroup(groupId)),
   updateDevices: () => dispatch(updateDevices()),
 });

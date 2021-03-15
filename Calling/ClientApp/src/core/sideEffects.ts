@@ -33,7 +33,7 @@ import {
   setVideoDeviceList,
   setDeviceManager
 } from './actions/devices';
-import { setToken, setUserId } from './actions/sdk';
+import { setUserId } from './actions/sdk';
 import { addScreenShareStream, removeScreenShareStream } from './actions/streams';
 import { State } from './reducers';
 import { createClientLogger, setLogLevel } from '@azure/logger';
@@ -214,21 +214,23 @@ const createCallOptions = (): CallClientOptions => {
 
 export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndReason) => void) => {
   return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
-    const state: State = getState();
-
     const options: CallClientOptions = createCallOptions();
     let callClient = new CallClient(options);
 
-    let token = state.sdk.token;
-    if (token === '') {
-      const tokenResponse: CommunicationUserToken = await utils.getTokenForUser();
-      const userToken = tokenResponse.token;
-      dispatch(setUserId(tokenResponse.user.communicationUserId));
-      dispatch(setToken(userToken));
-      token = userToken;
-    }
-
-    const tokenCredential = new AzureCommunicationTokenCredential(token);
+    const tokenResponse: CommunicationUserToken = await utils.getTokenForUser();
+    const userToken = tokenResponse.token;
+    // necessary as the C# and JS types are different
+    const user = tokenResponse.user as any;
+    const userId = user.id;
+    dispatch(setUserId(userId));
+    
+    const tokenCredential = new AzureCommunicationTokenCredential({
+      tokenRefresher: ():Promise<string> => {
+        return utils.getRefreshedTokenForUser(userId)
+      },
+      refreshProactively: true,
+      token: userToken
+    });
     const callAgent: CallAgent = await callClient.createCallAgent(tokenCredential, { displayName: name });
 
     if (callAgent === undefined) {
@@ -283,8 +285,7 @@ export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndRe
         const state = getState();
         if (state.calls.call && state.calls.call === removedCall) {
           dispatch(callRemoved(removedCall, state.calls.group));
-          // code 0 subcode 4521 can happen if your still registered to the call and you refresh the page
-          if (removedCall.callEndReason && removedCall.callEndReason.code !== 487 && removedCall.callEndReason.subCode !== 0) {
+          if (removedCall.callEndReason && removedCall.callEndReason.code !== 0) {
             removedCall.callEndReason && callEndedHandler(removedCall.callEndReason);
           }
         }

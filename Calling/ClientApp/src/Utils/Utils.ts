@@ -11,9 +11,17 @@ export const utils = {
     return window.location.origin;
   },
   getTokenForUser: async (): Promise<CommunicationUserToken> => {
-    const response = await fetch('/userToken');
+    const response = await fetch('/token');
     if (response.ok) {
       return response.json();
+    }
+    throw new Error('Invalid token response');
+  },
+  getRefreshedTokenForUser: async (identity: string): Promise<string> => {
+    const response = await fetch(`/refreshToken/${identity}`)
+    if (response.ok) {
+      let content = await response.json();
+      return content.token;
     }
     throw new Error('Invalid token response');
   },

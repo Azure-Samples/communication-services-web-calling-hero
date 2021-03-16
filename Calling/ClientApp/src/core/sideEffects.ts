@@ -219,9 +219,7 @@ export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndRe
 
     const tokenResponse: CommunicationUserToken = await utils.getTokenForUser();
     const userToken = tokenResponse.token;
-    // necessary as the C# and JS types are different
-    const user = tokenResponse.user as any;
-    const userId = user.id;
+    const userId = tokenResponse.user.communicationUserId
     dispatch(setUserId(userId));
     
     const tokenCredential = new AzureCommunicationTokenCredential({

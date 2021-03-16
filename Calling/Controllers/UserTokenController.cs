@@ -34,9 +34,15 @@ namespace Calling
                 Response<(CommunicationUserIdentifier User, AccessToken Token)> response = await _client.CreateUserWithTokenAsync(scopes: new[] { CommunicationTokenScope.VoIP });
 
                 var responseValue = response.Value;
+
+                var jsonFormattedUser = new
+                {
+                    communicationUserId = responseValue.User.Id
+                };
+
                 var clientResponse = new
                 {
-                    user = responseValue.User,
+                    user = jsonFormattedUser,
                     token = responseValue.Token.Token,
                     expiresOn = responseValue.Token.ExpiresOn
                 };

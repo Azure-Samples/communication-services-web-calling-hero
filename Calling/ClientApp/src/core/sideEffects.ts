@@ -12,7 +12,8 @@ import {
   CallAgent,
   CallClient,
   HangUpOptions,
-  CallEndReason
+  CallEndReason,
+  TeamsMeetingLinkLocator
 } from '@azure/communication-calling';
 import {
   AzureCommunicationTokenCredential,
@@ -282,7 +283,7 @@ export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndRe
       e.removed.forEach((removedCall) => {
         const state = getState();
         if (state.calls.call && state.calls.call === removedCall) {
-          dispatch(callRemoved(removedCall, state.calls.group));
+          dispatch(callRemoved(removedCall));
           if (removedCall.callEndReason && removedCall.callEndReason.code !== 0) {
             removedCall.callEndReason && callEndedHandler(removedCall.callEndReason);
           }
@@ -327,7 +328,27 @@ export const endCall = async (call: Call, options: HangUpOptions): Promise<void>
   await call.hangUp(options).catch((e: CommunicationError) => console.error(e));
 };
 
-export const joinGroup = async (callAgent: CallAgent, context: GroupCallLocator, callOptions: JoinCallOptions): Promise<void> => {
+export const join = async(callAgent: CallAgent, locator: GroupCallLocator | TeamsMeetingLinkLocator, callOptions: JoinCallOptions): Promise<void> => {
+  const isGroupCallLocator = (locator: GroupCallLocator | TeamsMeetingLinkLocator): locator is GroupCallLocator => { return true}
+
+  if (isGroupCallLocator(locator)) {
+    return joinGroup(callAgent, locator, callOptions);
+  }
+  else {
+    return joinTeamsMeeting(callAgent, locator, callOptions);
+  }
+}
+
+const joinGroup = async (callAgent: CallAgent, context: GroupCallLocator, callOptions: JoinCallOptions): Promise<void> => {
+  try {
+    await callAgent.join(context, callOptions);
+  } catch (e) {
+    console.log('Failed to join a call', e);
+    return;
+  }
+};
+
+const joinTeamsMeeting = async (callAgent: CallAgent, context: TeamsMeetingLinkLocator, callOptions: JoinCallOptions): Promise<void> => {
   try {
     await callAgent.join(context, callOptions);
   } catch (e) {

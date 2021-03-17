@@ -22,7 +22,9 @@ import {
   VideoDeviceInfo,
   RemoteParticipant,
   CallAgent,
-  DeviceManager
+  DeviceManager,
+  TeamsMeetingLinkLocator,
+  GroupCallLocator
 } from '@azure/communication-calling';
 import { ParticipantStream } from 'core/reducers/index.js';
 
@@ -45,12 +47,12 @@ export interface GroupCallProps {
   videoDeviceList: VideoDeviceInfo[];
   screenWidth: number;
   shareScreen: boolean;
+  locator: GroupCallLocator | TeamsMeetingLinkLocator;
   setAudioDeviceInfo(deviceInfo: AudioDeviceInfo): void;
   setVideoDeviceInfo(deviceInfo: VideoDeviceInfo): void;
   setLocalVideoStream(stream: LocalVideoStream | undefined): void;
   mute(): void;
-  isGroup(): void;
-  joinGroup(): void;
+  join(locator: GroupCallLocator | TeamsMeetingLinkLocator): void;
   endCallHandler(): void;
 }
 
@@ -58,13 +60,13 @@ export default (props: GroupCallProps): JSX.Element => {
   const [selectedPane, setSelectedPane] = useState(CommandPanelTypes.None);
   const activeScreenShare = props.screenShareStreams && props.screenShareStreams.length === 1;
 
-  const { callAgent, call, joinGroup } = props;
+  const { callAgent, call, join, locator } = props;
 
   useEffect(() => {
     if (callAgent && !call) {
-      joinGroup();
+      join(locator);
     }
-  }, [callAgent, call, joinGroup]);
+  }, [callAgent, call, join, locator]);
 
   return (
     <Stack horizontalAlign="center" verticalAlign="center" styles={containerStyles}>

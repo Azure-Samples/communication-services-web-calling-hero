@@ -1,12 +1,14 @@
 import { connect } from 'react-redux';
 import GroupCall, { GroupCallProps } from '../components/GroupCall';
-import { joinGroup, setMicrophone } from '../core/sideEffects';
+import { join, setMicrophone } from '../core/sideEffects';
 import { setLocalVideoStream } from '../core/actions/streams';
 import { setVideoDeviceInfo, setAudioDeviceInfo } from '../core/actions/devices';
-import {
+import { 
   AudioDeviceInfo,
   VideoDeviceInfo,
-  LocalVideoStream
+  LocalVideoStream,
+  TeamsMeetingLinkLocator,
+  GroupCallLocator
 } from '@azure/communication-calling';
 import { State } from '../core/reducers';
 
@@ -14,21 +16,17 @@ const mapStateToProps = (state: State, props: GroupCallProps) => ({
   userId: state.sdk.userId,
   callAgent: state.calls.callAgent,
   deviceManager: state.devices.deviceManager,
-  group: state.calls.group,
   screenWidth: props.screenWidth,
   call: state.calls.call,
   shareScreen: state.controls.shareScreen,
   mic: state.controls.mic,
   groupCallEndReason: state.calls.groupCallEndReason,
-  isGroup: () => state.calls.call && state.calls.call.direction !== 'Incoming' && !!state.calls.group,
-  joinGroup: async () => {
+  join: async (locator: GroupCallLocator | TeamsMeetingLinkLocator) => {
     state.calls.callAgent &&
     
-      await joinGroup(
+      await join(
         state.calls.callAgent,
-        {
-          groupId: state.calls.group
-        },
+        locator,
         {
           videoOptions: { localVideoStreams: state.streams.localVideoStream ? [state.streams.localVideoStream] : undefined },
           audioOptions: { muted: !state.controls.mic }

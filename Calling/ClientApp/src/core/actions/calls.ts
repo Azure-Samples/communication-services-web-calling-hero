@@ -1,7 +1,6 @@
 import { CallEndReason, Call, RemoteParticipant, CallAgent } from '@azure/communication-calling';
 
 const SET_CALL_AGENT = 'SET_CALL_AGENT';
-const SET_GROUP = 'SET_GROUP';
 const CALL_ADDED = 'CALL_ADDED';
 const CALL_REMOVED = 'CALL_REMOVED';
 const SET_CALL_STATE = 'SET_CALL_STATE';
@@ -10,11 +9,6 @@ const SET_PARTICIPANTS = 'SET_PARTICIPANTS';
 interface SetCallAgentAction {
   type: typeof SET_CALL_AGENT;
   callAgent: CallAgent;
-}
-
-interface SetGroupAction {
-  type: typeof SET_GROUP;
-  group: string;
 }
 
 interface CallAddedAction {
@@ -46,13 +40,6 @@ export const setCallAgent = (callAgent: CallAgent): SetCallAgentAction => {
   };
 };
 
-export const setGroup = (groupId: string): SetGroupAction => {
-  return {
-    type: SET_GROUP,
-    group: groupId
-  };
-};
-
 export const callAdded = (addedCall: Call): CallAddedAction => {
   return {
     type: CALL_ADDED,
@@ -60,12 +47,12 @@ export const callAdded = (addedCall: Call): CallAddedAction => {
   };
 };
 
-export const callRemoved = (removedCall: Call, group: string): CallRemovedAction => {
+export const callRemoved = (removedCall: Call): CallRemovedAction => {
   return {
     type: CALL_REMOVED,
     call: undefined,
     incomingCallEndReason: removedCall.direction === 'Incoming' ? removedCall.callEndReason : undefined,
-    groupCallEndReason: removedCall.direction !== 'Incoming' && !!group ? removedCall.callEndReason : undefined
+    groupCallEndReason: removedCall.callEndReason
   };
 };
 
@@ -85,7 +72,6 @@ export const setParticipants = (participants: RemoteParticipant[]): SetParticipa
 
 export {
   SET_CALL_AGENT,
-  SET_GROUP,
   CALL_ADDED,
   CALL_REMOVED,
   SET_CALL_STATE,
@@ -96,6 +82,5 @@ export type CallTypes =
   | SetCallAgentAction
   | SetParticipantsAction
   | SetCallStateAction
-  | SetGroupAction
   | CallAddedAction
   | CallRemovedAction;

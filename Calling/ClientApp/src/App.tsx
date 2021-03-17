@@ -11,7 +11,7 @@ import ConfigurationScreen from './containers/Configuration';
 import { v1 as createGUID } from 'uuid';
 import { loadTheme, initializeIcons } from '@fluentui/react';
 import { utils } from './Utils/Utils';
-import { CallEndReason } from '@azure/communication-calling';
+import { CallEndReason, GroupLocator, TeamsMeetingLinkLocator } from '@azure/communication-calling';
 
 const sdkVersion = require('../package.json').dependencies['@azure/communication-calling'];
 const lastUpdated = `Last Updated ${utils.getBuildTime()} with @azure/communication-calling:${sdkVersion}`;
@@ -23,6 +23,7 @@ const store = createStore(reducer, applyMiddleware(thunk));
 const App = () => {
   const [page, setPage] = useState('home');
   const [callEndReason, setCallEndReason] = useState<CallEndReason | undefined>();
+  // const [locator, setLocator] = useState<GroupLocator | TeamsMeetingLinkLocator | undefined>(undefined);
   const [groupId, setGroupId] = useState('');
   const [screenWidth, setScreenWidth] = useState(0);
 
@@ -40,6 +41,29 @@ const App = () => {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get('groupId');
   };
+
+  const getTeamsMeetingLinkFromUrl = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('meeting');
+  }
+
+  const getMeetingLink = () => {
+    const encodedTeamsMeetingLink = getTeamsMeetingLinkFromUrl()
+    if (!encodedTeamsMeetingLink) {
+      return '';
+    }
+    return decodeURIComponent(encodedTeamsMeetingLink);
+  }
+
+  const getLocator = (): GroupLocator | TeamsMeetingLinkLocator => {
+    const meetingLink = getMeetingLink();
+    
+    if (meetingLink === '') {
+      return { groupId: getGroupId() }
+    } else {
+      return { meetingLink: meetingLink }
+    }
+  }
 
   const getGroupId = () => {
     if (groupId) return groupId;
@@ -64,7 +88,6 @@ const App = () => {
           startCallHandler={() => setPage('call')}
           unsupportedStateHandler={() => setPage('unsupported')}
           callEndedHandler={(errorMsg: CallEndReason) => { setCallEndReason(errorMsg); setPage('error');} }
-          groupId={getGroupId()}
           screenWidth={screenWidth}
         />
       );
@@ -72,7 +95,7 @@ const App = () => {
       return (
         <GroupCall
           endCallHandler={() => setPage('endCall')}
-          groupId={getGroupId()}
+          locator={getLocator()}
           screenWidth={screenWidth}
         />
       );
@@ -112,6 +135,9 @@ const App = () => {
     }
   };
 
+  if (getMeetingLink() && page === 'home') {
+    setPage('configuration')
+  }
   if (getGroupIdFromUrl() && page === 'home') {
     setPage('configuration');
   }

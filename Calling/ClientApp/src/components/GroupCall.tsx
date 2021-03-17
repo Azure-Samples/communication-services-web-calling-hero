@@ -67,8 +67,6 @@ export default (props: GroupCallProps): JSX.Element => {
       join(locator);
     }
   }, [callAgent, call, join, locator]);
-
-  console.log("**** "+props.callState)
   return (
     <Stack horizontalAlign="center" verticalAlign="center" styles={containerStyles}>
       <Stack.Item styles={headerStyles}>

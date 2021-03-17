@@ -13,7 +13,8 @@ import {
   CallClient,
   HangUpOptions,
   CallEndReason,
-  TeamsMeetingLinkLocator
+  TeamsMeetingLinkLocator,
+  Features
 } from '@azure/communication-calling';
 import {
   AzureCommunicationTokenCredential,
@@ -23,7 +24,7 @@ import {
 import { CommunicationUserToken } from '@azure/communication-identity';
 import { Dispatch } from 'redux';
 import { utils } from '../Utils/Utils';
-import { callAdded, callRemoved, setCallState, setParticipants, setCallAgent } from './actions/calls';
+import { callAdded, callRemoved, setCallState, setParticipants, setCallAgent, setRecordingActive } from './actions/calls';
 import { setMic, setShareScreen } from './actions/controls';
 import {
   setAudioDeviceInfo,
@@ -264,7 +265,14 @@ export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndRe
         });
 
         dispatch(setShareScreen(addedCall.isScreenSharingOn))
-        
+
+        addedCall.api(Features.Recording).on('isRecordingActiveChanged', (): void => {
+          dispatch(setRecordingActive(addedCall.api(Features.Recording).isRecordingActive))
+        });
+
+        // if you are not in a teams meeting call you will just get false
+        dispatch(setRecordingActive(addedCall.api(Features.Recording).isRecordingActive))
+
         // if remote participants have changed, subscribe to the added remote participants
         addedCall.on('remoteParticipantsUpdated', (ev): void => {
           // for each of the added remote participants, subscribe to events and then just update as well in case the update has already happened

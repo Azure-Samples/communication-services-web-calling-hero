@@ -5,6 +5,7 @@ const CALL_ADDED = 'CALL_ADDED';
 const CALL_REMOVED = 'CALL_REMOVED';
 const SET_CALL_STATE = 'SET_CALL_STATE';
 const SET_PARTICIPANTS = 'SET_PARTICIPANTS';
+const SET_RECORDING_ACTIVE = 'SET_RECORDING_ACTIVE';
 
 interface SetCallAgentAction {
   type: typeof SET_CALL_AGENT;
@@ -31,6 +32,11 @@ interface SetCallStateAction {
 interface SetParticipantsAction {
   type: typeof SET_PARTICIPANTS;
   remoteParticipants: RemoteParticipant[];
+}
+
+interface SetRecordingActiveAction {
+  type: typeof SET_RECORDING_ACTIVE;
+  active: boolean;
 }
 
 export const setCallAgent = (callAgent: CallAgent): SetCallAgentAction => {
@@ -70,12 +76,20 @@ export const setParticipants = (participants: RemoteParticipant[]): SetParticipa
   };
 };
 
+export const setRecordingActive = (isActive: boolean): SetRecordingActiveAction => {
+  return {
+    type: SET_RECORDING_ACTIVE,
+    active: isActive
+  }
+}
+
 export {
   SET_CALL_AGENT,
   CALL_ADDED,
   CALL_REMOVED,
   SET_CALL_STATE,
-  SET_PARTICIPANTS
+  SET_PARTICIPANTS,
+  SET_RECORDING_ACTIVE
 };
 
 export type CallTypes =
@@ -83,4 +97,5 @@ export type CallTypes =
   | SetParticipantsAction
   | SetCallStateAction
   | CallAddedAction
-  | CallRemovedAction;
+  | CallRemovedAction
+  | SetRecordingActiveAction;

@@ -23,7 +23,8 @@ export default (props: LocalStreamMediaProps): JSX.Element => {
     styles: {
       root: {
         width: '100%',
-        height: '100%'
+        height: '100%',
+        display: activeStreamBeingRendered ? 'none' : 'block'
       }
     }
   };
@@ -65,7 +66,7 @@ export default (props: LocalStreamMediaProps): JSX.Element => {
         className={localVideoContainerStyle}
         id={Constants.LOCAL_VIDEO_PREVIEW_ID}
       />
-      <Image {...imageProps} style={{display: activeStreamBeingRendered ? 'none' : 'block'}}/>
+      <Image {...imageProps}/>
       <Label className={videoHint}>{label}</Label>
     </div>
   );

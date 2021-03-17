@@ -4,7 +4,6 @@ const SET_CALL_AGENT = 'SET_CALL_AGENT';
 const SET_GROUP = 'SET_GROUP';
 const CALL_ADDED = 'CALL_ADDED';
 const CALL_REMOVED = 'CALL_REMOVED';
-const CALL_RETRIED = 'CALL_RETRIED';
 const SET_CALL_STATE = 'SET_CALL_STATE';
 const SET_PARTICIPANTS = 'SET_PARTICIPANTS';
 
@@ -28,11 +27,6 @@ interface CallRemovedAction {
   call: Call | undefined;
   incomingCallEndReason: CallEndReason | undefined;
   groupCallEndReason: CallEndReason | undefined;
-}
-
-interface CallRetriedAction {
-  type: typeof CALL_RETRIED;
-  attempts: number;
 }
 
 interface SetCallStateAction {
@@ -89,21 +83,13 @@ export const setParticipants = (participants: RemoteParticipant[]): SetParticipa
   };
 };
 
-export const callRetried = (attempts: number): CallRetriedAction => {
-  return {
-    type: CALL_RETRIED,
-    attempts: attempts
-  };
-};
-
 export {
   SET_CALL_AGENT,
   SET_GROUP,
   CALL_ADDED,
   CALL_REMOVED,
   SET_CALL_STATE,
-  SET_PARTICIPANTS,
-  CALL_RETRIED
+  SET_PARTICIPANTS
 };
 
 export type CallTypes =
@@ -112,5 +98,4 @@ export type CallTypes =
   | SetCallStateAction
   | SetGroupAction
   | CallAddedAction
-  | CallRemovedAction
-  | CallRetriedAction;
+  | CallRemovedAction;

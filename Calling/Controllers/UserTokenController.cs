@@ -12,7 +12,6 @@ using Microsoft.Extensions.Configuration;
 
 namespace Calling
 {
-    [Route("/userToken")]
     public class UserTokenController : Controller
     {
         private readonly CommunicationIdentityClient _client;
@@ -26,6 +25,7 @@ namespace Calling
         /// Gets a token to be used to initalize the call client
         /// </summary>
         /// <returns></returns>
+        [Route("/token")]
         [HttpGet]
         public async Task<IActionResult> GetAsync()
         {
@@ -34,13 +34,48 @@ namespace Calling
                 Response<(CommunicationUserIdentifier User, AccessToken Token)> response = await _client.CreateUserWithTokenAsync(scopes: new[] { CommunicationTokenScope.VoIP });
 
                 var responseValue = response.Value;
+
+                var jsonFormattedUser = new
+                {
+                    communicationUserId = responseValue.User.Id
+                };
+
                 var clientResponse = new
                 {
-                    user = responseValue.User,
+                    user = jsonFormattedUser,
                     token = responseValue.Token.Token,
                     expiresOn = responseValue.Token.ExpiresOn
                 };
                 
+                return this.Ok(clientResponse);
+            }
+            catch (RequestFailedException ex)
+            {
+                Console.WriteLine($"Error occured while Generating Token: {ex}");
+                return this.Ok(this.Json(ex));
+            }
+        }
+
+        /// <summary>
+        /// Gets a token to be used to initalize the call client
+        /// </summary>
+        /// <returns></returns>
+        [Route("/refreshToken/{identity}")]
+        [HttpGet]
+        public async Task<IActionResult> GetAsync(string identity)
+        {
+            try
+            {
+                CommunicationUserIdentifier identifier = new CommunicationUserIdentifier(identity);
+                Response<AccessToken> response = await _client.IssueTokenAsync(identifier, scopes: new[] { CommunicationTokenScope.VoIP });
+
+                var responseValue = response.Value;
+                var clientResponse = new
+                {
+                    token = responseValue.Token,
+                    expiresOn = responseValue.ExpiresOn
+                };
+
                 return this.Ok(clientResponse);
             }
             catch (RequestFailedException ex)

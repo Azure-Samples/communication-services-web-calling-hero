@@ -10,7 +10,8 @@ import {
   AudioDeviceInfo,
   LocalVideoStream,
   DeviceManager,
-  CallAgent
+  CallAgent,
+  CallEndReason
 } from '@azure/communication-calling';
 import { VideoCameraEmphasisIcon } from '@fluentui/react-icons-northstar';
 import {
@@ -33,7 +34,7 @@ export interface ConfigurationScreenProps {
   setGroup(groupId: string): void;
   startCallHandler(): void;
   unsupportedStateHandler: () => void;
-  endCallHandler: () => void;
+  callEndedHandler: (reason: CallEndReason) => void;
   videoDeviceList: VideoDeviceInfo[];
   audioDeviceList: AudioDeviceInfo[];
   setVideoDeviceInfo(device: VideoDeviceInfo): void;

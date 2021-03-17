@@ -1,7 +1,7 @@
 // © Microsoft Corporation. All rights reserved.
 
 import React, { useEffect, useState } from 'react';
-import { Label } from '@fluentui/react';
+import { Label, Spinner, SpinnerSize } from '@fluentui/react';
 import { RemoteVideoStream, Renderer, RendererView } from '@azure/communication-calling';
 import { videoHint, mediaContainer } from './styles/StreamMedia.styles';
 import { utils } from 'Utils/Utils';
@@ -19,6 +19,7 @@ export default (props: RemoteStreamMediaProps): JSX.Element => {
   const streamId = props.stream ? utils.getStreamId(props.label, props.stream) : `${props.label} - no stream`;
 
   const [activeStreamBeingRendered, setActiveStreamBeingRendered] = useState(false);
+  const [showRenderLoading, setShowRenderLoading] = useState(false);
 
   const imageProps = {
     src: staticMediaSVG.toString(),
@@ -26,9 +27,17 @@ export default (props: RemoteStreamMediaProps): JSX.Element => {
     styles: {
       root: {
         width: '100%',
-        height: '100%'
+        height: '100%',
+        display: activeStreamBeingRendered ? 'none' : 'block'
       }
     }
+  };
+
+  const loadingStyle = {
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
   };
 
   const {label, stream} = props;
@@ -43,9 +52,11 @@ export default (props: RemoteStreamMediaProps): JSX.Element => {
 
       // set the flag that a stream is being rendered
       setActiveStreamBeingRendered(true);
+      setShowRenderLoading(true);
       const renderer: Renderer = new Renderer(props.stream);
       // this can block a really long time if we fail to be subscribed to the call and it has to retry
       const rendererView = await renderer.createView({ scalingMode: 'Crop' });
+      setShowRenderLoading(false);
       if (container && container.childElementCount === 0) {
         container.appendChild(rendererView.target);
       }
@@ -72,8 +83,10 @@ export default (props: RemoteStreamMediaProps): JSX.Element => {
 
   return (
     <div className={mediaContainer}>
-      <div style={{display: activeStreamBeingRendered ? 'block' : 'none' }} className={mediaContainer} id={streamId} />
-        <Image {...imageProps} style={{ display: activeStreamBeingRendered ? 'none' : 'block'}} />
+      <div style={{display: activeStreamBeingRendered ? 'block' : 'none' }} className={mediaContainer} id={streamId}>
+      { showRenderLoading && <Spinner style={loadingStyle} label={`Rendering stream...`} size={SpinnerSize.xSmall} />}
+      </div>
+        <Image {...imageProps}/>
         <Label className={videoHint}>{label}</Label>
     </div>
   );

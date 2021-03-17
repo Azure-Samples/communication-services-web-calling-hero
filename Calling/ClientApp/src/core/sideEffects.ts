@@ -11,7 +11,8 @@ import {
   VideoDeviceInfo,
   CallAgent,
   CallClient,
-  HangUpOptions
+  HangUpOptions,
+  CallEndReason
 } from '@azure/communication-calling';
 import {
   AzureCommunicationTokenCredential,
@@ -21,7 +22,7 @@ import {
 import { CommunicationUserToken } from '@azure/communication-identity';
 import { Dispatch } from 'redux';
 import { utils } from '../Utils/Utils';
-import { callAdded, callRemoved, setCallState, setParticipants, setCallAgent, callRetried } from './actions/calls';
+import { callAdded, callRemoved, setCallState, setParticipants, setCallAgent } from './actions/calls';
 import { setMic, setShareScreen } from './actions/controls';
 import {
   setAudioDeviceInfo,
@@ -32,7 +33,7 @@ import {
   setVideoDeviceList,
   setDeviceManager
 } from './actions/devices';
-import { setToken, setUserId } from './actions/sdk';
+import { setUserId } from './actions/sdk';
 import { addScreenShareStream, removeScreenShareStream } from './actions/streams';
 import { State } from './reducers';
 import { createClientLogger, setLogLevel } from '@azure/logger';
@@ -211,23 +212,23 @@ const createCallOptions = (): CallClientOptions => {
   }
 }
 
-export const initCallAgent = (name: string) => {
+export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndReason) => void) => {
   return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
-    const state: State = getState();
-
     const options: CallClientOptions = createCallOptions();
     let callClient = new CallClient(options);
 
-    let token = state.sdk.token;
-    if (token === '') {
-      const tokenResponse: CommunicationUserToken = await utils.getTokenForUser();
-      const userToken = tokenResponse.token;
-      dispatch(setUserId(tokenResponse.user.communicationUserId));
-      dispatch(setToken(userToken));
-      token = userToken;
-    }
-
-    const tokenCredential = new AzureCommunicationTokenCredential(token);
+    const tokenResponse: CommunicationUserToken = await utils.getTokenForUser();
+    const userToken = tokenResponse.token;
+    const userId = tokenResponse.user.communicationUserId
+    dispatch(setUserId(userId));
+    
+    const tokenCredential = new AzureCommunicationTokenCredential({
+      tokenRefresher: ():Promise<string> => {
+        return utils.getRefreshedTokenForUser(userId)
+      },
+      refreshProactively: true,
+      token: userToken
+    });
     const callAgent: CallAgent = await callClient.createCallAgent(tokenCredential, { displayName: name });
 
     if (callAgent === undefined) {
@@ -271,8 +272,6 @@ export const initCallAgent = (name: string) => {
             dispatch(setParticipants([...state.calls.remoteParticipants, addedRemoteParticipant]))
           });
 
-        
-
           ev.removed.forEach((removedRemoteParticipant) => {
             dispatch(setParticipants([...state.calls.remoteParticipants.filter(remoteParticipant => { return remoteParticipant !== removedRemoteParticipant }) ]))
           });
@@ -282,11 +281,11 @@ export const initCallAgent = (name: string) => {
       });
       e.removed.forEach((removedCall) => {
         const state = getState();
-
-        dispatch(callRetried(state.calls.attempts + 1));
-
         if (state.calls.call && state.calls.call === removedCall) {
           dispatch(callRemoved(removedCall, state.calls.group));
+          if (removedCall.callEndReason && removedCall.callEndReason.code !== 0) {
+            removedCall.callEndReason && callEndedHandler(removedCall.callEndReason);
+          }
         }
       });
     });

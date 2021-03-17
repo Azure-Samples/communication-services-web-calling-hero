@@ -89,7 +89,6 @@ const App = () => {
         />
       );
     } else if (page === 'unsupported') {
-      // page === 'error'
       window.document.title = 'Unsupported browser';
       return (
         <>

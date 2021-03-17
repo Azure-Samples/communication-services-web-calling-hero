@@ -68,6 +68,7 @@ export default (props: GroupCallProps): JSX.Element => {
     }
   }, [callAgent, call, join, locator]);
 
+  console.log("**** "+props.callState)
   return (
     <Stack horizontalAlign="center" verticalAlign="center" styles={containerStyles}>
       <Stack.Item styles={headerStyles}>
@@ -81,8 +82,13 @@ export default (props: GroupCallProps): JSX.Element => {
         />
       </Stack.Item>
       <Stack.Item styles={containerStyles}>
-        {!props.shareScreen ? (
-          props.callState === Constants.CONNECTED && (
+        { props.shareScreen && (
+          <div className={loadingStyle}>
+          <Label>Your screen is being shared</Label>
+        </div>)
+        }
+        { props.callState === Constants.CONNECTED &&
+          (
             <Stack horizontal styles={containerStyles}>
               <Stack.Item grow styles={activeScreenShare ? activeContainerClassName : hiddenContainerClassName}>
                 {activeScreenShare && <MediaFullScreen activeScreenShareStream={props.screenShareStreams[0]} />}
@@ -102,11 +108,16 @@ export default (props: GroupCallProps): JSX.Element => {
               )}
             </Stack>
           )
-        ) : (
-          <div className={loadingStyle}>
-            <Label>Your screen is being shared</Label>
-          </div>
-        )}
+        }
+        {
+          props.callState === Constants.LOBBY && (
+            <Stack horizontal styles={containerStyles}>
+              <div className={loadingStyle} style={{width:'100%'}}>
+                <Label>Waiting to be admitted</Label>
+              </div>
+            </Stack>
+          )
+        }
       </Stack.Item>
     </Stack>
   );

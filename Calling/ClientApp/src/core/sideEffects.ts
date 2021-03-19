@@ -292,8 +292,16 @@ export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndRe
         const state = getState();
         if (state.calls.call && state.calls.call === removedCall) {
           dispatch(callRemoved(removedCall));
+
+          // if we were not allowed into invited into a Teams call
+          if (removedCall.callEndReason && removedCall.callEndReason.code === 0 && removedCall.callEndReason.subCode === 5854) {
+            removedCall.callEndReason && callEndedHandler(removedCall.callEndReason);
+            return;
+          }
+          
           if (removedCall.callEndReason && removedCall.callEndReason.code !== 0) {
             removedCall.callEndReason && callEndedHandler(removedCall.callEndReason);
+            return;
           }
         }
       });

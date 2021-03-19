@@ -1,6 +1,6 @@
 // © Microsoft Corporation. All rights reserved.
 import React, { useState, useEffect } from 'react';
-import { Label, Overlay, Stack } from '@fluentui/react';
+import { Label, MessageBar, Overlay, Stack } from '@fluentui/react';
 import Header from '../containers/Header';
 import MediaGallery from '../containers/MediaGallery';
 import MediaFullScreen from './MediaFullScreen';
@@ -13,7 +13,8 @@ import {
   hiddenContainerClassName,
   activeContainerClassName,
   loadingStyle,
-  overlayStyles
+  overlayStyles,
+  messageBarStyles
 } from './styles/GroupCall.styles';
 import {
   Call,
@@ -48,6 +49,8 @@ export interface GroupCallProps {
   screenWidth: number;
   shareScreen: boolean;
   locator: GroupCallLocator | TeamsMeetingLinkLocator;
+  isBeingRecorded: boolean;
+  isBeingTranscribed: boolean;
   setAudioDeviceInfo(deviceInfo: AudioDeviceInfo): void;
   setVideoDeviceInfo(deviceInfo: VideoDeviceInfo): void;
   setLocalVideoStream(stream: LocalVideoStream | undefined): void;
@@ -58,15 +61,37 @@ export interface GroupCallProps {
 
 export default (props: GroupCallProps): JSX.Element => {
   const [selectedPane, setSelectedPane] = useState(CommandPanelTypes.None);
+  const [isCallBeingRecorded, setIsCallBeingRecorded] = useState<Boolean | undefined>(undefined);
+  const [recordedBannerViewable, setRecordedBannerViewable] = useState(false);
+  const [isCallBeingTranscribed, setIsCallBeingTranscribed] = useState<Boolean | undefined>(undefined);
+  const [transcribedBannerViewable, setTranscribedBannerViewable] = useState(false);
   const activeScreenShare = props.screenShareStreams && props.screenShareStreams.length === 1;
 
-  const { callAgent, call, join, locator } = props;
+  const { callAgent, call, join, locator, isBeingRecorded, isBeingTranscribed } = props;
 
   useEffect(() => {
     if (callAgent && !call) {
       join(locator);
     }
   }, [callAgent, call, join, locator]);
+
+  useEffect(() => {
+    if (isCallBeingRecorded !== isBeingRecorded) {
+      if (isCallBeingRecorded === undefined && isBeingRecorded === false) {
+        return;
+      }
+      setRecordedBannerViewable(true);
+      setIsCallBeingRecorded(isBeingRecorded);
+    }
+    if (isCallBeingTranscribed !== isBeingTranscribed) {
+      if (isCallBeingTranscribed === undefined && isBeingTranscribed === false) {
+        return;
+      }
+      setTranscribedBannerViewable(true);
+      setIsCallBeingTranscribed(isBeingTranscribed);
+    }
+   }, [isBeingRecorded, isBeingTranscribed]);
+
   return (
     <Stack horizontalAlign="center" verticalAlign="center" styles={containerStyles}>
       <Stack.Item styles={headerStyles}>
@@ -79,6 +104,18 @@ export default (props: GroupCallProps): JSX.Element => {
           screenWidth={props.screenWidth}
         />
       </Stack.Item>
+      { recordedBannerViewable && <Stack.Item styles={messageBarStyles}>
+      <MessageBar onDismiss={()=>{setRecordedBannerViewable(false)}}>
+        <Label>{ isBeingRecorded ? "Recording started." : "Recording is being saved" }</Label>
+        <div>{ isBeingRecorded ? "This call is being recorded for quality assurance." : "Recording has stopped" }</div>
+      </MessageBar>
+      </Stack.Item> }
+      { transcribedBannerViewable && <Stack.Item styles={messageBarStyles}>
+        <MessageBar onDismiss={()=>{setTranscribedBannerViewable(false)}}>
+          <Label>{ isBeingTranscribed ? "Recording and transcription have started." : "Recording and transcription has stopped."}</Label>
+          <div>{ isBeingTranscribed ? "By attending this meeting, you consent to being included. Privacy policy" : ""}</div>
+        </MessageBar>
+      </Stack.Item>  }
       <Stack.Item styles={containerStyles}>
         { props.shareScreen && (
           <div className={loadingStyle}>

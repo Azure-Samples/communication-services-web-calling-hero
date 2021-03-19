@@ -44,7 +44,9 @@ const mapStateToProps = (state: State, props: GroupCallProps) => ({
   videoDeviceList: state.devices.videoDeviceList,
   audioDeviceList: state.devices.audioDeviceList,
   cameraPermission: state.devices.cameraPermission,
-  microphonePermission: state.devices.microphonePermission
+  microphonePermission: state.devices.microphonePermission,
+  isBeingRecorded: state.calls.isBeingRecorded,
+  isBeingTranscribed: state.calls.isBeingTranscribed
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

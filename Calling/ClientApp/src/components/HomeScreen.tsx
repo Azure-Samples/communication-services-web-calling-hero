@@ -1,6 +1,6 @@
 // © Microsoft Corporation. All rights reserved.
-import React from 'react';
-import { Stack, PrimaryButton, Icon, Image, IImageStyles } from '@fluentui/react';
+import React, { useState }  from 'react';
+import { Stack, PrimaryButton, Icon, Image, IImageStyles, TextField } from '@fluentui/react';
 import { VideoCameraEmphasisIcon } from '@fluentui/react-icons-northstar';
 import heroSVG from '../assets/hero.svg';
 import {
@@ -18,6 +18,7 @@ import {
 
 export interface HomeScreenProps {
   startCallHandler(): void;
+  joinTeamsMeeting(meetingLink: string): void;
 }
 
 const imageStyleProps: IImageStyles = {
@@ -29,10 +30,12 @@ const imageStyleProps: IImageStyles = {
 };
 
 export default (props: HomeScreenProps): JSX.Element => {
+  const [meetingUrl, setMeetingUrl] = useState('');
   const iconName = 'SkypeCircleCheck';
   const imageProps = { src: heroSVG.toString() };
   const headerTitle = 'Exceptionally simple video calling';
   const startCallButtonText = 'Start a call';
+  const joinTeamsCallText = 'Join a Teams Meeting';
   const listItems = [
     'Customize with your web stack',
     'Connect with users with seamless collaboration across web',
@@ -64,6 +67,15 @@ export default (props: HomeScreenProps): JSX.Element => {
           <VideoCameraEmphasisIcon className={videoCameraIconStyle} size="medium" />
           {startCallButtonText}
         </PrimaryButton>
+        <Stack.Item>
+        <PrimaryButton disabled={meetingUrl === ''} onClick={() => props.joinTeamsMeeting(meetingUrl)}>
+          <VideoCameraEmphasisIcon className={videoCameraIconStyle} size="medium" />
+          {joinTeamsCallText}
+        </PrimaryButton>
+        <TextField onChange={(event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => { if(newValue){ setMeetingUrl(newValue)}}} >
+          
+        </TextField>
+        </Stack.Item>
       </Stack>
       <Image
         alt="Welcome to the Azure Communication Services Calling sample app"

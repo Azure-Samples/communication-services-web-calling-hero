@@ -6,6 +6,7 @@ const CALL_REMOVED = 'CALL_REMOVED';
 const SET_CALL_STATE = 'SET_CALL_STATE';
 const SET_PARTICIPANTS = 'SET_PARTICIPANTS';
 const SET_RECORDING_ACTIVE = 'SET_RECORDING_ACTIVE';
+const SET_TRANSCRIBING_ACTIVE = 'SET_TRANSCRIBING_ACTIVE';
 
 interface SetCallAgentAction {
   type: typeof SET_CALL_AGENT;
@@ -36,6 +37,11 @@ interface SetParticipantsAction {
 
 interface SetRecordingActiveAction {
   type: typeof SET_RECORDING_ACTIVE;
+  active: boolean;
+}
+
+interface SetTranscribingActiveAction {
+  type: typeof SET_TRANSCRIBING_ACTIVE;
   active: boolean;
 }
 
@@ -83,13 +89,21 @@ export const setRecordingActive = (isActive: boolean): SetRecordingActiveAction 
   }
 }
 
+export const setTranscribingActive = (isActive: boolean): SetTranscribingActiveAction => {
+  return {
+    type: SET_TRANSCRIBING_ACTIVE,
+    active: isActive
+  }
+}
+
 export {
   SET_CALL_AGENT,
   CALL_ADDED,
   CALL_REMOVED,
   SET_CALL_STATE,
   SET_PARTICIPANTS,
-  SET_RECORDING_ACTIVE
+  SET_RECORDING_ACTIVE,
+  SET_TRANSCRIBING_ACTIVE
 };
 
 export type CallTypes =
@@ -98,4 +112,5 @@ export type CallTypes =
   | SetCallStateAction
   | CallAddedAction
   | CallRemovedAction
-  | SetRecordingActiveAction;
+  | SetRecordingActiveAction
+  | SetTranscribingActiveAction;

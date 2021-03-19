@@ -23,7 +23,6 @@ const store = createStore(reducer, applyMiddleware(thunk));
 const App = () => {
   const [page, setPage] = useState('home');
   const [callEndReason, setCallEndReason] = useState<CallEndReason | undefined>();
-  // const [locator, setLocator] = useState<GroupLocator | TeamsMeetingLinkLocator | undefined>(undefined);
   const [groupId, setGroupId] = useState('');
   const [screenWidth, setScreenWidth] = useState(0);
 
@@ -79,6 +78,9 @@ const App = () => {
         <HomeScreen
           startCallHandler={() => {
             window.history.pushState({}, document.title, window.location.href + '?groupId=' + getGroupId());
+          }}
+          joinTeamsMeeting={(meetingUrl: string) => {
+            window.location.href = window.location.href + '?meeting=' + encodeURIComponent(meetingUrl);
           }}
         />
       );

@@ -8,7 +8,6 @@ import thunk from 'redux-thunk';
 import EndCall from './components/EndCall';
 import HomeScreen from './components/HomeScreen';
 import ConfigurationScreen from './containers/Configuration';
-import { v1 as createGUID } from 'uuid';
 import { loadTheme, initializeIcons } from '@fluentui/react';
 import { utils } from './Utils/Utils';
 import { CallEndReason, GroupLocator, TeamsMeetingLinkLocator } from '@azure/communication-calling';
@@ -23,7 +22,6 @@ const store = createStore(reducer, applyMiddleware(thunk));
 const App = () => {
   const [page, setPage] = useState('home');
   const [callEndReason, setCallEndReason] = useState<CallEndReason | undefined>();
-  const [groupId, setGroupId] = useState('');
   const [screenWidth, setScreenWidth] = useState(0);
 
   useEffect(() => {
@@ -65,19 +63,16 @@ const App = () => {
   }
 
   const getGroupId = () => {
-    if (groupId) return groupId;
-    const uri_gid = getGroupIdFromUrl();
-    const gid = uri_gid == null || uri_gid === '' ? createGUID() : uri_gid;
-    setGroupId(gid);
-    return gid;
+    const groupId = getGroupIdFromUrl();
+    return groupId ? groupId : ''
   };
 
   const getContent = () => {
     if (page === 'home') {
       return (
         <HomeScreen
-          startCallHandler={() => {
-            window.history.pushState({}, document.title, window.location.href + '?groupId=' + getGroupId());
+          startCallHandler={(groupId: string) => {
+            window.location.href = window.location.href + '?groupId=' + encodeURIComponent(groupId);
           }}
           joinTeamsMeeting={(meetingUrl: string) => {
             window.location.href = window.location.href + '?meeting=' + encodeURIComponent(meetingUrl);

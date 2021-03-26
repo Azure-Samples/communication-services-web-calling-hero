@@ -3,6 +3,7 @@ import React, { useState }  from 'react';
 import { Stack, PrimaryButton, Icon, Image, IImageStyles, TextField } from '@fluentui/react';
 import { VideoCameraEmphasisIcon } from '@fluentui/react-icons-northstar';
 import heroSVG from '../assets/hero.svg';
+import { v1 as createGUID } from 'uuid';
 import {
   imgStyle,
   containerTokens,
@@ -17,7 +18,7 @@ import {
 } from './styles/HomeScreen.styles';
 
 export interface HomeScreenProps {
-  startCallHandler(): void;
+  startCallHandler(groupId: string): void;
   joinTeamsMeeting(meetingLink: string): void;
 }
 
@@ -31,6 +32,7 @@ const imageStyleProps: IImageStyles = {
 
 export default (props: HomeScreenProps): JSX.Element => {
   const [meetingUrl, setMeetingUrl] = useState('');
+  const groupId: string = createGUID();
   const iconName = 'SkypeCircleCheck';
   const imageProps = { src: heroSVG.toString() };
   const headerTitle = 'Exceptionally simple video calling';
@@ -63,18 +65,19 @@ export default (props: HomeScreenProps): JSX.Element => {
                 </li>
             </ul>
         </Stack>
-        <PrimaryButton className={buttonStyle} onClick={props.startCallHandler}>
-          <VideoCameraEmphasisIcon className={videoCameraIconStyle} size="medium" />
-          {startCallButtonText}
-        </PrimaryButton>
         <Stack.Item>
-        <PrimaryButton disabled={meetingUrl === ''} onClick={() => props.joinTeamsMeeting(meetingUrl)}>
-          <VideoCameraEmphasisIcon className={videoCameraIconStyle} size="medium" />
-          {joinTeamsCallText}
-        </PrimaryButton>
-        <TextField onChange={(event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => { if(newValue){ setMeetingUrl(newValue)}}} >
-          
-        </TextField>
+          <PrimaryButton className={buttonStyle} onClick={() => props.startCallHandler(groupId)}>
+            <VideoCameraEmphasisIcon className={videoCameraIconStyle} size="medium" />
+            {startCallButtonText}
+          </PrimaryButton>
+          <TextField disabled={true} value={groupId} />
+        </Stack.Item>
+        <Stack.Item>
+          <PrimaryButton disabled={meetingUrl === ''} onClick={() => props.joinTeamsMeeting(meetingUrl)}>
+            <VideoCameraEmphasisIcon className={videoCameraIconStyle} size="medium" />
+            {joinTeamsCallText}
+          </PrimaryButton>
+        <TextField onChange={(event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => { newValue === undefined ? setMeetingUrl('') : setMeetingUrl(newValue)}} />
         </Stack.Item>
       </Stack>
       <Image

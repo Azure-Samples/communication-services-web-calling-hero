@@ -1,7 +1,6 @@
 import {
   AudioDeviceInfo,
   Call,
-  CallClientOptions,
   CommunicationServicesError,
   GroupCallLocator,
   JoinCallOptions,
@@ -35,7 +34,7 @@ import {
 import { setUserId } from './actions/sdk';
 import { addScreenShareStream, removeScreenShareStream } from './actions/streams';
 import { State } from './reducers';
-import { createClientLogger, setLogLevel } from '@azure/logger';
+import { setLogLevel } from '@azure/logger';
 
 export const setMicrophone = (mic: boolean) => {
   return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
@@ -222,11 +221,6 @@ export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndRe
 
     dispatch(setCallAgent(callAgent));
 
-    const deviceManager: DeviceManager = await callClient.getDeviceManager();
-
-    dispatch(setDeviceManager(deviceManager));
-    subscribeToDeviceManager(deviceManager, dispatch, getState);
-
     callAgent.on('callsUpdated', (e: { added: Call[]; removed: Call[] }): void => {
       e.added.forEach((addedCall) => {
         const state = getState();
@@ -279,8 +273,6 @@ export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndRe
 
 export const initCallClient = (unsupportedStateHandler: () => void) => {
   return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
-
-      const options: CallClientOptions = createCallOptions();
       let callClient;
 
       // check if chrome on ios OR firefox browser
@@ -290,7 +282,8 @@ export const initCallClient = (unsupportedStateHandler: () => void) => {
       }
 
       try {
-        callClient = new CallClient(options);
+        setLogLevel('verbose')
+        callClient = new CallClient();
       } catch (e) {
         unsupportedStateHandler();
         return;

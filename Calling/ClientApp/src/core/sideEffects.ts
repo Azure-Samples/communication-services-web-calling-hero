@@ -2,7 +2,7 @@ import {
   AudioDeviceInfo,
   Call,
   CallClientOptions,
-  CommunicationError,
+  CommunicationServicesError,
   GroupCallLocator,
   JoinCallOptions,
   DeviceManager,
@@ -16,7 +16,6 @@ import {
 } from '@azure/communication-calling';
 import {
   AzureCommunicationTokenCredential,
-  CallingApplicationKind,
   CommunicationUserKind
 } from '@azure/communication-common';
 import { CommunicationUserToken } from '@azure/communication-identity';
@@ -198,24 +197,10 @@ export const updateDevices = () => {
   };
 };
 
-const createCallOptions = (): CallClientOptions => {
-  const logger = createClientLogger('Azure Communication Services - Calling Hero Sample');
-
-  setLogLevel('verbose');
-  logger.verbose.log = (...args) => { console.log(...args); };
-  logger.info.log = (...args) => { console.info(...args) ; };
-  logger.warning.log = (...args) => { console.warn(...args); };
-  logger.error.log = (...args) => { console.error(...args); };
-
-  return {
-    logger: logger
-  }
-}
-
 export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndReason) => void) => {
   return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
-    const options: CallClientOptions = createCallOptions();
-    let callClient = new CallClient(options);
+    setLogLevel('verbose');
+    let callClient = new CallClient();
 
     const tokenResponse: CommunicationUserToken = await utils.getTokenForUser();
     const userToken = tokenResponse.token;
@@ -324,7 +309,7 @@ export const initCallClient = (unsupportedStateHandler: () => void) => {
 
 // what does the forEveryone parameter really mean?
 export const endCall = async (call: Call, options: HangUpOptions): Promise<void> => {
-  await call.hangUp(options).catch((e: CommunicationError) => console.error(e));
+  await call.hangUp(options).catch((e: CommunicationServicesError) => console.error(e));
 };
 
 export const joinGroup = async (callAgent: CallAgent, context: GroupCallLocator, callOptions: JoinCallOptions): Promise<void> => {
@@ -336,13 +321,13 @@ export const joinGroup = async (callAgent: CallAgent, context: GroupCallLocator,
   }
 };
 
-export const addParticipant = async (call: Call, user: CommunicationUserKind | CallingApplicationKind): Promise<void> => {
+export const addParticipant = async (call: Call, user: CommunicationUserKind): Promise<void> => {
   await call.addParticipant(user);
 };
 
 export const removeParticipant = async (
   call: Call,
-  user: CommunicationUserKind | CallingApplicationKind
+  user: CommunicationUserKind
 ): Promise<void> => {
-  await call.removeParticipant(user).catch((e: CommunicationError) => console.error(e));
+  await call.removeParticipant(user).catch((e: CommunicationServicesError) => console.error(e));
 };

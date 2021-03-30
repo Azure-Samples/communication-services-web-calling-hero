@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ParticipantStream } from '../core/reducers';
 import { hiddenFullScreenStyle, fullScreenStyle, loadingStyle } from './styles/MediaFullScreen.styles';
-import { RemoteVideoStream, Renderer, RendererView } from '@azure/communication-calling';
+import { RemoteVideoStream, VideoStreamRenderer, VideoStreamRendererView } from '@azure/communication-calling';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import { utils } from 'Utils/Utils';
 
@@ -12,7 +12,7 @@ export interface MediaFullScreenProps {
 export default (props: MediaFullScreenProps): JSX.Element => {
   const [loading, setLoading] = useState(true);
   const fullScreenStreamMediaId = 'fullScreenStreamMediaId';
-  let rendererView: RendererView;
+  let rendererView: VideoStreamRendererView;
 
   /**
    * Start stream after DOM has rendered
@@ -23,7 +23,7 @@ export default (props: MediaFullScreenProps): JSX.Element => {
   const renderStream = async () => {
     if (activeScreenShareStream && activeScreenShareStream.stream) {
       const stream: RemoteVideoStream = activeScreenShareStream.stream;
-      const renderer: Renderer = new Renderer(stream);
+      const renderer: VideoStreamRenderer = new VideoStreamRenderer(stream);
       rendererView = await renderer.createView({ scalingMode: 'Fit' });
 
       const container = document.getElementById(fullScreenStreamMediaId);

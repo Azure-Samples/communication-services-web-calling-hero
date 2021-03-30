@@ -46,8 +46,6 @@ export const utils = {
     switch(identifier.kind) {
       case 'communicationUser':
         return identifier.communicationUserId;
-      case 'callingApplication':
-        return identifier.callingApplicationId;
       case 'phoneNumber':
         return identifier.phoneNumber;
       case 'microsoftTeamsUser':

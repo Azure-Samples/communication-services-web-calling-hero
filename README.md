@@ -3,6 +3,7 @@ page_type: sample
 languages:
 - javascript
 - nodejs
+- csharp
 products:
 - azure
 - azure-communication-services

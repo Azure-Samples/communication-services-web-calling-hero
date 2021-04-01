@@ -11,6 +11,7 @@ import { Image, ImageFit } from '@fluentui/react';
 export interface RemoteStreamMediaProps {
   label: string;
   stream: RemoteVideoStream | undefined;
+  isParticipantStreamSelected: boolean;
 }
 
 export default (props: RemoteStreamMediaProps): JSX.Element => {
@@ -44,7 +45,7 @@ export default (props: RemoteStreamMediaProps): JSX.Element => {
 
   const renderRemoteStream = async () => {
     const container = document.getElementById(streamId);
-    if (container && props.stream && props.stream.isAvailable) {
+    if (container && props.stream && props.stream.isAvailable && props.isParticipantStreamSelected) {
       // if we are already rendering a stream we don't want to start rendering the same stream
       if (activeStreamBeingRendered) {
         return;

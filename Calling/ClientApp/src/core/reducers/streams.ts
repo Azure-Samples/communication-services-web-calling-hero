@@ -10,7 +10,6 @@ import {
 import { DeviceTypes, SET_VIDEO_DEVICE_INFO } from '../actions/devices';
 
 export interface StreamsState {
-  streams: ParticipantStream[];
   screenShareStreams: ParticipantStream[];
   localVideoRendererIsBusy: boolean;
   localVideoStream?: LocalVideoStream;
@@ -19,7 +18,6 @@ export interface StreamsState {
 const initialState: StreamsState = {
   localVideoRendererIsBusy: false,
   localVideoStream: undefined,
-  streams: [],
   screenShareStreams: []
 };
 
@@ -35,7 +33,7 @@ export const streamsReducer: Reducer<StreamsState, StreamTypes | DeviceTypes> = 
       return state;
     case SET_LOCAL_VIDEO_STREAM:
       return { ...state, localVideoStream: action.localVideoStream };
-    case ADD_SCREENSHARE_STREAM:
+      case ADD_SCREENSHARE_STREAM:
       const newScreenShareStream: ParticipantStream = { stream: action.stream, user: action.user };
       return { ...state, screenShareStreams: [...state.screenShareStreams, newScreenShareStream] };
     case REMOVE_SCREENSHARE_STREAM:

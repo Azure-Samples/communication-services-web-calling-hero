@@ -1,4 +1,5 @@
 import { CallEndReason, Call, RemoteParticipant, CallAgent } from '@azure/communication-calling';
+import { SelectionState } from '../RemoteStreamSelector';
 
 const SET_CALL_AGENT = 'SET_CALL_AGENT';
 const SET_GROUP = 'SET_GROUP';
@@ -6,6 +7,7 @@ const CALL_ADDED = 'CALL_ADDED';
 const CALL_REMOVED = 'CALL_REMOVED';
 const SET_CALL_STATE = 'SET_CALL_STATE';
 const SET_PARTICIPANTS = 'SET_PARTICIPANTS';
+const SET_SELECTED_PARTICIPANTS = 'SET_SELECTED_PARTICIPANTS';
 
 interface SetCallAgentAction {
   type: typeof SET_CALL_AGENT;
@@ -37,6 +39,11 @@ interface SetCallStateAction {
 interface SetParticipantsAction {
   type: typeof SET_PARTICIPANTS;
   remoteParticipants: RemoteParticipant[];
+}
+
+interface SetSelectedParticipantsAction {
+  type: typeof SET_SELECTED_PARTICIPANTS;
+  selectedParticipants: SelectionState[];
 }
 
 export const setCallAgent = (callAgent: CallAgent): SetCallAgentAction => {
@@ -83,18 +90,27 @@ export const setParticipants = (participants: RemoteParticipant[]): SetParticipa
   };
 };
 
+export const setSelectedParticipants = (selected: SelectionState[]): SetSelectedParticipantsAction => {
+  return {
+    type: SET_SELECTED_PARTICIPANTS,
+    selectedParticipants: selected
+  };
+};
+
 export {
   SET_CALL_AGENT,
   SET_GROUP,
   CALL_ADDED,
   CALL_REMOVED,
   SET_CALL_STATE,
+  SET_SELECTED_PARTICIPANTS,
   SET_PARTICIPANTS
 };
 
 export type CallTypes =
   | SetCallAgentAction
   | SetParticipantsAction
+  | SetSelectedParticipantsAction
   | SetCallStateAction
   | SetGroupAction
   | CallAddedAction

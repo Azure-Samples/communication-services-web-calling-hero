@@ -35,6 +35,7 @@ import { setUserId } from './actions/sdk';
 import { addScreenShareStream, removeScreenShareStream } from './actions/streams';
 import { State } from './reducers';
 import { setLogLevel } from '@azure/logger';
+import RemoteStreamSelector from './RemoteStreamSelector';
 
 export const setMicrophone = (mic: boolean) => {
   return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
@@ -87,8 +88,20 @@ const subscribeToParticipant = (
   call: Call,
   dispatch: Dispatch
 ): void => {
+  let remoteStreamSelector = RemoteStreamSelector.getInstance(dispatch);
+
   participant.on('stateChanged', () => {
+    remoteStreamSelector.participantStateChanged(
+      utils.getId(participant.identifier),
+      participant.displayName ?? '',
+      participant.state, 
+      !participant.isMuted, 
+      participant.videoStreams[0].isAvailable);
     dispatch(setParticipants([...call.remoteParticipants.values()]));
+  });
+
+  participant.on('isMutedChanged', () => {
+    remoteStreamSelector.participantAudioChanged(utils.getId(participant.identifier), !participant.isMuted);
   });
 
   participant.on('isSpeakingChanged', () => {
@@ -107,6 +120,11 @@ const subscribeToParticipant = (
         });
   
         if (addedStream.isAvailable) { dispatch(addScreenShareStream(addedStream, participant)); }
+      }
+      else if (addedStream.mediaStreamType === 'Video') {
+        addedStream.on('isAvailableChanged', () => {
+          remoteStreamSelector.participantVideoChanged(utils.getId(participant.identifier), addedStream.isAvailable);
+        });
       }
     });
     dispatch(setParticipants([...call.remoteParticipants.values()]));

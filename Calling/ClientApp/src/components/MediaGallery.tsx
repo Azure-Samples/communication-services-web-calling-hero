@@ -4,12 +4,14 @@ import { RemoteParticipant, LocalVideoStream } from '@azure/communication-callin
 import { utils } from '../Utils/Utils';
 import LocalStreamMedia from './LocalStreamMedia';
 import RemoteStreamMedia from './RemoteStreamMedia';
+import { SelectionState } from 'core/RemoteStreamSelector';
 
 export interface MediaGalleryProps {
   userId: string;
   displayName: string;
   remoteParticipants: RemoteParticipant[];
   localVideoStream: LocalVideoStream;
+  selectedParticipants: SelectionState[];
 }
 
 export default (props: MediaGalleryProps): JSX.Element => {
@@ -26,10 +28,11 @@ export default (props: MediaGalleryProps): JSX.Element => {
   );
   const getMediaGalleryTilesForParticipants = (participants: RemoteParticipant[], userId: string, displayName: string) => {
     const remoteParticipantsMediaGalleryItems = participants.map((participant) => (
-      <div key={`${utils.getId(participant.identifier)}-tile`} className={mediaGalleryStyle}>
+       <div key={`${utils.getId(participant.identifier)}-tile`} className={mediaGalleryStyle}>
         <RemoteStreamMedia
           key={utils.getId(participant.identifier)}
           stream={participant.videoStreams[0]}
+          isParticipantStreamSelected= {props.selectedParticipants.filter(p => p.participantId === utils.getId(participant.identifier)).length > 0}
           label={participant.displayName ?? utils.getId(participant.identifier)}
         />
       </div>

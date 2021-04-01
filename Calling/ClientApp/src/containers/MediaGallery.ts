@@ -6,6 +6,7 @@ const mapStateToProps = (state: State) => ({
   userId: state.sdk.userId,
   displayName: state.calls.callAgent?.displayName,
   remoteParticipants: state.calls.remoteParticipants,
+  selectedParticipants: state.calls.selectedParticipants,
   localVideoStream: state.streams.localVideoStream
 });
 

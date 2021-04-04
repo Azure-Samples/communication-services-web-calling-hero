@@ -7,7 +7,7 @@ const CALL_ADDED = 'CALL_ADDED';
 const CALL_REMOVED = 'CALL_REMOVED';
 const SET_CALL_STATE = 'SET_CALL_STATE';
 const SET_PARTICIPANTS = 'SET_PARTICIPANTS';
-const SET_SELECTED_PARTICIPANTS = 'SET_SELECTED_PARTICIPANTS';
+const SET_DOMINANT_PARTICIPANTS = 'SET_DOMINANT_PARTICIPANTS';
 
 interface SetCallAgentAction {
   type: typeof SET_CALL_AGENT;
@@ -41,9 +41,9 @@ interface SetParticipantsAction {
   remoteParticipants: RemoteParticipant[];
 }
 
-interface SetSelectedParticipantsAction {
-  type: typeof SET_SELECTED_PARTICIPANTS;
-  selectedParticipants: SelectionState[];
+interface SetDominantParticipantsAction {
+  type: typeof SET_DOMINANT_PARTICIPANTS;
+  dominantParticipants: SelectionState[];
 }
 
 export const setCallAgent = (callAgent: CallAgent): SetCallAgentAction => {
@@ -90,10 +90,10 @@ export const setParticipants = (participants: RemoteParticipant[]): SetParticipa
   };
 };
 
-export const setSelectedParticipants = (selected: SelectionState[]): SetSelectedParticipantsAction => {
+export const setDominantParticipants = (selected: SelectionState[]): SetDominantParticipantsAction => {
   return {
-    type: SET_SELECTED_PARTICIPANTS,
-    selectedParticipants: selected
+    type: SET_DOMINANT_PARTICIPANTS,
+    dominantParticipants: selected
   };
 };
 
@@ -103,14 +103,14 @@ export {
   CALL_ADDED,
   CALL_REMOVED,
   SET_CALL_STATE,
-  SET_SELECTED_PARTICIPANTS,
+  SET_DOMINANT_PARTICIPANTS,
   SET_PARTICIPANTS
 };
 
 export type CallTypes =
   | SetCallAgentAction
   | SetParticipantsAction
-  | SetSelectedParticipantsAction
+  | SetDominantParticipantsAction
   | SetCallStateAction
   | SetGroupAction
   | CallAddedAction

@@ -33,7 +33,7 @@ export const streamsReducer: Reducer<StreamsState, StreamTypes | DeviceTypes> = 
       return state;
     case SET_LOCAL_VIDEO_STREAM:
       return { ...state, localVideoStream: action.localVideoStream };
-      case ADD_SCREENSHARE_STREAM:
+    case ADD_SCREENSHARE_STREAM:
       const newScreenShareStream: ParticipantStream = { stream: action.stream, user: action.user };
       return { ...state, screenShareStreams: [...state.screenShareStreams, newScreenShareStream] };
     case REMOVE_SCREENSHARE_STREAM:

@@ -1,6 +1,6 @@
 // © Microsoft Corporation. All rights reserved.
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Label, Spinner, SpinnerSize } from '@fluentui/react';
 import { RemoteVideoStream, VideoStreamRenderer, VideoStreamRendererView } from '@azure/communication-calling';
 import { videoHint, mediaContainer } from './styles/StreamMedia.styles';
@@ -41,11 +41,11 @@ export default (props: RemoteStreamMediaProps): JSX.Element => {
     alignItems: 'center'
   };
 
-  const {label, stream} = props;
+  const {label, stream, isParticipantStreamSelected} = props;
 
-  const renderRemoteStream = async () => {
+  const renderRemoteStream = useCallback(async () => {
     const container = document.getElementById(streamId);
-    if (container && props.stream && props.stream.isAvailable && props.isParticipantStreamSelected) {
+    if (container && stream && stream.isAvailable && isParticipantStreamSelected) {
       // if we are already rendering a stream we don't want to start rendering the same stream
       if (activeStreamBeingRendered) {
         return;
@@ -54,7 +54,7 @@ export default (props: RemoteStreamMediaProps): JSX.Element => {
       // set the flag that a stream is being rendered
       setActiveStreamBeingRendered(true);
       setShowRenderLoading(true);
-      const renderer: VideoStreamRenderer = new VideoStreamRenderer(props.stream);
+      const renderer: VideoStreamRenderer = new VideoStreamRenderer(stream);
       // this can block a really long time if we fail to be subscribed to the call and it has to retry
       const rendererView = await renderer.createView({ scalingMode: 'Crop' });
       setShowRenderLoading(false);
@@ -68,7 +68,7 @@ export default (props: RemoteStreamMediaProps): JSX.Element => {
         rendererView.dispose();
       }
     }
-  };
+  }, [stream, isParticipantStreamSelected, setShowRenderLoading, setActiveStreamBeingRendered]);
 
   useEffect(() => {
     if (!stream) {
@@ -80,7 +80,7 @@ export default (props: RemoteStreamMediaProps): JSX.Element => {
     if (stream.isAvailable) {
       renderRemoteStream();
     }
-  }, [stream, renderRemoteStream]);
+  }, [stream, isParticipantStreamSelected, renderRemoteStream]);
 
   return (
     <div className={mediaContainer}>

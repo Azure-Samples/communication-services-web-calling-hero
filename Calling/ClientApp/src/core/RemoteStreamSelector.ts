@@ -1,4 +1,4 @@
-import { setSelectedParticipants } from './actions/calls';
+import { setDominantParticipants } from './actions/calls';
 import { Dispatch } from "redux";
 import { RemoteParticipantState } from '@azure/communication-calling';
 
@@ -60,7 +60,7 @@ export class SelectionState {
 }
 
 export default class RemoteStreamSelector {
-  private static SelectedParticipantsCount = 1;
+  private static DominantParticipantsCount = 1;
   private static ProcessingDelayInSeconds = 2000;
   private readonly dipatch: Dispatch;
   private batchedCommands: Event[];
@@ -99,7 +99,7 @@ export default class RemoteStreamSelector {
     let sortedList = [...this.remoteParticipants.values()].sort(this.compareFn);
     console.log("RemoteStreamSelector: Participants sorted list", sortedList);
 
-    this.dipatch(setSelectedParticipants(sortedList.slice(0, RemoteStreamSelector.SelectedParticipantsCount)));
+    this.dipatch(setDominantParticipants(sortedList.slice(0, RemoteStreamSelector.DominantParticipantsCount)));
   }
 
   public participantAudioChanged = (participantId: string, isUnmuted: boolean): void => {
@@ -118,10 +118,11 @@ export default class RemoteStreamSelector {
       case 'Connected':
         this.remoteParticipants.set(participantId, new SelectionState(participantId, displayName, isUnMuted, isVideoOn));
         this.participantAudioChanged(participantId, isUnMuted);
-        this.participantVideoChanged(participantId, isVideoOn)
+        this.participantVideoChanged(participantId, isVideoOn);
         break;
       case 'Disconnected':
         this.remoteParticipants.delete(participantId);
+        this.processCommands(); // Force update Redux list with removed participant.
         break;
     }
   }

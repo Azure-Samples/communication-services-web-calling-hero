@@ -35,6 +35,8 @@ import { setUserId } from './actions/sdk';
 import { addScreenShareStream, removeScreenShareStream } from './actions/streams';
 import { State } from './reducers';
 import { setLogLevel } from '@azure/logger';
+import RemoteStreamSelector from './RemoteStreamSelector';
+import { Constants } from './constants';
 
 export const setMicrophone = (mic: boolean) => {
   return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
@@ -87,8 +89,20 @@ const subscribeToParticipant = (
   call: Call,
   dispatch: Dispatch
 ): void => {
+  let remoteStreamSelector = RemoteStreamSelector.getInstance(Constants.DOMINTANT_PARTICIPANTS_COUNT, dispatch);
+
   participant.on('stateChanged', () => {
+    remoteStreamSelector.participantStateChanged(
+      utils.getId(participant.identifier),
+      participant.displayName ?? '',
+      participant.state, 
+      !participant.isMuted, 
+      participant.videoStreams[0].isAvailable);
     dispatch(setParticipants([...call.remoteParticipants.values()]));
+  });
+
+  participant.on('isMutedChanged', () => {
+    remoteStreamSelector.participantAudioChanged(utils.getId(participant.identifier), !participant.isMuted);
   });
 
   participant.on('isSpeakingChanged', () => {
@@ -107,6 +121,11 @@ const subscribeToParticipant = (
         });
   
         if (addedStream.isAvailable) { dispatch(addScreenShareStream(addedStream, participant)); }
+      }
+      else if (addedStream.mediaStreamType === 'Video') {
+        addedStream.on('isAvailableChanged', () => {
+          remoteStreamSelector.participantVideoChanged(utils.getId(participant.identifier), addedStream.isAvailable);
+        });
       }
     });
     dispatch(setParticipants([...call.remoteParticipants.values()]));
@@ -246,14 +265,15 @@ export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndRe
         // if remote participants have changed, subscribe to the added remote participants
         addedCall.on('remoteParticipantsUpdated', (ev): void => {
           // for each of the added remote participants, subscribe to events and then just update as well in case the update has already happened
-            ev.added.forEach((addedRemoteParticipant) => {
+          ev.added.forEach((addedRemoteParticipant) => {
             subscribeToParticipant(addedRemoteParticipant, addedCall, dispatch);
-            dispatch(setParticipants([...state.calls.remoteParticipants, addedRemoteParticipant]))
+            dispatch(setParticipants([...state.calls.remoteParticipants, addedRemoteParticipant]));
           });
 
-          ev.removed.forEach((removedRemoteParticipant) => {
-            dispatch(setParticipants([...state.calls.remoteParticipants.filter(remoteParticipant => { return remoteParticipant !== removedRemoteParticipant }) ]))
-          });
+          // We don't use the actual value we are just going to reset the remoteParticipants based on the call
+          if (ev.removed.length > 0) {
+            dispatch(setParticipants([...addedCall.remoteParticipants.values()]));
+          }
         });
 
         dispatch(setParticipants([...state.calls.remoteParticipants]));

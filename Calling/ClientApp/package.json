@@ -37,6 +37,7 @@
     "y18n": ">=4.0.1"
   },
   "devDependencies": {
+    "@types/jest": "^26.0.22",
     "ajv": "^6.9.1",
     "cross-env": "^5.2.0",
     "eslint": "^6.8.0",

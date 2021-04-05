@@ -60,14 +60,15 @@ export class SelectionState {
 }
 
 export default class RemoteStreamSelector {
-  private static DominantParticipantsCount = 1;
-  private static ProcessingDelayInSeconds = 2000;
+  private readonly dominantParticipantsCount;
   private readonly dipatch: Dispatch;
   private batchedCommands: Event[];
   private remoteParticipants: Map<string, SelectionState>;
-  static Singleton: RemoteStreamSelector;
+  private static ProcessingDelayInSeconds = 2000;
+  private static Singleton: RemoteStreamSelector;
 
-  constructor(dispatch: Dispatch) {
+  constructor(dominantParticipantsCount: number, dispatch: Dispatch) {
+    this.dominantParticipantsCount = dominantParticipantsCount;
     this.dipatch = dispatch;
     this.batchedCommands = [];
     this.remoteParticipants = new Map();
@@ -78,7 +79,7 @@ export default class RemoteStreamSelector {
     );
   }
 
-  compareFn = (a: SelectionState, b: SelectionState) => {
+  private compareFn = (a: SelectionState, b: SelectionState) => {
     if (a.isVideoOn === b.isVideoOn) {
       if (a.isUnMuted === b.isUnMuted) return b.lastUnMuted - a.lastUnMuted;
       return a.isUnMuted ? -1 : 1;
@@ -86,7 +87,7 @@ export default class RemoteStreamSelector {
     return a.isVideoOn ? -1 : 1;
   };
 
-  processCommands = (commands = this.batchedCommands): void => {
+  public processCommands = (commands = this.batchedCommands): void => {
     commands.forEach((command) => {
       let participant = this.remoteParticipants.get(command.participantId);
       if (!participant) {
@@ -96,12 +97,11 @@ export default class RemoteStreamSelector {
       command.process(participant);
     });
     this.batchedCommands = [];
-    console.log('RemoteStreamSelector: Remote participants', this.remoteParticipants);
 
     let sortedList = [...this.remoteParticipants.values()].sort(this.compareFn);
     console.log('RemoteStreamSelector: Participants sorted list', sortedList);
 
-    this.dipatch(setDominantParticipants(sortedList.slice(0, RemoteStreamSelector.DominantParticipantsCount)));
+    this.dipatch(setDominantParticipants(sortedList.slice(0, this.dominantParticipantsCount)));
   };
 
   public participantAudioChanged = (participantId: string, isUnmuted: boolean): void => {
@@ -141,6 +141,6 @@ export default class RemoteStreamSelector {
     }
   };
 
-  public static getInstance = (dispatch: Dispatch): RemoteStreamSelector =>
-    (RemoteStreamSelector.Singleton = RemoteStreamSelector.Singleton ?? new RemoteStreamSelector(dispatch));
+  public static getInstance = (dominantParticipantsCount: number, dispatch: Dispatch): RemoteStreamSelector =>
+    (RemoteStreamSelector.Singleton = RemoteStreamSelector.Singleton ?? new RemoteStreamSelector(dominantParticipantsCount, dispatch));
 }

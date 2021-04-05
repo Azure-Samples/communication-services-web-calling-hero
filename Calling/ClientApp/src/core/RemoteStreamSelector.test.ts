@@ -8,7 +8,7 @@ Date.now = jest.fn(() => mockStartTimeInMilliseconds++);
 console.log = jest.fn();
 
 beforeAll(() => {
-  remoteStreamSelector = RemoteStreamSelector.getInstance(mockDispatch as any);
+  remoteStreamSelector = RemoteStreamSelector.getInstance(1, mockDispatch as any);
   remoteStreamSelector.participantStateChanged('1', 'user1', 'Connected', false, false);
   remoteStreamSelector.participantStateChanged('2', 'user2', 'Connected', false, false);
   remoteStreamSelector.participantStateChanged('3', 'user3', 'Connected', false, false);
@@ -59,18 +59,19 @@ test('For video participants, precedence to unmuted participants', () => {
   expect(mockDispatch).toReturnWith('user2');
 });
 
-test('For video participants, if all participants are muted, priority to the first participant who turned on thier camera', () => {
+test('For video participants, if all participants are unmuted, precedence to participants who have unmuted the latest', () => {
   remoteStreamSelector.participantVideoChanged('1', true);
   remoteStreamSelector.participantVideoChanged('2', true);
   remoteStreamSelector.participantAudioChanged('2', true);
   remoteStreamSelector.participantVideoChanged('3', true);
+  remoteStreamSelector.participantAudioChanged('3', true);
   remoteStreamSelector.participantAudioChanged('1', true);
   remoteStreamSelector.processCommands();
 
   expect(mockDispatch).toReturnWith('user1');
 });
 
-test('For video participants, if all participants are unmuted, precedence to participants who have unmuted the latest', () => {
+test('For video participants, if all participants are muted, priority to the first participant who turned on thier camera', () => {
   remoteStreamSelector.participantVideoChanged('1', true);
   remoteStreamSelector.participantVideoChanged('2', true);
   remoteStreamSelector.participantVideoChanged('3', true);

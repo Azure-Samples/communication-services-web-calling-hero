@@ -88,7 +88,7 @@ const subscribeToParticipant = (
   call: Call,
   dispatch: Dispatch
 ): void => {
-  let remoteStreamSelector = RemoteStreamSelector.getInstance(dispatch);
+  let remoteStreamSelector = RemoteStreamSelector.getInstance(1, dispatch);
 
   participant.on('stateChanged', () => {
     remoteStreamSelector.participantStateChanged(

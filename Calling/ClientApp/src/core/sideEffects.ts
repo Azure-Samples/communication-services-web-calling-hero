@@ -36,6 +36,7 @@ import { addScreenShareStream, removeScreenShareStream } from './actions/streams
 import { State } from './reducers';
 import { setLogLevel } from '@azure/logger';
 import RemoteStreamSelector from './RemoteStreamSelector';
+import { Constants } from './constants';
 
 export const setMicrophone = (mic: boolean) => {
   return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
@@ -88,7 +89,7 @@ const subscribeToParticipant = (
   call: Call,
   dispatch: Dispatch
 ): void => {
-  let remoteStreamSelector = RemoteStreamSelector.getInstance(1, dispatch);
+  let remoteStreamSelector = RemoteStreamSelector.getInstance(Constants.DOMINTANT_PARTICIPANTS_COUNT, dispatch);
 
   participant.on('stateChanged', () => {
     remoteStreamSelector.participantStateChanged(

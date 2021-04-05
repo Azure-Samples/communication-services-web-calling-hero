@@ -40,7 +40,7 @@ test('For non-video participants, if latest unmuted participant have muted thems
   expect(mockDispatch).toReturnWith('user1');
 });
 
-test('Video participants should take the top precedence, even if muted.', () => {
+test('Video participants should take the top precedence, even if muted and others unmuted.', () => {
   remoteStreamSelector.participantAudioChanged('1', true);
   remoteStreamSelector.participantAudioChanged('2', true);
   remoteStreamSelector.participantVideoChanged('3', true);

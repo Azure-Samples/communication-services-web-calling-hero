@@ -15,14 +15,14 @@ beforeAll(() => {
   remoteStreamSelector.processCommands();
 });
 
-test('For non-video participants, precedence to the unmuted', async () => {
+test('For non-video participants, precedence to the unmuted', () => {
   remoteStreamSelector.participantAudioChanged('2', true);
   remoteStreamSelector.processCommands();
 
   expect(mockDispatch).toReturnWith('user2');
 });
 
-test('For non-video participants, precedence to participants who have unmuted the latest', async () => {
+test('For non-video participants, precedence to participants who have unmuted the latest', () => {
   remoteStreamSelector.participantAudioChanged('1', true);
   remoteStreamSelector.participantAudioChanged('2', true);
   remoteStreamSelector.participantAudioChanged('3', true);
@@ -59,7 +59,18 @@ test('For video participants, precedence to unmuted participants', () => {
   expect(mockDispatch).toReturnWith('user2');
 });
 
-test('For video participants, if all participants are either muted or unmuted, priority to the first participant who turned on thier camera', () => {
+test('For video participants, if all participants are muted, priority to the first participant who turned on thier camera', () => {
+  remoteStreamSelector.participantVideoChanged('1', true);
+  remoteStreamSelector.participantVideoChanged('2', true);
+  remoteStreamSelector.participantAudioChanged('2', true);
+  remoteStreamSelector.participantVideoChanged('3', true);
+  remoteStreamSelector.participantAudioChanged('1', true);
+  remoteStreamSelector.processCommands();
+
+  expect(mockDispatch).toReturnWith('user1');
+});
+
+test('For video participants, if all participants are unmuted, precedence to participants who have unmuted the latest', () => {
   remoteStreamSelector.participantVideoChanged('1', true);
   remoteStreamSelector.participantVideoChanged('2', true);
   remoteStreamSelector.participantVideoChanged('3', true);

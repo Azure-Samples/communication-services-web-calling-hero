@@ -1,6 +1,5 @@
 import { connect } from 'react-redux';
 import ConfigurationScreen, { ConfigurationScreenProps } from '../components/Configuration';
-import { setGroup } from '../core/actions/calls';
 import { setVideoDeviceInfo, setAudioDeviceInfo } from '../core/actions/devices';
 import { initCallAgent, initCallClient, updateDevices } from '../core/sideEffects';
 import { setMic } from '../core/actions/controls';
@@ -11,7 +10,6 @@ import { setLocalVideoStream } from '../core/actions/streams';
 const mapStateToProps = (state: State, props: ConfigurationScreenProps) => ({
   deviceManager: state.devices.deviceManager,
   callAgent: state.calls.callAgent,
-  group: state.calls.group,
   mic: state.controls.mic,
   screenWidth: props.screenWidth,
   localVideoStream: state.streams.localVideoStream,
@@ -32,7 +30,6 @@ const mapDispatchToProps = (dispatch: any, props: ConfigurationScreenProps) => (
     dispatch(initCallClient( unsupportedStateHandler)),
   setupCallAgent: (displayName: string) =>
     dispatch(initCallAgent(displayName, props.callEndedHandler)),
-  setGroup: (groupId: string) => dispatch(setGroup(groupId)),
   updateDevices: () => dispatch(updateDevices()),
 });
 

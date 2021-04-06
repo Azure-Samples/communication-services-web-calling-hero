@@ -3,6 +3,7 @@ export class Constants {
   static RINGING = 'Ringing';
   static CONNECTING = 'Connecting';
   static CONNECTED = 'Connected';
+  static LOBBY = 'InLobby';
   static DEFAULT_IMG_WIDTH = 200;
   static CROP_MEDIA = 'Crop';
   static CONFIGURATION_LOCAL_VIDEO_PREVIEW_ID = 'ConfigurationLocalVideoPreview';

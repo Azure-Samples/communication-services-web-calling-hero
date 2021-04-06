@@ -9,18 +9,21 @@ import {
   SET_DOMINANT_PARTICIPANTS,
   SET_PARTICIPANTS,
   CallTypes,
-  SET_CALL_AGENT
+  SET_CALL_AGENT,
+  SET_RECORDING_ACTIVE,
+  SET_TRANSCRIBING_ACTIVE
 } from '../actions/calls';
 
 export interface CallsState {
   callAgent?: CallAgent;
-  group: string;
   call?: Call;
   callState: string;
   incomingCallEndReason: CallEndReason | undefined;
   groupCallEndReason: CallEndReason | undefined;
   remoteParticipants: RemoteParticipant[];
   attempts: number;
+  isBeingRecorded: boolean | undefined;
+  isBeingTranscribed: boolean | undefined;
   dominantParticipants: SelectionState[];
 }
 
@@ -31,6 +34,9 @@ const initialState: CallsState = {
   incomingCallEndReason: undefined,
   groupCallEndReason: undefined,
   remoteParticipants: [],
+  attempts: 0,
+  isBeingRecorded: undefined,
+  isBeingTranscribed: undefined,
   dominantParticipants: [],
   group: '',
   attempts: 0
@@ -56,8 +62,10 @@ export const callsReducer: Reducer<CallsState, CallTypes> = (state = initialStat
       return { ...state, dominantParticipants: action.dominantParticipants };
     case SET_PARTICIPANTS:
       return { ...state, remoteParticipants: action.remoteParticipants };
-    case SET_GROUP:
-      return { ...state, group: action.group };
+    case SET_RECORDING_ACTIVE:
+      return { ...state, isBeingRecorded: action.active }
+    case SET_TRANSCRIBING_ACTIVE:
+      return { ...state, isBeingTranscribed: action.active}
     default:
       return state;
   }

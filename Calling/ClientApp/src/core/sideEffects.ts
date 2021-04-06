@@ -11,7 +11,9 @@ import {
   CallAgent,
   CallClient,
   HangUpOptions,
-  CallEndReason
+  CallEndReason,
+  TeamsMeetingLinkLocator,
+  Features
 } from '@azure/communication-calling';
 import {
   AzureCommunicationTokenCredential,
@@ -20,7 +22,7 @@ import {
 import { CommunicationUserToken } from '@azure/communication-identity';
 import { Dispatch } from 'redux';
 import { utils } from '../Utils/Utils';
-import { callAdded, callRemoved, setCallState, setParticipants, setCallAgent } from './actions/calls';
+import { callAdded, callRemoved, setCallState, setParticipants, setCallAgent, setRecordingActive } from './actions/calls';
 import { setMic, setShareScreen } from './actions/controls';
 import {
   setAudioDeviceInfo,
@@ -261,7 +263,14 @@ export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndRe
         });
 
         dispatch(setShareScreen(addedCall.isScreenSharingOn))
-        
+
+        addedCall.api(Features.Recording).on('isRecordingActiveChanged', (): void => {
+          dispatch(setRecordingActive(addedCall.api(Features.Recording).isRecordingActive))
+        });
+
+        // if you are not in a teams meeting call you will just get false
+        dispatch(setRecordingActive(addedCall.api(Features.Recording).isRecordingActive))
+
         // if remote participants have changed, subscribe to the added remote participants
         addedCall.on('remoteParticipantsUpdated', (ev): void => {
           // for each of the added remote participants, subscribe to events and then just update as well in case the update has already happened
@@ -281,9 +290,17 @@ export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndRe
       e.removed.forEach((removedCall) => {
         const state = getState();
         if (state.calls.call && state.calls.call === removedCall) {
-          dispatch(callRemoved(removedCall, state.calls.group));
+          dispatch(callRemoved(removedCall));
+
+          // if we were not allowed into invited into a Teams call
+          if (removedCall.callEndReason && removedCall.callEndReason.code === 0 && removedCall.callEndReason.subCode === 5854) {
+            removedCall.callEndReason && callEndedHandler(removedCall.callEndReason);
+            return;
+          }
+          
           if (removedCall.callEndReason && removedCall.callEndReason.code !== 0) {
             removedCall.callEndReason && callEndedHandler(removedCall.callEndReason);
+            return;
           }
         }
       });
@@ -325,7 +342,27 @@ export const endCall = async (call: Call, options: HangUpOptions): Promise<void>
   await call.hangUp(options).catch((e: CommunicationServicesError) => console.error(e));
 };
 
-export const joinGroup = async (callAgent: CallAgent, context: GroupCallLocator, callOptions: JoinCallOptions): Promise<void> => {
+export const join = async(callAgent: CallAgent, locator: GroupCallLocator | TeamsMeetingLinkLocator, callOptions: JoinCallOptions): Promise<void> => {
+  const isGroupCallLocator = (locator: GroupCallLocator | TeamsMeetingLinkLocator): locator is GroupCallLocator => { return true}
+
+  if (isGroupCallLocator(locator)) {
+    return joinGroup(callAgent, locator, callOptions);
+  }
+  else {
+    return joinTeamsMeeting(callAgent, locator, callOptions);
+  }
+}
+
+const joinGroup = async (callAgent: CallAgent, context: GroupCallLocator, callOptions: JoinCallOptions): Promise<void> => {
+  try {
+    await callAgent.join(context, callOptions);
+  } catch (e) {
+    console.log('Failed to join a call', e);
+    return;
+  }
+};
+
+const joinTeamsMeeting = async (callAgent: CallAgent, context: TeamsMeetingLinkLocator, callOptions: JoinCallOptions): Promise<void> => {
   try {
     await callAgent.join(context, callOptions);
   } catch (e) {

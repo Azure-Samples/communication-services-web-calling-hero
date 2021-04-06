@@ -31,7 +31,6 @@ export interface ConfigurationScreenProps {
   deviceManager: DeviceManager;
   setupCallClient(unsupportedStateHandler: () => void): void;
   setupCallAgent(displayName: string): void;
-  setGroup(groupId: string): void;
   startCallHandler(): void;
   unsupportedStateHandler: () => void;
   callEndedHandler: (reason: CallEndReason) => void;
@@ -58,7 +57,7 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
   const [name, setName] = useState(createUserId());
   const [emptyWarning, setEmptyWarning] = useState(false);
 
-  const {groupId, setupCallClient, setupCallAgent, setGroup, unsupportedStateHandler} = props;
+  const {setupCallClient, setupCallAgent, unsupportedStateHandler} = props;
 
   useEffect(() => {
     setupCallClient(unsupportedStateHandler);
@@ -106,7 +105,6 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
                   } else {
                     setEmptyWarning(false);
                     await setupCallAgent(name);
-                    setGroup(groupId);
                     props.startCallHandler();
                   }
                 }}

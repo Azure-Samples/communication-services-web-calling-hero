@@ -60,7 +60,7 @@ export class SelectionState {
 }
 
 export default class RemoteStreamSelector {
-  private readonly dominantParticipantsCount;
+  private readonly dominantParticipantsCount: number;
   private readonly dipatch: Dispatch;
   private batchedCommands: Event[];
   private remoteParticipants: Map<string, SelectionState>;

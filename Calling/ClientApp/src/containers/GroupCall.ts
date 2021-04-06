@@ -36,7 +36,6 @@ const mapStateToProps = (state: State, props: GroupCallProps) => ({
       );
   },
   remoteParticipants: state.calls.remoteParticipants,
-  streams: state.streams.streams,
   callState: state.calls.callState,
   localVideo: state.controls.localVideo,
   localVideoStream: state.streams.localVideoStream,

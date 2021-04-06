@@ -34,7 +34,6 @@ export interface GroupCallProps {
   deviceManager: DeviceManager;
   mic: boolean;
   remoteParticipants: RemoteParticipant[];
-  streams: ParticipantStream[];
   callState: string;
   localVideo: boolean;
   localVideoStream: LocalVideoStream;

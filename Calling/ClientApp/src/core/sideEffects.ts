@@ -1,8 +1,7 @@
 import {
   AudioDeviceInfo,
   Call,
-  CallClientOptions,
-  CommunicationError,
+  CommunicationServicesError,
   GroupCallLocator,
   JoinCallOptions,
   DeviceManager,
@@ -18,7 +17,6 @@ import {
 } from '@azure/communication-calling';
 import {
   AzureCommunicationTokenCredential,
-  CallingApplicationKind,
   CommunicationUserKind
 } from '@azure/communication-common';
 import { CommunicationUserToken } from '@azure/communication-identity';
@@ -38,7 +36,9 @@ import {
 import { setUserId } from './actions/sdk';
 import { addScreenShareStream, removeScreenShareStream } from './actions/streams';
 import { State } from './reducers';
-import { createClientLogger, setLogLevel } from '@azure/logger';
+import { setLogLevel } from '@azure/logger';
+import RemoteStreamSelector from './RemoteStreamSelector';
+import { Constants } from './constants';
 
 export const setMicrophone = (mic: boolean) => {
   return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
@@ -91,8 +91,20 @@ const subscribeToParticipant = (
   call: Call,
   dispatch: Dispatch
 ): void => {
+  let remoteStreamSelector = RemoteStreamSelector.getInstance(Constants.DOMINTANT_PARTICIPANTS_COUNT, dispatch);
+
   participant.on('stateChanged', () => {
+    remoteStreamSelector.participantStateChanged(
+      utils.getId(participant.identifier),
+      participant.displayName ?? '',
+      participant.state, 
+      !participant.isMuted, 
+      participant.videoStreams[0].isAvailable);
     dispatch(setParticipants([...call.remoteParticipants.values()]));
+  });
+
+  participant.on('isMutedChanged', () => {
+    remoteStreamSelector.participantAudioChanged(utils.getId(participant.identifier), !participant.isMuted);
   });
 
   participant.on('isSpeakingChanged', () => {
@@ -111,6 +123,11 @@ const subscribeToParticipant = (
         });
   
         if (addedStream.isAvailable) { dispatch(addScreenShareStream(addedStream, participant)); }
+      }
+      else if (addedStream.mediaStreamType === 'Video') {
+        addedStream.on('isAvailableChanged', () => {
+          remoteStreamSelector.participantVideoChanged(utils.getId(participant.identifier), addedStream.isAvailable);
+        });
       }
     });
     dispatch(setParticipants([...call.remoteParticipants.values()]));
@@ -200,24 +217,10 @@ export const updateDevices = () => {
   };
 };
 
-const createCallOptions = (): CallClientOptions => {
-  const logger = createClientLogger('Azure Communication Services - Calling Hero Sample');
-
-  setLogLevel('verbose');
-  logger.verbose.log = (...args) => { console.log(...args); };
-  logger.info.log = (...args) => { console.info(...args) ; };
-  logger.warning.log = (...args) => { console.warn(...args); };
-  logger.error.log = (...args) => { console.error(...args); };
-
-  return {
-    logger: logger
-  }
-}
-
 export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndReason) => void) => {
   return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
-    const options: CallClientOptions = createCallOptions();
-    let callClient = new CallClient(options);
+    setLogLevel('verbose');
+    let callClient = new CallClient();
 
     const tokenResponse: CommunicationUserToken = await utils.getTokenForUser();
     const userToken = tokenResponse.token;
@@ -238,11 +241,6 @@ export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndRe
     }
 
     dispatch(setCallAgent(callAgent));
-
-    const deviceManager: DeviceManager = await callClient.getDeviceManager();
-
-    dispatch(setDeviceManager(deviceManager));
-    subscribeToDeviceManager(deviceManager, dispatch, getState);
 
     callAgent.on('callsUpdated', (e: { added: Call[]; removed: Call[] }): void => {
       e.added.forEach((addedCall) => {
@@ -276,14 +274,15 @@ export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndRe
         // if remote participants have changed, subscribe to the added remote participants
         addedCall.on('remoteParticipantsUpdated', (ev): void => {
           // for each of the added remote participants, subscribe to events and then just update as well in case the update has already happened
-            ev.added.forEach((addedRemoteParticipant) => {
+          ev.added.forEach((addedRemoteParticipant) => {
             subscribeToParticipant(addedRemoteParticipant, addedCall, dispatch);
-            dispatch(setParticipants([...state.calls.remoteParticipants, addedRemoteParticipant]))
+            dispatch(setParticipants([...state.calls.remoteParticipants, addedRemoteParticipant]));
           });
 
-          ev.removed.forEach((removedRemoteParticipant) => {
-            dispatch(setParticipants([...state.calls.remoteParticipants.filter(remoteParticipant => { return remoteParticipant !== removedRemoteParticipant }) ]))
-          });
+          // We don't use the actual value we are just going to reset the remoteParticipants based on the call
+          if (ev.removed.length > 0) {
+            dispatch(setParticipants([...addedCall.remoteParticipants.values()]));
+          }
         });
 
         dispatch(setParticipants([...state.calls.remoteParticipants]));
@@ -311,8 +310,6 @@ export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndRe
 
 export const initCallClient = (unsupportedStateHandler: () => void) => {
   return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
-
-      const options: CallClientOptions = createCallOptions();
       let callClient;
 
       // check if chrome on ios OR firefox browser
@@ -322,7 +319,8 @@ export const initCallClient = (unsupportedStateHandler: () => void) => {
       }
 
       try {
-        callClient = new CallClient(options);
+        setLogLevel('verbose')
+        callClient = new CallClient();
       } catch (e) {
         unsupportedStateHandler();
         return;
@@ -341,7 +339,7 @@ export const initCallClient = (unsupportedStateHandler: () => void) => {
 
 // what does the forEveryone parameter really mean?
 export const endCall = async (call: Call, options: HangUpOptions): Promise<void> => {
-  await call.hangUp(options).catch((e: CommunicationError) => console.error(e));
+  await call.hangUp(options).catch((e: CommunicationServicesError) => console.error(e));
 };
 
 export const join = async(callAgent: CallAgent, locator: GroupCallLocator | TeamsMeetingLinkLocator, callOptions: JoinCallOptions): Promise<void> => {
@@ -373,13 +371,13 @@ const joinTeamsMeeting = async (callAgent: CallAgent, context: TeamsMeetingLinkL
   }
 };
 
-export const addParticipant = async (call: Call, user: CommunicationUserKind | CallingApplicationKind): Promise<void> => {
+export const addParticipant = async (call: Call, user: CommunicationUserKind): Promise<void> => {
   await call.addParticipant(user);
 };
 
 export const removeParticipant = async (
   call: Call,
-  user: CommunicationUserKind | CallingApplicationKind
+  user: CommunicationUserKind
 ): Promise<void> => {
-  await call.removeParticipant(user).catch((e: CommunicationError) => console.error(e));
+  await call.removeParticipant(user).catch((e: CommunicationServicesError) => console.error(e));
 };

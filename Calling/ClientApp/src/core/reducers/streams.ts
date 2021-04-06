@@ -10,7 +10,6 @@ import {
 import { DeviceTypes, SET_VIDEO_DEVICE_INFO } from '../actions/devices';
 
 export interface StreamsState {
-  streams: ParticipantStream[];
   screenShareStreams: ParticipantStream[];
   localVideoRendererIsBusy: boolean;
   localVideoStream?: LocalVideoStream;
@@ -19,7 +18,6 @@ export interface StreamsState {
 const initialState: StreamsState = {
   localVideoRendererIsBusy: false,
   localVideoStream: undefined,
-  streams: [],
   screenShareStreams: []
 };
 

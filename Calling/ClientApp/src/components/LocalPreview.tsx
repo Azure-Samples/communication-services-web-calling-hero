@@ -4,11 +4,11 @@ import { Stack, Toggle, Image, ImageFit } from '@fluentui/react';
 import { MicIcon, CallVideoIcon } from '@fluentui/react-icons-northstar';
 import { Constants } from '../core/constants';
 import {
-  RendererView,
+  VideoStreamRendererView,
   VideoDeviceInfo,
   AudioDeviceInfo,
   LocalVideoStream,
-  Renderer
+  VideoStreamRenderer
 } from '@azure/communication-calling';
 import staticMediaSVG from '../assets/staticmedia.svg';
 import {
@@ -31,7 +31,7 @@ export interface LocalPreviewProps {
   localVideoStream: LocalVideoStream;
 }
 
-let rendererView: RendererView;
+let rendererView: VideoStreamRendererView;
 
 export default (props: LocalPreviewProps): JSX.Element => {
   const imageProps = {
@@ -51,7 +51,7 @@ export default (props: LocalPreviewProps): JSX.Element => {
   useEffect(() => {
     (async () => {
       if (props.localVideoStream) {
-        const renderer: Renderer = new Renderer(props.localVideoStream);
+        const renderer: VideoStreamRenderer = new VideoStreamRenderer(props.localVideoStream);
         rendererView = await renderer.createView({ scalingMode: 'Crop' });
 
         const container = document.getElementById(Constants.CONFIGURATION_LOCAL_VIDEO_PREVIEW_ID);

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Image, ImageFit, Label } from '@fluentui/react';
-import { LocalVideoStream, Renderer, RendererView } from '@azure/communication-calling';
+import { LocalVideoStream, VideoStreamRenderer, VideoStreamRendererView } from '@azure/communication-calling';
 import { videoHint, mediaContainer, localVideoContainerStyle } from './styles/StreamMedia.styles';
 import { Constants } from '../core/constants';
 import staticMediaSVG from '../assets/staticmedia.svg';
@@ -13,7 +13,7 @@ export interface LocalStreamMediaProps {
 }
 
 export default (props: LocalStreamMediaProps): JSX.Element => {
-  let rendererView: RendererView;
+  let rendererView: VideoStreamRendererView;
 
   const [activeStreamBeingRendered, setActiveStreamBeingRendered] = useState(false);
 
@@ -34,7 +34,7 @@ export default (props: LocalStreamMediaProps): JSX.Element => {
   useEffect(() => {
     (async () => {
       if (stream) {
-        const renderer: Renderer = new Renderer(stream);
+        const renderer: VideoStreamRenderer = new VideoStreamRenderer(stream);
         rendererView = await renderer.createView({ scalingMode: 'Crop', isMirrored: true  });
 
         const container = document.getElementById(Constants.LOCAL_VIDEO_PREVIEW_ID);

@@ -52,6 +52,8 @@ export const utils = {
         return identifier.microsoftTeamsUserId;
       case 'unknown':
         return identifier.id;
+      default :
+        return ''
     }
   },
   getStreamId: (userId: string, stream: RemoteVideoStream): string => {

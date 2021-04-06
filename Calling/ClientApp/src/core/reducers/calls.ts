@@ -5,7 +5,6 @@ import {
   CALL_ADDED,
   CALL_REMOVED,
   SET_CALL_STATE,
-  SET_GROUP,
   SET_DOMINANT_PARTICIPANTS,
   SET_PARTICIPANTS,
   CallTypes,
@@ -37,9 +36,7 @@ const initialState: CallsState = {
   attempts: 0,
   isBeingRecorded: undefined,
   isBeingTranscribed: undefined,
-  dominantParticipants: [],
-  group: '',
-  attempts: 0
+  dominantParticipants: []
 };
 
 export const callsReducer: Reducer<CallsState, CallTypes> = (state = initialState, action: CallTypes): CallsState => {

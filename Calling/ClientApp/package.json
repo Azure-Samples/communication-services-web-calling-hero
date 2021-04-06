@@ -4,9 +4,9 @@
   "private": true,
   "description": "This is a sample application to show how the Azure Communication Services Calling Web SDK can be used to build a group calling experience. The client-side application is a React based user interface which uses Redux for handling complex state while leveraging Microsoft Fluent UI for how things look. Powering this front-end is a C# web application powered by ASP.net Core to connect this application with Azure.",
   "dependencies": {
-    "@azure/communication-calling": "1.0.0",
-    "@azure/communication-common": "1.0.0",
-    "@azure/communication-identity": "1.0.0",
+    "@azure/communication-calling": "1.0.0-beta.9",
+    "@azure/communication-common": "1.0.0-beta.4",
+    "@azure/communication-identity": "1.0.0-beta.4",
     "@fluentui/react": "^7.117.1",
     "@fluentui/react-icons-northstar": "^0.51.0",
     "@fluentui/react-northstar": "^0.51.0",

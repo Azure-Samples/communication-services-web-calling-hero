@@ -1,7 +1,7 @@
 import {
   AudioDeviceInfo,
   Call,
-  CommunicationServicesError,
+  CommunicationError,
   GroupCallLocator,
   JoinCallOptions,
   DeviceManager,
@@ -244,6 +244,9 @@ export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndRe
 
     callAgent.on('callsUpdated', (e: { added: Call[]; removed: Call[] }): void => {
       e.added.forEach((addedCall) => {
+
+        console.log(`Call added : Call Id = ${addedCall.id}`)
+
         const state = getState();
         if (state.calls.call && addedCall.direction === 'Incoming') {
           addedCall.hangUp();
@@ -339,7 +342,7 @@ export const initCallClient = (unsupportedStateHandler: () => void) => {
 
 // what does the forEveryone parameter really mean?
 export const endCall = async (call: Call, options: HangUpOptions): Promise<void> => {
-  await call.hangUp(options).catch((e: CommunicationServicesError) => console.error(e));
+  await call.hangUp(options).catch((e: CommunicationError) => console.error(e));
 };
 
 export const join = async(callAgent: CallAgent, locator: GroupCallLocator | TeamsMeetingLinkLocator, callOptions: JoinCallOptions): Promise<void> => {
@@ -379,5 +382,5 @@ export const removeParticipant = async (
   call: Call,
   user: CommunicationUserKind
 ): Promise<void> => {
-  await call.removeParticipant(user).catch((e: CommunicationServicesError) => console.error(e));
+  await call.removeParticipant(user).catch((e: CommunicationError) => console.error(e));
 };

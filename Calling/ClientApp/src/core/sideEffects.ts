@@ -242,6 +242,9 @@ export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndRe
 
     callAgent.on('callsUpdated', (e: { added: Call[]; removed: Call[] }): void => {
       e.added.forEach((addedCall) => {
+
+        console.log(`Call added : Call Id = ${addedCall.id}`)
+
         const state = getState();
         if (state.calls.call && addedCall.direction === 'Incoming') {
           addedCall.hangUp();

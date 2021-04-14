@@ -13,8 +13,8 @@ products:
 
 # Group Calling Sample
 
-This is a sample application to show how the Azure Communication Services Calling Web SDK can be used to build a group calling experience. 
-The client-side application is a React based user interface which uses Redux for handling complex state while leveraging Microsoft Fluent UI. 
+This is a sample application to show how the Azure Communication Services Calling Web SDK can be used to build a group calling experience.
+The client-side application is a React based user interface which uses Redux for handling complex state while leveraging Microsoft Fluent UI.
 Powering this front-end is a C# web application powered by ASP.NET Core to connect this application with Azure Communication Services.
 
 A separate branch with Teams Interop capabilities is [available](https://github.com/Azure-Samples/communication-services-web-calling-hero/blob/teams-interop/README.md). Teams Interop is in public preview and uses beta SDKs that are not meant for production use. Please use the main branch sample for any production scenarios.
@@ -47,7 +47,7 @@ Additional documentation for this sample can be found on [Microsoft Docs](https:
 1. Open an instance of PowerShell, Windows Terminal, Command Prompt or equivalent and navigate to the directory that you'd like to clone the sample to.
 2. `git clone https://github.com/Azure-Samples/communication-services-web-calling-hero.git`
 3. Get the `Connection String` from the Azure portal. For more information on connection strings, see [Create an Azure Communication Resources](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource)
-4. Once you get the `Connection String`, add the connection string to the **Calling/appsetting.json** file found under the Calling folder. Input your connection string in the variable: `ResourceConnectionString`. 
+4. Once you get the `Connection String`, add the connection string to the **Calling/appsetting.json** file found under the Calling folder. Input your connection string in the variable: `ResourceConnectionString`.
 
 ## Locally deploying the sample app
 
@@ -57,7 +57,7 @@ Additional documentation for this sample can be found on [Microsoft Docs](https:
 ### Troubleshooting
 
 1. Solution doesn\'t build, it throws errors during NPM installation/build
-	
+
 	Clean/rebuild the C# solution
 
 2. The app shows an "Unsupported browser" screen but I am on a [supported browser](https://docs.microsoft.com/en-us/azure/communication-services/concepts/voice-video-calling/calling-sdk-features#calling-client-library-browser-support).
@@ -71,6 +71,14 @@ Additional documentation for this sample can be found on [Microsoft Docs](https:
 3. Before publish, add your connection string with `Edit App Service Settings`, and fill in `ResourceConnectionString` as key and connection string (copy from appsettings.json) as value
 
 **Note**: While you may use http://localhost for local testing, the sample when deployed will only work when served over https. The SDK [does not support http](https://docs.microsoft.com/en-us/azure/communication-services/concepts/voice-video-calling/calling-sdk-features#user-webrtc-over-https).
+
+## Building off of the sample
+
+If you would like to build off of this sample to add calling capabilities to your own awesome application, keep a few things in mind:
+
+* The sample serves a Single Page Application. This has a few implications.
+  * By default, the served app cannot be embedded in another frame (e.g. as a web widget). See ./Calling/Startup.cs for details on how to enable embedding.
+  * By default, the backend disables Cross-Origin Resource Sharing (CORS). If you'd like to serve the backend APIs from a different domain than the static content, you must enable (restricted) CORS. This can be done by configuring a middleware in the backend in ./Calling/Startup.cs, or by configuring your server framework to modify HTTP response headers.
 
 ## Additional Reading
 

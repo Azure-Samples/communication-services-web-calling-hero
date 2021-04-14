@@ -12,8 +12,6 @@ namespace Calling
 {
     public class Startup
     {
-        private const string AllowAnyOrigin = nameof(AllowAnyOrigin);
-
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -23,20 +21,6 @@ namespace Calling
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // Allow CORS as our client may be hosted on a different domain.
-            services.AddCors(options =>
-            {
-                options.AddPolicy(AllowAnyOrigin,
-                    builder =>
-                    {
-                        builder.SetIsOriginAllowed(origin => true);
-                        builder.AllowCredentials();
-                        builder.AllowAnyMethod();
-                        builder.AllowAnyHeader();
-                    }
-                );
-            });
-
             services.AddControllers();
 
             // In production, the React files will be served from this directory
@@ -53,8 +37,6 @@ namespace Calling
             app.UseSpaStaticFiles();
 
             app.UseRouting();
-
-            app.UseCors(AllowAnyOrigin);
 
             app.UseEndpoints(endpoints =>
             {

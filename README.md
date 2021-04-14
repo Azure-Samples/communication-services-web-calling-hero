@@ -76,9 +76,9 @@ Additional documentation for this sample can be found on [Microsoft Docs](https:
 
 If you would like to build off of this sample to add calling capabilities to your own awesome application, keep a few things in mind:
 
-* The sample serves a Single Page Application. This has a few implications.
-  * By default, the served app cannot be embedded in another frame (e.g. as a web widget). See ./Calling/Startup.cs for details on how to enable embedding.
-  * By default, the backend disables Cross-Origin Resource Sharing (CORS). If you'd like to serve the backend APIs from a different domain than the static content, you must enable (restricted) CORS. This can be done by configuring a middleware in the backend in ./Calling/Startup.cs, or by configuring your server framework to modify HTTP response headers.
+- The sample serves a Single Page Application. This has a few implications.
+  - By default, the served app cannot be embedded in another frame (e.g. as a web widget). See ./Calling/Startup.cs for details on how to enable embedding.
+  - By default, the backend disables Cross-Origin Resource Sharing (CORS). If you'd like to serve the backend APIs from a different domain than the static content, you must enable (restricted) CORS. This can be done by configuring a middleware in the backend in ./Calling/Startup.cs, or by configuring your server framework to modify HTTP response headers.
 
 ## Additional Reading
 

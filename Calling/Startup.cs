@@ -38,6 +38,16 @@ namespace Calling
 
             app.UseRouting();
 
+            // This sample app serves a Single Page Application that is not intended to be embedded into
+            // another site.
+            // If you want to instead build a widget off of this sample that is embedded in your own application,
+            // remove the following middleware.
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers.Add("X-Frame-Options", "DENY");
+                await next.Invoke();
+            });
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

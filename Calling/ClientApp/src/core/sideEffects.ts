@@ -268,9 +268,10 @@ export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndRe
         // if remote participants have changed, subscribe to the added remote participants
         addedCall.on('remoteParticipantsUpdated', (ev): void => {
           // for each of the added remote participants, subscribe to events and then just update as well in case the update has already happened
+          const state = getState();
           ev.added.forEach((addedRemoteParticipant) => {
             subscribeToParticipant(addedRemoteParticipant, addedCall, dispatch);
-            dispatch(setParticipants([...addedCall.remoteParticipants, addedRemoteParticipant]));
+            dispatch(setParticipants([...state.calls.remoteParticipants, addedRemoteParticipant]));
           });
 
           // We don't use the actual value we are just going to reset the remoteParticipants based on the call

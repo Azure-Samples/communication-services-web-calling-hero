@@ -82,7 +82,7 @@ export const setShareUnshareScreen = (shareScreen: boolean) => {
 };
 
 const subscribeToParticipant = (participant: RemoteParticipant, call: Call, dispatch: Dispatch): void => {
-  let remoteStreamSelector = RemoteStreamSelector.getInstance(Constants.DOMINTANT_PARTICIPANTS_COUNT, dispatch);
+  const remoteStreamSelector = RemoteStreamSelector.getInstance(Constants.DOMINTANT_PARTICIPANTS_COUNT, dispatch);
 
   participant.on('stateChanged', () => {
     remoteStreamSelector.participantStateChanged(
@@ -225,7 +225,7 @@ export const updateDevices = () => {
 export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndReason) => void) => {
   return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
     setLogLevel('verbose');
-    let callClient = new CallClient();
+    const callClient = new CallClient();
 
     const tokenResponse: CommunicationUserToken = await utils.getTokenForUser();
     const userToken = tokenResponse.token;

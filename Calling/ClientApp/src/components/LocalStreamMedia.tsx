@@ -35,7 +35,7 @@ export default (props: LocalStreamMediaProps): JSX.Element => {
     (async () => {
       if (stream) {
         const renderer: VideoStreamRenderer = new VideoStreamRenderer(stream);
-        rendererView = await renderer.createView({ scalingMode: 'Crop', isMirrored: true  });
+        rendererView = await renderer.createView({ scalingMode: 'Crop', isMirrored: true });
 
         const container = document.getElementById(Constants.LOCAL_VIDEO_PREVIEW_ID);
 
@@ -66,7 +66,7 @@ export default (props: LocalStreamMediaProps): JSX.Element => {
         className={localVideoContainerStyle}
         id={Constants.LOCAL_VIDEO_PREVIEW_ID}
       />
-      <Image {...imageProps}/>
+      <Image {...imageProps} />
       <Label className={videoHint}>{label}</Label>
     </div>
   );

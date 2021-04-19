@@ -71,8 +71,8 @@ export default (props: GroupCallProps): JSX.Element => {
         <Header
           selectedPane={selectedPane}
           setSelectedPane={setSelectedPane}
-          endCallHandler={() => { 
-            props.endCallHandler(); 
+          endCallHandler={() => {
+            props.endCallHandler();
           }}
           screenWidth={props.screenWidth}
         />
@@ -87,16 +87,16 @@ export default (props: GroupCallProps): JSX.Element => {
               <Stack.Item grow styles={!activeScreenShare ? activeContainerClassName : hiddenContainerClassName}>
                 <MediaGallery />
               </Stack.Item>
-              {selectedPane !== CommandPanelTypes.None && (
-                  window.innerWidth > Constants.MINI_HEADER_WINDOW_WIDTH ?
-                <Stack.Item disableShrink styles={paneStyles}>
-                  <CommandPanel {...props} selectedPane={selectedPane} setSelectedPane={setSelectedPane} />
-                </Stack.Item>
-                :
-                <Overlay styles={overlayStyles}>
+              {selectedPane !== CommandPanelTypes.None &&
+                (window.innerWidth > Constants.MINI_HEADER_WINDOW_WIDTH ? (
+                  <Stack.Item disableShrink styles={paneStyles}>
                     <CommandPanel {...props} selectedPane={selectedPane} setSelectedPane={setSelectedPane} />
-                </Overlay>
-              )}
+                  </Stack.Item>
+                ) : (
+                  <Overlay styles={overlayStyles}>
+                    <CommandPanel {...props} selectedPane={selectedPane} setSelectedPane={setSelectedPane} />
+                  </Overlay>
+                ))}
             </Stack>
           )
         ) : (

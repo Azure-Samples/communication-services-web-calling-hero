@@ -29,25 +29,24 @@ export enum CommandPanelTypes {
 }
 
 export default (props: CommandPanelProps): JSX.Element => {
-
   return (
     <Stack styles={fullHeightStyles}>
       <Stack.Item className={paneHeaderStyle}>
         <div className={paneHeaderTextStyle}>{props.selectedPane}</div>
       </Stack.Item>
-      
-        {props.selectedPane === CommandPanelTypes.People && (
-          <Stack.Item styles={fullHeightStyles}>
-            <ParticipantStack />
-          </Stack.Item>
-        )}
-        {props.selectedPane === CommandPanelTypes.People && (
-          <Stack.Item>
-            <Footer />
-          </Stack.Item>
-        )}
-        {props.selectedPane === CommandPanelTypes.Settings && (
-          <Stack.Item>
+
+      {props.selectedPane === CommandPanelTypes.People && (
+        <Stack.Item styles={fullHeightStyles}>
+          <ParticipantStack />
+        </Stack.Item>
+      )}
+      {props.selectedPane === CommandPanelTypes.People && (
+        <Stack.Item>
+          <Footer />
+        </Stack.Item>
+      )}
+      {props.selectedPane === CommandPanelTypes.Settings && (
+        <Stack.Item>
           <div className={settingsContainerStyle}>
             <NewLocalSettings
               videoDeviceList={props.videoDeviceList}
@@ -59,9 +58,8 @@ export default (props: CommandPanelProps): JSX.Element => {
               deviceManager={props.deviceManager}
             />
           </div>
-          </Stack.Item>
-        )}
-      
+        </Stack.Item>
+      )}
     </Stack>
   );
 };

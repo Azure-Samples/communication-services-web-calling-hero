@@ -63,19 +63,16 @@ const App = () => {
         <ConfigurationScreen
           startCallHandler={() => setPage('call')}
           unsupportedStateHandler={() => setPage('unsupported')}
-          callEndedHandler={(errorMsg: CallEndReason) => { setCallEndReason(errorMsg); setPage('error');} }
+          callEndedHandler={(errorMsg: CallEndReason) => {
+            setCallEndReason(errorMsg);
+            setPage('error');
+          }}
           groupId={getGroupId()}
           screenWidth={screenWidth}
         />
       );
     } else if (page === 'call') {
-      return (
-        <GroupCall
-          endCallHandler={() => setPage('endCall')}
-          groupId={getGroupId()}
-          screenWidth={screenWidth}
-        />
-      );
+      return <GroupCall endCallHandler={() => setPage('endCall')} groupId={getGroupId()} screenWidth={screenWidth} />;
     } else if (page === 'endCall') {
       return (
         <EndCall
@@ -92,23 +89,28 @@ const App = () => {
       window.document.title = 'Unsupported browser';
       return (
         <>
-          <a href="https://docs.microsoft.com/en-us/azure/communication-services/concepts/voice-video-calling/calling-sdk-features#calling-client-library-browser-support">Learn more</a>&nbsp;about
-          browsers and platforms supported by the web calling sdk
+          <a href="https://docs.microsoft.com/en-us/azure/communication-services/concepts/voice-video-calling/calling-sdk-features#calling-client-library-browser-support">
+            Learn more
+          </a>
+          &nbsp;about browsers and platforms supported by the web calling sdk
         </>
       );
     } else if (page === 'error') {
       window.document.title = 'Call Ended';
       return (
         <div>
-          <div>{`The call has ended with this error code (Code: ${callEndReason?.code} Subcode: ${callEndReason?.subCode})`}</div >
+          <div>{`The call has ended with this error code (Code: ${callEndReason?.code} Subcode: ${callEndReason?.subCode})`}</div>
 
           <div>
-          <a href="https://docs.microsoft.com/en-us/azure/communication-services/concepts/troubleshooting-info?tabs=csharp%2Cjavascript%2Cdotnet">Learn more</a>&nbsp;about
-          why this Azure Communication Services call has ended.</div>
+            <a href="https://docs.microsoft.com/en-us/azure/communication-services/concepts/troubleshooting-info?tabs=csharp%2Cjavascript%2Cdotnet">
+              Learn more
+            </a>
+            &nbsp;about why this Azure Communication Services call has ended.
+          </div>
         </div>
       );
     } else {
-      return <></>
+      return <></>;
     }
   };
 

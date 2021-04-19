@@ -142,5 +142,6 @@ export default class RemoteStreamSelector {
   };
 
   public static getInstance = (dominantParticipantsCount: number, dispatch: Dispatch): RemoteStreamSelector =>
-    (RemoteStreamSelector.Singleton = RemoteStreamSelector.Singleton ?? new RemoteStreamSelector(dominantParticipantsCount, dispatch));
+    (RemoteStreamSelector.Singleton =
+      RemoteStreamSelector.Singleton ?? new RemoteStreamSelector(dominantParticipantsCount, dispatch));
 }

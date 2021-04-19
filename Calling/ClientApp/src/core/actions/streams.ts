@@ -62,7 +62,4 @@ export {
   REMOVE_SCREENSHARE_STREAM
 };
 
-export type StreamTypes =
-  | SetLocalStreamAction
-  | AddScreenShareStreamAction
-  | RemoveScreenShareStreamAction;
+export type StreamTypes = SetLocalStreamAction | AddScreenShareStreamAction | RemoveScreenShareStreamAction;

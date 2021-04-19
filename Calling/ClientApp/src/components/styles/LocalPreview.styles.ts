@@ -29,5 +29,5 @@ export const toggleButtonsBarStyle = mergeStyles({
 export const localPreviewStyle = mergeStyles({
   width: '100%',
   height: '100%',
-  maxHeight: '15.9375rem',
+  maxHeight: '15.9375rem'
 });

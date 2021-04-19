@@ -58,7 +58,7 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
   const [name, setName] = useState(createUserId());
   const [emptyWarning, setEmptyWarning] = useState(false);
 
-  const {groupId, setupCallClient, setupCallAgent, setGroup, unsupportedStateHandler} = props;
+  const { groupId, setupCallClient, setupCallAgent, setGroup, unsupportedStateHandler } = props;
 
   useEffect(() => {
     setupCallClient(unsupportedStateHandler);

@@ -3,11 +3,7 @@ import GroupCall, { GroupCallProps } from '../components/GroupCall';
 import { joinGroup, setMicrophone } from '../core/sideEffects';
 import { setLocalVideoStream } from '../core/actions/streams';
 import { setVideoDeviceInfo, setAudioDeviceInfo } from '../core/actions/devices';
-import {
-  AudioDeviceInfo,
-  VideoDeviceInfo,
-  LocalVideoStream
-} from '@azure/communication-calling';
+import { AudioDeviceInfo, VideoDeviceInfo, LocalVideoStream } from '@azure/communication-calling';
 import { State } from '../core/reducers';
 
 const mapStateToProps = (state: State, props: GroupCallProps) => ({
@@ -23,17 +19,18 @@ const mapStateToProps = (state: State, props: GroupCallProps) => ({
   isGroup: () => state.calls.call && state.calls.call.direction !== 'Incoming' && !!state.calls.group,
   joinGroup: async () => {
     state.calls.callAgent &&
-    
-      await joinGroup(
+      (await joinGroup(
         state.calls.callAgent,
         {
           groupId: state.calls.group
         },
         {
-          videoOptions: { localVideoStreams: state.streams.localVideoStream ? [state.streams.localVideoStream] : undefined },
+          videoOptions: {
+            localVideoStreams: state.streams.localVideoStream ? [state.streams.localVideoStream] : undefined
+          },
           audioOptions: { muted: !state.controls.mic }
         }
-      );
+      ));
   },
   remoteParticipants: state.calls.remoteParticipants,
   callState: state.calls.callState,

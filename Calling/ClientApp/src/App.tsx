@@ -43,8 +43,8 @@ const App = () => {
 
   const getGroupId = () => {
     if (groupId) return groupId;
-    const uri_gid = getGroupIdFromUrl();
-    const gid = uri_gid == null || uri_gid === '' ? createGUID() : uri_gid;
+    const uriGid = getGroupIdFromUrl();
+    const gid = uriGid == null || uriGid === '' ? createGUID() : uriGid;
     setGroupId(gid);
     return gid;
   };

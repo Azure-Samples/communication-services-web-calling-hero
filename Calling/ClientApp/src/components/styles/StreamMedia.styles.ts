@@ -27,5 +27,5 @@ export const mediaContainer = mergeStyles({
 });
 export const localVideoContainerStyle = mergeStyles(mediaContainer, {
   width: '100%',
-  height: '100%',
+  height: '100%'
 });

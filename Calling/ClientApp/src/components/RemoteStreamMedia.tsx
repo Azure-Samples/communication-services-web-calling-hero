@@ -41,7 +41,7 @@ export default (props: RemoteStreamMediaProps): JSX.Element => {
     alignItems: 'center'
   };
 
-  const {label, stream, isParticipantStreamSelected} = props;
+  const { label, stream, isParticipantStreamSelected } = props;
 
   const renderRemoteStream = useCallback(async () => {
     const container = document.getElementById(streamId);
@@ -84,11 +84,11 @@ export default (props: RemoteStreamMediaProps): JSX.Element => {
 
   return (
     <div className={mediaContainer}>
-      <div style={{display: activeStreamBeingRendered ? 'block' : 'none' }} className={mediaContainer} id={streamId}>
-      { showRenderLoading && <Spinner style={loadingStyle} label={`Rendering stream...`} size={SpinnerSize.xSmall} />}
+      <div style={{ display: activeStreamBeingRendered ? 'block' : 'none' }} className={mediaContainer} id={streamId}>
+        {showRenderLoading && <Spinner style={loadingStyle} label={`Rendering stream...`} size={SpinnerSize.xSmall} />}
       </div>
-        <Image {...imageProps}/>
-        <Label className={videoHint}>{label}</Label>
+      <Image {...imageProps} />
+      <Label className={videoHint}>{label}</Label>
     </div>
   );
 };

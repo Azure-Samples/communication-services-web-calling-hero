@@ -26,13 +26,19 @@ export default (props: MediaGalleryProps): JSX.Element => {
     (participants) => (participants && participants.length > 0 ? Math.ceil(Math.sqrt(participants.length + 1)) : 1),
     []
   );
-  const getMediaGalleryTilesForParticipants = (participants: RemoteParticipant[], userId: string, displayName: string) => {
+  const getMediaGalleryTilesForParticipants = (
+    participants: RemoteParticipant[],
+    userId: string,
+    displayName: string
+  ) => {
     const remoteParticipantsMediaGalleryItems = participants.map((participant) => (
       <div key={`${utils.getId(participant.identifier)}-tile`} className={mediaGalleryStyle}>
         <RemoteStreamMedia
           key={utils.getId(participant.identifier)}
           stream={participant.videoStreams[0]}
-          isParticipantStreamSelected = {props.dominantParticipants.filter(p => p.participantId === utils.getId(participant.identifier)).length > 0}
+          isParticipantStreamSelected={
+            props.dominantParticipants.filter((p) => p.participantId === utils.getId(participant.identifier)).length > 0
+          }
           label={participant.displayName ?? utils.getId(participant.identifier)}
         />
       </div>
@@ -57,7 +63,8 @@ export default (props: MediaGalleryProps): JSX.Element => {
   if (numberOfRows !== gridRow) setGridRow(numberOfRows);
 
   return (
-    <div id="video-gallery"
+    <div
+      id="video-gallery"
       className={mediaGalleryGridStyle}
       style={{
         gridTemplateRows: `repeat(${gridRow}, minmax(0, 1fr))`,

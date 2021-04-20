@@ -11,7 +11,7 @@ interface Event {
 class AudioChangedEvent implements Event {
   participantId: string;
   timeStamp: number;
-  isUnMuted: boolean = false;
+  isUnMuted = false;
 
   constructor(participantId: string, isUnMuted: boolean) {
     this.participantId = participantId;
@@ -30,7 +30,7 @@ class AudioChangedEvent implements Event {
 class VideoChangedEvent implements Event {
   participantId: string;
   timeStamp: number;
-  isVideoOn: boolean = false;
+  isVideoOn = false;
 
   constructor(participantId: string, isVideoOn: boolean) {
     this.participantId = participantId;
@@ -50,7 +50,7 @@ export class SelectionState {
   participantId: string;
   displayName: string;
 
-  constructor(participantId: string, displayName: string, isUnMuted: boolean = false, isVideoOn: boolean = false) {
+  constructor(participantId: string, displayName: string, isUnMuted = false, isVideoOn = false) {
     this.participantId = participantId;
     this.displayName = displayName;
     this.isUnMuted = isUnMuted;
@@ -89,7 +89,7 @@ export default class RemoteStreamSelector {
 
   public processCommands = (commands = this.batchedCommands): void => {
     commands.forEach((command) => {
-      let participant = this.remoteParticipants.get(command.participantId);
+      const participant = this.remoteParticipants.get(command.participantId);
       if (!participant) {
         console.error(`RemoteStreamSelector: Participant ${command.participantId} not found`);
         return;
@@ -98,7 +98,7 @@ export default class RemoteStreamSelector {
     });
     this.batchedCommands = [];
 
-    let sortedList = [...this.remoteParticipants.values()].sort(this.compareFn);
+    const sortedList = [...this.remoteParticipants.values()].sort(this.compareFn);
     console.log('RemoteStreamSelector: Participants sorted list', sortedList);
 
     this.dipatch(setDominantParticipants(sortedList.slice(0, this.dominantParticipantsCount)));
@@ -142,5 +142,6 @@ export default class RemoteStreamSelector {
   };
 
   public static getInstance = (dominantParticipantsCount: number, dispatch: Dispatch): RemoteStreamSelector =>
-    (RemoteStreamSelector.Singleton = RemoteStreamSelector.Singleton ?? new RemoteStreamSelector(dominantParticipantsCount, dispatch));
+    (RemoteStreamSelector.Singleton =
+      RemoteStreamSelector.Singleton ?? new RemoteStreamSelector(dominantParticipantsCount, dispatch));
 }

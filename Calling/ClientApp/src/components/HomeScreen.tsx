@@ -13,7 +13,8 @@ import {
   videoCameraIconStyle,
   buttonStyle,
   nestedStackTokens,
-  upperStackStyle, listItemStyle
+  upperStackStyle,
+  listItemStyle
 } from './styles/HomeScreen.styles';
 
 export interface HomeScreenProps {
@@ -44,21 +45,23 @@ export default (props: HomeScreenProps): JSX.Element => {
       <Stack className={upperStackStyle} tokens={upperStackTokens}>
         <div className={headerStyle}>{headerTitle}</div>
         <Stack tokens={nestedStackTokens}>
-            <ul className={listStyle}>
-                <li className={listItemStyle}>
-                    <Icon className={iconStyle} iconName={iconName} /> {listItems[0]}
-                </li>
-                <li className={listItemStyle}>
-                    <Icon className={iconStyle} iconName={iconName} /> {listItems[1]}
-                </li>
-                <li className={listItemStyle}>
-                    <Icon className={iconStyle} iconName={iconName} /> {listItems[2]}
-                </li>
-                <li className={listItemStyle}>
-                    <Icon className={iconStyle} iconName={iconName} /> {listItems[3]}{' '}
-                    <a href="https://docs.microsoft.com/en-us/azure/communication-services/samples/calling-hero-sample?pivots=platform-web">sample</a>
-                </li>
-            </ul>
+          <ul className={listStyle}>
+            <li className={listItemStyle}>
+              <Icon className={iconStyle} iconName={iconName} /> {listItems[0]}
+            </li>
+            <li className={listItemStyle}>
+              <Icon className={iconStyle} iconName={iconName} /> {listItems[1]}
+            </li>
+            <li className={listItemStyle}>
+              <Icon className={iconStyle} iconName={iconName} /> {listItems[2]}
+            </li>
+            <li className={listItemStyle}>
+              <Icon className={iconStyle} iconName={iconName} /> {listItems[3]}{' '}
+              <a href="https://docs.microsoft.com/en-us/azure/communication-services/samples/calling-hero-sample?pivots=platform-web">
+                sample
+              </a>
+            </li>
+          </ul>
         </Stack>
         <PrimaryButton className={buttonStyle} onClick={props.startCallHandler}>
           <VideoCameraEmphasisIcon className={videoCameraIconStyle} size="medium" />

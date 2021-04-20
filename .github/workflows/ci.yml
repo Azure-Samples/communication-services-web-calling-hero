@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build_and_test:
+    name: Build and test
+    runs-on: windows-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.101
+
+      - name: Build backend
+        shell: bash
+        run: |
+          dotnet build ./Calling
+
+      - name: Test backend
+        shell: bash
+        run: |
+          dotnet test ./Calling
+
+  clean_frontend:
+    name: Run clean code tests on frontend
+    runs-on: windows-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install (dev) dependencies
+        working-directory: ./Calling/ClientApp
+        run: npm install
+
+      - name: Lint
+        working-directory: ./Calling/ClientApp
+        run: npx eslint -c package.json --ext ts --ext tsx .
+
+      - name: Check all is pretty
+        working-directory: ./Calling/ClientApp
+        run: npx prettier -c .

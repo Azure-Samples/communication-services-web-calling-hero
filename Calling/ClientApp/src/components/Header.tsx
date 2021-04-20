@@ -81,7 +81,10 @@ export default (props: HeaderProps): JSX.Element => {
   }, [props.call, props.localVideoStream]);
 
   return (
-    <Stack id="header" className={props.screenWidth > Constants.MINI_HEADER_WINDOW_WIDTH ? headerContainer : headerCenteredContainer}>
+    <Stack
+      id="header"
+      className={props.screenWidth > Constants.MINI_HEADER_WINDOW_WIDTH ? headerContainer : headerCenteredContainer}
+    >
       <Pivot
         onKeyDownCapture={(e) => {
           if ((e.target as HTMLElement).id === CommandPanelTypes.People && e.keyCode === 39) e.preventDefault();

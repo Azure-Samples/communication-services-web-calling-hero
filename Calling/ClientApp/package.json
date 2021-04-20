@@ -52,7 +52,10 @@
     "typescript": "^3.9.7"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": "react-app",
+    "rules": {
+      "react/display-name": 0
+    }
   },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",

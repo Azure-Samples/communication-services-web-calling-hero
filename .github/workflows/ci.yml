@@ -52,7 +52,7 @@ jobs:
 
       - name: Lint
         working-directory: ./Calling/ClientApp
-        run: npx eslint --ext ts --ext tsx .
+        run: npx eslint -c package.json --ext ts --ext tsx .
 
       - name: Check all is pretty
         working-directory: ./Calling/ClientApp

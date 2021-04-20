@@ -87,7 +87,6 @@ export default (props: LocalPreviewProps): JSX.Element => {
       >
         <CallVideoIcon size="medium" />
         <Toggle
-          onKeyDownCapture={(e) => {}}
           checked={props.localVideoStream !== undefined}
           styles={toggleStyle}
           disabled={!props.videoDeviceInfo || props.videoDeviceList.length === 0}

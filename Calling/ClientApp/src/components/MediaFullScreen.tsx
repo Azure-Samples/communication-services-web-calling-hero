@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ParticipantStream } from '../core/reducers';
 import { hiddenFullScreenStyle, fullScreenStyle, loadingStyle } from './styles/MediaFullScreen.styles';
 import { RemoteVideoStream, VideoStreamRenderer, VideoStreamRendererView } from '@azure/communication-calling';
@@ -12,7 +12,7 @@ export interface MediaFullScreenProps {
 export default (props: MediaFullScreenProps): JSX.Element => {
   const [loading, setLoading] = useState(true);
   const fullScreenStreamMediaId = 'fullScreenStreamMediaId';
-  let rendererView: VideoStreamRendererView;
+  const rendererViewRef = useRef<VideoStreamRendererView>();
 
   /**
    * Start stream after DOM has rendered
@@ -20,26 +20,27 @@ export default (props: MediaFullScreenProps): JSX.Element => {
 
   const activeScreenShareStream = props.activeScreenShareStream;
 
-  const renderStream = async () => {
+  const renderStreamCallback = useCallback(async () => {
     if (activeScreenShareStream && activeScreenShareStream.stream) {
       const stream: RemoteVideoStream = activeScreenShareStream.stream;
       const renderer: VideoStreamRenderer = new VideoStreamRenderer(stream);
-      rendererView = await renderer.createView({ scalingMode: 'Fit' });
+      rendererViewRef.current = await renderer.createView({ scalingMode: 'Fit' });
 
       const container = document.getElementById(fullScreenStreamMediaId);
       if (container && container.childElementCount === 0) {
         setLoading(false);
-        container.appendChild(rendererView.target);
+        container.appendChild(rendererViewRef.current.target);
       }
     } else {
-      if (rendererView) {
-        rendererView.dispose();
+      if (rendererViewRef) {
+        rendererViewRef.current?.dispose();
       }
     }
-  };
+  }, [activeScreenShareStream])
+
   useEffect(() => {
-    renderStream();
-  }, [activeScreenShareStream, renderStream]);
+    renderStreamCallback();
+  }, [renderStreamCallback]);
 
   const displayName =
     props.activeScreenShareStream.user.displayName ?? utils.getId(props.activeScreenShareStream.user.identifier);

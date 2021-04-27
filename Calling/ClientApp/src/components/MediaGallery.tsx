@@ -30,7 +30,7 @@ export default (props: MediaGalleryProps): JSX.Element => {
     participants: RemoteParticipant[],
     userId: string,
     displayName: string
-  ): JSX.Element => {
+  ): JSX.Element[] => {
     const remoteParticipantsMediaGalleryItems = participants.map((participant) => (
       <div key={`${utils.getId(participant.identifier)}-tile`} className={mediaGalleryStyle}>
         <RemoteStreamMedia

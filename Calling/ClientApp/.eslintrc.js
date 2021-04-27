@@ -14,5 +14,7 @@ module.exports = {
     }
   },
   extends: ['plugin:react/recommended', 'plugin:@typescript-eslint/recommended', 'prettier'],
-  rules: {}
+  rules: {
+    "react/display-name": "off",
+  }
 };

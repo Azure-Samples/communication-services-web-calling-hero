@@ -12,13 +12,13 @@ import {
 const invitePeopleString = 'Invite people to join';
 const copyJoinInfoString = 'Copy join info';
 
-const copyJoinLink = () => {
+const copyJoinLink = (): void => {
   const inputElement = document.getElementById('inputText') as HTMLInputElement;
   inputElement.select();
   document.execCommand('copy');
 };
 
-export default () => {
+export default (): JSX.Element => {
   return (
     <Stack styles={paneFooterStyles} tokens={paneFooterTokens}>
       <Separator />

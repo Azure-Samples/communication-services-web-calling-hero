@@ -17,7 +17,7 @@ export interface CommandPanelProps {
   videoDeviceList: VideoDeviceInfo[];
   audioDeviceList: AudioDeviceInfo[];
   audioDeviceInfo: AudioDeviceInfo;
-  setSelectedPane: any;
+  setSelectedPane: () => void;
   setVideoDeviceInfo(device: VideoDeviceInfo): void;
   setAudioDeviceInfo(device: AudioDeviceInfo): void;
   deviceManager: DeviceManager;

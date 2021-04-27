@@ -32,7 +32,7 @@ export default (props: LocalStreamMediaProps): JSX.Element => {
   const { stream, label } = props;
 
   useEffect(() => {
-    (async () => {
+    (async (): Promise<void> => {
       if (stream) {
         const renderer: VideoStreamRenderer = new VideoStreamRenderer(stream);
         rendererViewRef.current = await renderer.createView({ scalingMode: 'Crop', isMirrored: true });
@@ -51,7 +51,7 @@ export default (props: LocalStreamMediaProps): JSX.Element => {
       }
     })();
 
-    return () => {
+    return (): void => {
       if (rendererViewRef) {
         rendererViewRef.current?.dispose();
         setActiveStreamBeingRendered(false);

@@ -16,8 +16,8 @@ const mapStateToProps = (state: State, props: GroupCallProps) => ({
   shareScreen: state.controls.shareScreen,
   mic: state.controls.mic,
   groupCallEndReason: state.calls.groupCallEndReason,
-  isGroup: () => state.calls.call && state.calls.call.direction !== 'Incoming' && !!state.calls.group,
-  joinGroup: async () => {
+  isGroup: (): boolean | undefined => state.calls.call && state.calls.call.direction !== 'Incoming' && !!state.calls.group,
+  joinGroup: async (): Promise<void> => {
     state.calls.callAgent &&
       (await joinGroup(
         state.calls.callAgent,
@@ -46,14 +46,14 @@ const mapStateToProps = (state: State, props: GroupCallProps) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-  mute: () => dispatch(setMicrophone(false)),
-  setAudioDeviceInfo: (deviceInfo: AudioDeviceInfo) => {
+  mute: (): void => dispatch(setMicrophone(false)),
+  setAudioDeviceInfo: (deviceInfo: AudioDeviceInfo): void => {
     dispatch(setAudioDeviceInfo(deviceInfo));
   },
-  setVideoDeviceInfo: (deviceInfo: VideoDeviceInfo) => {
+  setVideoDeviceInfo: (deviceInfo: VideoDeviceInfo): void => {
     dispatch(setVideoDeviceInfo(deviceInfo));
   },
-  setLocalVideoStream: (localVideoStream: LocalVideoStream) => dispatch(setLocalVideoStream(localVideoStream))
+  setLocalVideoStream: (localVideoStream: LocalVideoStream): void => dispatch(setLocalVideoStream(localVideoStream))
 });
 
 const connector: any = connect(mapStateToProps, mapDispatchToProps);

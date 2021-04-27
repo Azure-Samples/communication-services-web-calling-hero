@@ -41,19 +41,19 @@ export interface HeaderProps {
 }
 
 export default (props: HeaderProps): JSX.Element => {
-  const togglePeople = (selectedPane: string, setSelectedPane: (pane: string) => void) => {
+  const togglePeople = (selectedPane: string, setSelectedPane: (pane: string) => void): void => {
     return selectedPane !== CommandPanelTypes.People
       ? setSelectedPane(CommandPanelTypes.People)
       : setSelectedPane(CommandPanelTypes.None);
   };
 
-  const toggleOptions = (selectedPane: string, setSelectedPane: (pane: string) => void) => {
+  const toggleOptions = (selectedPane: string, setSelectedPane: (pane: string) => void): void => {
     return selectedPane !== CommandPanelTypes.Settings
       ? setSelectedPane(CommandPanelTypes.Settings)
       : setSelectedPane(CommandPanelTypes.None);
   };
 
-  const handleLocalVideoOnOff = async () => {
+  const handleLocalVideoOnOff = async (): Promise<void> => {
     if (props.localVideoStream) {
       await props.call.stopVideo(props.localVideoStream);
       props.setLocalVideoStream(undefined);
@@ -66,11 +66,11 @@ export default (props: HeaderProps): JSX.Element => {
     }
   };
 
-  const handleMuteOnOff = () => {
+  const handleMuteOnOff = (): void => {
     props.setMic(!props.mic);
   };
 
-  const handleScreenSharingOnOff = () => {
+  const handleScreenSharingOnOff = (): void => {
     props.setScreenShare(!props.shareScreen);
   };
 
@@ -86,11 +86,11 @@ export default (props: HeaderProps): JSX.Element => {
       className={props.screenWidth > Constants.MINI_HEADER_WINDOW_WIDTH ? headerContainer : headerCenteredContainer}
     >
       <Pivot
-        onKeyDownCapture={(e) => {
+        onKeyDownCapture={(e): void => {
           if ((e.target as HTMLElement).id === CommandPanelTypes.People && e.keyCode === 39) e.preventDefault();
         }}
-        getTabId={(itemKey: string) => itemKey}
-        onLinkClick={(item) => {
+        getTabId={(itemKey: string): string => itemKey}
+        onLinkClick={(item): void => {
           if (!item) return;
           if (item.props.itemKey === CommandPanelTypes.Settings)
             toggleOptions(props.selectedPane, props.setSelectedPane);
@@ -102,7 +102,7 @@ export default (props: HeaderProps): JSX.Element => {
       >
         <PivotItem
           itemKey={CommandPanelTypes.Settings}
-          onRenderItemLink={() => (
+          onRenderItemLink={(): JSX.Element => (
             <SettingsIcon
               outline={props.selectedPane === CommandPanelTypes.Settings ? false : true}
               size="medium"
@@ -112,7 +112,7 @@ export default (props: HeaderProps): JSX.Element => {
         />
         <PivotItem
           itemKey={CommandPanelTypes.People}
-          onRenderItemLink={() => (
+          onRenderItemLink={(): JSX.Element => (
             <UserFriendsIcon
               outline={props.selectedPane === CommandPanelTypes.People ? false : true}
               size="medium"
@@ -135,7 +135,7 @@ export default (props: HeaderProps): JSX.Element => {
         screenShareActive={props.shareScreen}
         activeScreenShareStream={props.screenShareStreams[0] ?? undefined}
         onScreenShareChange={handleScreenSharingOnOff}
-        onEndCallClick={() => {
+        onEndCallClick={(): void => {
           if (props.localVideo) handleLocalVideoOnOff();
           props.endCall();
         }}

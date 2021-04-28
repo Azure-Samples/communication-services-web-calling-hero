@@ -72,13 +72,15 @@ const App = (): JSX.Element => {
         />
       );
     } else if (page === 'call') {
-      return <GroupCall endCallHandler={(): void => setPage('endCall')} groupId={getGroupId()} screenWidth={screenWidth} />;
+      return (
+        <GroupCall endCallHandler={(): void => setPage('endCall')} groupId={getGroupId()} screenWidth={screenWidth} />
+      );
     } else if (page === 'endCall') {
       return (
         <EndCall
           message={'You left the call'}
           rejoinHandler={(): void => {
-            window.location.reload()
+            window.location.reload();
           }}
           homeHandler={(): void => {
             window.location.href = window.location.href.split('?')[0];

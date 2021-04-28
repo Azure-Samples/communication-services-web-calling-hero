@@ -36,7 +36,7 @@ export default (props: MediaFullScreenProps): JSX.Element => {
         rendererViewRef.current?.dispose();
       }
     }
-  }, [activeScreenShareStream])
+  }, [activeScreenShareStream]);
 
   useEffect(() => {
     renderStreamCallback();

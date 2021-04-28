@@ -68,7 +68,14 @@ export default (props: RemoteStreamMediaProps): JSX.Element => {
         rendererViewRef.current.dispose();
       }
     }
-  }, [stream, streamId, isParticipantStreamSelected, activeStreamBeingRendered, setShowRenderLoading, setActiveStreamBeingRendered]);
+  }, [
+    stream,
+    streamId,
+    isParticipantStreamSelected,
+    activeStreamBeingRendered,
+    setShowRenderLoading,
+    setActiveStreamBeingRendered
+  ]);
 
   useEffect(() => {
     if (!stream) {

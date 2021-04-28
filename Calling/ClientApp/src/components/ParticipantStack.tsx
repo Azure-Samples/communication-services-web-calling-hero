@@ -50,9 +50,7 @@ const onRenderOverflowButton = (overflowItems: any): JSX.Element => (
     menuProps={{ items: overflowItems }}
   />
 );
-const getParticipants = (
-  participants: CallParticipant[]
-): JSX.Element[] =>
+const getParticipants = (participants: CallParticipant[]): JSX.Element[] =>
   participants.map((item, i) => (
     <OverflowSet
       key={i}

@@ -63,10 +63,10 @@
     "build": "react-scripts build",
     "test": "cross-env CI=true react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "prettier": "prettier --write --config .prettierrc **/*.js **/*.ts",
-    "prettier:check": "prettier --check --config .prettierrc **/*.js **/*.ts",
-    "lint": "eslint */**/*.{ts,tsx} && echo Lint completed.",
-    "lint:quiet": "eslint */**/*.{ts,tsx} --quiet && echo Lint completed."
+    "prettier": "prettier --write --config .prettierrc **/*.js **/*.ts **/*.tsx",
+    "prettier:check": "prettier --check --config .prettierrc **/*.js **/*.ts **/*.tsx",
+    "lint": "eslint -c package.json */**/*.{ts,tsx} && echo Lint completed.",
+    "lint:quiet": "eslint -c package.json */**/*.{ts,tsx} --quiet && echo Lint completed."
   },
   "browserslist": {
     "production": [

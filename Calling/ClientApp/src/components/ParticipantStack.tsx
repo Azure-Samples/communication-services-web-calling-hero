@@ -8,7 +8,6 @@ import {
   iconStyle
 } from './styles/ParticipantStack.styles';
 import { RemoteParticipant, Call } from '@azure/communication-calling';
-import { CommunicationUserKind } from '@azure/communication-common';
 import { ParticipantStream } from 'core/reducers';
 import { utils } from '../Utils/Utils';
 import { MicIcon, MicOffIcon } from '@fluentui/react-icons-northstar';
@@ -20,7 +19,6 @@ export interface ParticipantStackProps {
   callState: string;
   screenShareStreams: ParticipantStream[];
   remoteParticipants: RemoteParticipant[];
-  removeParticipant(user: CommunicationUserKind | undefined): void;
 }
 export interface CallParticipant {
   key: string;
@@ -31,7 +29,7 @@ export interface CallParticipant {
   isSpeaking: boolean;
 }
 
-const onRenderItem = (item: any) => (
+const onRenderItem = (item: any): JSX.Element => (
   <>
     <Persona
       text={item.name}
@@ -43,7 +41,7 @@ const onRenderItem = (item: any) => (
     {item.isScreenSharing && <FontIcon className={iconStyle} iconName="ScreenCast" />}
   </>
 );
-const onRenderOverflowButton = (overflowItems: any) => (
+const onRenderOverflowButton = (overflowItems: any): JSX.Element => (
   <IconButton
     role="menuitem"
     title="More options"
@@ -52,10 +50,7 @@ const onRenderOverflowButton = (overflowItems: any) => (
     menuProps={{ items: overflowItems }}
   />
 );
-const getParticipants = (
-  participants: CallParticipant[],
-  removeParticipant: (user: CommunicationUserKind | undefined) => void
-) =>
+const getParticipants = (participants: CallParticipant[]): JSX.Element[] =>
   participants.map((item, i) => (
     <OverflowSet
       key={i}
@@ -90,7 +85,7 @@ export default (props: ParticipantStackProps): JSX.Element => {
   });
   return (
     <Stack className={participantStackStyle} tokens={participantStackTokens}>
-      {getParticipants(participants, props.removeParticipant)}
+      {getParticipants(participants)}
     </Stack>
   );
 };

@@ -17,7 +17,7 @@ const mapStateToProps = (state: State, props: HeaderProps) => ({
   mic: state.controls.mic,
   call: state.calls.call,
   shareScreen: state.controls.shareScreen,
-  endCall: () => {
+  endCall: (): void => {
     state.calls.call && endCall(state.calls.call, { forEveryone: false });
     props.endCallHandler();
   },
@@ -30,11 +30,11 @@ const mapStateToProps = (state: State, props: HeaderProps) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-  setLocalVideoStream: (localVideoStream: LocalVideoStream) => dispatch(setLocalVideoStream(localVideoStream)),
-  setMic: (mic: boolean) => dispatch(setMicrophone(mic)),
-  setScreenShare: (screenShare: boolean) => dispatch(setShareUnshareScreen(screenShare)),
+  setLocalVideoStream: (localVideoStream: LocalVideoStream): void => dispatch(setLocalVideoStream(localVideoStream)),
+  setMic: (mic: boolean): void => dispatch(setMicrophone(mic)),
+  setScreenShare: (screenShare: boolean): void => dispatch(setShareUnshareScreen(screenShare)),
   // Only support Desktop -- Chrome | Edge (Chromium) | Safari
-  isLocalScreenShareSupportedInBrowser: () => {
+  isLocalScreenShareSupportedInBrowser: (): boolean => {
     return (
       !utils.isMobileSession() &&
       (/chrome/i.test(navigator.userAgent.toLowerCase()) || /safari/i.test(navigator.userAgent.toLowerCase()))

@@ -53,7 +53,7 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
   const spinnerLabel = 'Initializing call client...';
   const buttonText = 'Start call';
 
-  const createUserId = () => 'user' + Math.ceil(Math.random() * 1000);
+  const createUserId = (): string => 'user' + Math.ceil(Math.random() * 1000);
 
   const [name, setName] = useState(createUserId());
   const [emptyWarning, setEmptyWarning] = useState(false);
@@ -100,7 +100,7 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
             <div>
               <PrimaryButton
                 className={buttonStyle}
-                onClick={async () => {
+                onClick={async (): Promise<void> => {
                   if (!name) {
                     setEmptyWarning(true);
                   } else {

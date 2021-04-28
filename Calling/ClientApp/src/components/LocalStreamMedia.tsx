@@ -1,6 +1,6 @@
 // © Microsoft Corporation. All rights reserved.
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Image, ImageFit, Label } from '@fluentui/react';
 import { LocalVideoStream, VideoStreamRenderer, VideoStreamRendererView } from '@azure/communication-calling';
 import { videoHint, mediaContainer, localVideoContainerStyle } from './styles/StreamMedia.styles';
@@ -13,7 +13,7 @@ export interface LocalStreamMediaProps {
 }
 
 export default (props: LocalStreamMediaProps): JSX.Element => {
-  let rendererView: VideoStreamRendererView;
+  const rendererViewRef = useRef<VideoStreamRendererView>();
 
   const [activeStreamBeingRendered, setActiveStreamBeingRendered] = useState(false);
 
@@ -32,28 +32,28 @@ export default (props: LocalStreamMediaProps): JSX.Element => {
   const { stream, label } = props;
 
   useEffect(() => {
-    (async () => {
+    (async (): Promise<void> => {
       if (stream) {
         const renderer: VideoStreamRenderer = new VideoStreamRenderer(stream);
-        rendererView = await renderer.createView({ scalingMode: 'Crop', isMirrored: true });
+        rendererViewRef.current = await renderer.createView({ scalingMode: 'Crop', isMirrored: true });
 
         const container = document.getElementById(Constants.LOCAL_VIDEO_PREVIEW_ID);
 
         if (container && container.childElementCount === 0) {
-          container.appendChild(rendererView.target);
+          container.appendChild(rendererViewRef.current.target);
           setActiveStreamBeingRendered(true);
         }
       } else {
-        if (rendererView) {
-          rendererView.dispose();
+        if (rendererViewRef) {
+          rendererViewRef.current?.dispose();
           setActiveStreamBeingRendered(false);
         }
       }
     })();
 
-    return () => {
-      if (rendererView) {
-        rendererView.dispose();
+    return (): void => {
+      if (rendererViewRef) {
+        rendererViewRef.current?.dispose();
         setActiveStreamBeingRendered(false);
       }
     };

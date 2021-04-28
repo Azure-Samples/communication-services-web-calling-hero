@@ -16,7 +16,8 @@ const mapStateToProps = (state: State, props: GroupCallProps) => ({
   shareScreen: state.controls.shareScreen,
   mic: state.controls.mic,
   groupCallEndReason: state.calls.groupCallEndReason,
-  isGroup: (): boolean | undefined => state.calls.call && state.calls.call.direction !== 'Incoming' && !!state.calls.group,
+  isGroup: (): boolean | undefined =>
+    state.calls.call && state.calls.call.direction !== 'Incoming' && !!state.calls.group,
   joinGroup: async (): Promise<void> => {
     state.calls.callAgent &&
       (await joinGroup(

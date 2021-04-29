@@ -35,7 +35,7 @@ export default (props: LocalSettingsProps): JSX.Element => {
         styles={dropDownStyles}
         disabled={props.videoDeviceList.length === 0}
         defaultSelectedKey={props.videoDeviceInfo ? props.videoDeviceInfo.id : ''}
-        onChange={(...args) => {
+        onChange={(...args): void => {
           const index = args[2] ?? 0;
           props.setVideoDeviceInfo(props.videoDeviceList[index]);
         }}
@@ -48,7 +48,7 @@ export default (props: LocalSettingsProps): JSX.Element => {
           disabled={props.audioDeviceList.length === 0}
           options={getDropDownList(props.audioDeviceList)}
           defaultSelectedKey={props.audioDeviceInfo ? props.audioDeviceInfo.id : ''}
-          onChange={(...args) => {
+          onChange={(...args): void => {
             const index = args[2] ?? 0;
             props.setAudioDeviceInfo(props.audioDeviceList[index]);
             props.deviceManager.selectMicrophone(props.audioDeviceList[index]);

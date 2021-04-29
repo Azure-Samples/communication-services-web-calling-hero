@@ -71,7 +71,7 @@ export default (props: GroupCallProps): JSX.Element => {
         <Header
           selectedPane={selectedPane}
           setSelectedPane={setSelectedPane}
-          endCallHandler={() => {
+          endCallHandler={(): void => {
             props.endCallHandler();
           }}
           screenWidth={props.screenWidth}

@@ -26,7 +26,7 @@ const TextFieldStyleProps = {
 };
 
 export default (props: DisplayNameFieldProps): JSX.Element => {
-  const onNameTextChange = (event: any) => {
+  const onNameTextChange = (event: any): void => {
     props.setName(event.target.value);
     if (event.target.value) {
       props.setEmptyWarning(false);

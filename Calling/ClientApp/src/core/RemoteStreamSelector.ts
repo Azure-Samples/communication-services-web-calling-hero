@@ -79,7 +79,7 @@ export default class RemoteStreamSelector {
     );
   }
 
-  private compareFn = (a: SelectionState, b: SelectionState) => {
+  private compareFn = (a: SelectionState, b: SelectionState): number => {
     if (a.isVideoOn === b.isVideoOn) {
       if (a.isUnMuted === b.isUnMuted) return b.lastUnMuted - a.lastUnMuted;
       return a.isUnMuted ? -1 : 1;

@@ -47,7 +47,7 @@ export default (props: MediaControlsProps): JSX.Element => {
   return (
     <Stack className={mediaControlStyles}>
       <CommandButton
-        onKeyDownCapture={(e) => {
+        onKeyDownCapture={(e): void => {
           if (e.keyCode === 13 && props.localVideoRendererIsBusy) {
             e.preventDefault();
           }

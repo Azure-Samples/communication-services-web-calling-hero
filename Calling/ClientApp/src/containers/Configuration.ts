@@ -24,14 +24,14 @@ const mapStateToProps = (state: State, props: ConfigurationScreenProps) => ({
 });
 
 const mapDispatchToProps = (dispatch: any, props: ConfigurationScreenProps) => ({
-  setLocalVideoStream: (localVideoStream: LocalVideoStream) => dispatch(setLocalVideoStream(localVideoStream)),
-  setMic: (mic: boolean) => dispatch(setMic(mic)),
-  setAudioDeviceInfo: (deviceInfo: AudioDeviceInfo) => dispatch(setAudioDeviceInfo(deviceInfo)),
-  setVideoDeviceInfo: (deviceInfo: VideoDeviceInfo) => dispatch(setVideoDeviceInfo(deviceInfo)),
-  setupCallClient: (unsupportedStateHandler: () => void) => dispatch(initCallClient(unsupportedStateHandler)),
-  setupCallAgent: (displayName: string) => dispatch(initCallAgent(displayName, props.callEndedHandler)),
-  setGroup: (groupId: string) => dispatch(setGroup(groupId)),
-  updateDevices: () => dispatch(updateDevices())
+  setLocalVideoStream: (localVideoStream: LocalVideoStream): void => dispatch(setLocalVideoStream(localVideoStream)),
+  setMic: (mic: boolean): void => dispatch(setMic(mic)),
+  setAudioDeviceInfo: (deviceInfo: AudioDeviceInfo): void => dispatch(setAudioDeviceInfo(deviceInfo)),
+  setVideoDeviceInfo: (deviceInfo: VideoDeviceInfo): void => dispatch(setVideoDeviceInfo(deviceInfo)),
+  setupCallClient: (unsupportedStateHandler: () => void): void => dispatch(initCallClient(unsupportedStateHandler)),
+  setupCallAgent: (displayName: string): void => dispatch(initCallAgent(displayName, props.callEndedHandler)),
+  setGroup: (groupId: string): void => dispatch(setGroup(groupId)),
+  updateDevices: (): void => dispatch(updateDevices())
 });
 
 const connector: any = connect(mapStateToProps, mapDispatchToProps);

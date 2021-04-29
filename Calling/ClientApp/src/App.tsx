@@ -20,28 +20,28 @@ loadTheme({});
 initializeIcons();
 
 const store = createStore(reducer, applyMiddleware(thunk));
-const App = () => {
+const App = (): JSX.Element => {
   const [page, setPage] = useState('home');
   const [callEndReason, setCallEndReason] = useState<CallEndReason | undefined>();
   const [groupId, setGroupId] = useState('');
   const [screenWidth, setScreenWidth] = useState(0);
 
   useEffect(() => {
-    const setWindowWidth = () => {
+    const setWindowWidth = (): void => {
       const width = typeof window !== 'undefined' ? window.innerWidth : 0;
       setScreenWidth(width);
     };
     setWindowWidth();
     window.addEventListener('resize', setWindowWidth);
-    return () => window.removeEventListener('resize', setWindowWidth);
+    return (): void => window.removeEventListener('resize', setWindowWidth);
   }, []);
 
-  const getGroupIdFromUrl = () => {
+  const getGroupIdFromUrl = (): string | null => {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get('groupId');
   };
 
-  const getGroupId = () => {
+  const getGroupId = (): string => {
     if (groupId) return groupId;
     const uriGid = getGroupIdFromUrl();
     const gid = uriGid == null || uriGid === '' ? createGUID() : uriGid;
@@ -49,11 +49,11 @@ const App = () => {
     return gid;
   };
 
-  const getContent = () => {
+  const getContent = (): JSX.Element => {
     if (page === 'home') {
       return (
         <HomeScreen
-          startCallHandler={() => {
+          startCallHandler={(): void => {
             window.history.pushState({}, document.title, window.location.href + '?groupId=' + getGroupId());
           }}
         />
@@ -61,9 +61,9 @@ const App = () => {
     } else if (page === 'configuration') {
       return (
         <ConfigurationScreen
-          startCallHandler={() => setPage('call')}
-          unsupportedStateHandler={() => setPage('unsupported')}
-          callEndedHandler={(errorMsg: CallEndReason) => {
+          startCallHandler={(): void => setPage('call')}
+          unsupportedStateHandler={(): void => setPage('unsupported')}
+          callEndedHandler={(errorMsg: CallEndReason): void => {
             setCallEndReason(errorMsg);
             setPage('error');
           }}
@@ -72,15 +72,17 @@ const App = () => {
         />
       );
     } else if (page === 'call') {
-      return <GroupCall endCallHandler={() => setPage('endCall')} groupId={getGroupId()} screenWidth={screenWidth} />;
+      return (
+        <GroupCall endCallHandler={(): void => setPage('endCall')} groupId={getGroupId()} screenWidth={screenWidth} />
+      );
     } else if (page === 'endCall') {
       return (
         <EndCall
           message={'You left the call'}
-          rejoinHandler={() => {
-            window.location.href = window.location.href;
+          rejoinHandler={(): void => {
+            window.location.reload();
           }}
-          homeHandler={() => {
+          homeHandler={(): void => {
             window.location.href = window.location.href.split('?')[0];
           }}
         />

@@ -25,13 +25,22 @@ import {
 } from './styles/Configuration.styles';
 import { AzureCommunicationTokenCredential } from '@azure/communication-common';
 
+export type TokenResponse = {
+  tokenCredential: AzureCommunicationTokenCredential;
+  userId: string;
+};
+
 export interface ConfigurationScreenProps {
   userId: string;
   groupId: string;
   callAgent: CallAgent;
   deviceManager: DeviceManager;
   setupCallClient(unsupportedStateHandler: () => void): void;
-  setupCallAgent(displayName: string, groupId: string, afterSetupHandler: (callAgent: CallAgent, groupId: string) => void): void;
+  setupCallAgent(
+    displayName: string,
+    groupId: string,
+    afterSetupHandler: (callAgent: CallAgent, groupId: string) => void
+  ): void;
   setGroup(groupId: string): void;
   startCallHandler(): void;
   unsupportedStateHandler: () => void;
@@ -49,9 +58,13 @@ export interface ConfigurationScreenProps {
   localVideoStream: LocalVideoStream;
   screenWidth: number;
   joinGroup(callAgent: CallAgent, groupId: string): void;
-  getToken(): Promise<{tokenCredential: AzureCommunicationTokenCredential, userId: string}>;
+  getToken(): Promise<TokenResponse>;
   createCallAgent(tokenCredential: AzureCommunicationTokenCredential, displayName: string): Promise<CallAgent>;
-  registerToCallEvents(userId: string, callAgent: CallAgent, endCallHandler: (reason: CallEndReason) => void): Promise<void> 
+  registerToCallEvents(
+    userId: string,
+    callAgent: CallAgent,
+    endCallHandler: (reason: CallEndReason) => void
+  ): Promise<void>;
 }
 
 export default (props: ConfigurationScreenProps): JSX.Element => {
@@ -111,7 +124,7 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
                   } else {
                     setEmptyWarning(false);
                     //1. Retrieve a token
-                    const {tokenCredential, userId} = await props.getToken();
+                    const { tokenCredential, userId } = await props.getToken();
                     //2. Initialize the call agent
                     const callAgent = await props.createCallAgent(tokenCredential, name);
                     //3. Register for calling events

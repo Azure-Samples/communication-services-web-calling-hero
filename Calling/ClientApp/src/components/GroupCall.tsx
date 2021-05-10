@@ -79,7 +79,7 @@ export default (props: GroupCallProps): JSX.Element => {
                 {activeScreenShare && <MediaFullScreen activeScreenShareStream={props.screenShareStreams[0]} />}
               </Stack.Item>
               <Stack.Item grow styles={!activeScreenShare ? activeContainerClassName : hiddenContainerClassName}>
-                <MediaGallery localVideoStream={props.localVideoStream}/>
+                <MediaGallery localVideoStream={props.localVideoStream} />
               </Stack.Item>
               {selectedPane !== CommandPanelTypes.None &&
                 (window.innerWidth > Constants.MINI_HEADER_WINDOW_WIDTH ? (

@@ -1,11 +1,18 @@
 import { connect } from 'react-redux';
-import ConfigurationScreen, { ConfigurationScreenProps } from '../components/Configuration';
+import ConfigurationScreen, { ConfigurationScreenProps, TokenResponse } from '../components/Configuration';
 import { setCallAgent, setGroup } from '../core/actions/calls';
 import { setVideoDeviceInfo, setAudioDeviceInfo } from '../core/actions/devices';
 import { initCallClient, joinGroup, registerToCallAgent, updateDevices } from '../core/sideEffects';
 import { setMic } from '../core/actions/controls';
 import { State } from '../core/reducers';
-import { AudioDeviceInfo, VideoDeviceInfo, LocalVideoStream, CallAgent, CallClient, CallEndReason } from '@azure/communication-calling';
+import {
+  AudioDeviceInfo,
+  VideoDeviceInfo,
+  LocalVideoStream,
+  CallAgent,
+  CallClient,
+  CallEndReason
+} from '@azure/communication-calling';
 import { CommunicationUserToken } from '@azure/communication-identity';
 import { utils } from 'Utils/Utils';
 import { AzureCommunicationTokenCredential } from '@azure/communication-common';
@@ -38,10 +45,10 @@ const mapStateToProps = (state: State, props: ConfigurationScreenProps) => ({
         }
       ));
   },
-  getToken: async(): Promise<{tokenCredential: AzureCommunicationTokenCredential, userId: string}> => {
+  getToken: async (): Promise<TokenResponse> => {
     const tokenResponse: CommunicationUserToken = await utils.getTokenForUser();
     const userToken = tokenResponse.token;
-    const userId = tokenResponse.user.communicationUserId
+    const userId = tokenResponse.user.communicationUserId;
 
     const tokenCredential = new AzureCommunicationTokenCredential({
       tokenRefresher: (): Promise<string> => {
@@ -54,9 +61,12 @@ const mapStateToProps = (state: State, props: ConfigurationScreenProps) => ({
     return {
       tokenCredential,
       userId
-    }
+    };
   },
-  createCallAgent: async (tokenCredential: AzureCommunicationTokenCredential, displayName: string): Promise<CallAgent> => {
+  createCallAgent: async (
+    tokenCredential: AzureCommunicationTokenCredential,
+    displayName: string
+  ): Promise<CallAgent> => {
     const callClient = new CallClient();
     const callAgent: CallAgent = await callClient.createCallAgent(tokenCredential, { displayName });
     return callAgent;
@@ -68,10 +78,14 @@ const mapDispatchToProps = (dispatch: any, props: ConfigurationScreenProps) => (
   setAudioDeviceInfo: (deviceInfo: AudioDeviceInfo): void => dispatch(setAudioDeviceInfo(deviceInfo)),
   setVideoDeviceInfo: (deviceInfo: VideoDeviceInfo): void => dispatch(setVideoDeviceInfo(deviceInfo)),
   setupCallClient: (unsupportedStateHandler: () => void): void => dispatch(initCallClient(unsupportedStateHandler)),
-  registerToCallEvents: async (userId: string, callAgent: CallAgent, endCallHandler: (reason: CallEndReason) => void): Promise<void> => {
+  registerToCallEvents: async (
+    userId: string,
+    callAgent: CallAgent,
+    endCallHandler: (reason: CallEndReason) => void
+  ): Promise<void> => {
     dispatch(setUserId(userId));
     dispatch(setCallAgent(callAgent));
-    dispatch(registerToCallAgent(userId, callAgent, endCallHandler))
+    dispatch(registerToCallAgent(userId, callAgent, endCallHandler));
   },
   setGroup: (groupId: string): void => dispatch(setGroup(groupId)),
   updateDevices: (): void => dispatch(updateDevices())

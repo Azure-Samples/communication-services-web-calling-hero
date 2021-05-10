@@ -13,7 +13,7 @@ import {
   HangUpOptions,
   CallEndReason
 } from '@azure/communication-calling';
-import {  CommunicationUserKind } from '@azure/communication-common';
+import { CommunicationUserKind } from '@azure/communication-common';
 import { Dispatch } from 'redux';
 import { utils } from '../Utils/Utils';
 import { callAdded, callRemoved, setCallState, setParticipants, setCallAgent } from './actions/calls';
@@ -221,8 +221,12 @@ export const updateDevices = () => {
   };
 };
 
-export const registerToCallAgent = (userId: string,callAgent: CallAgent, callEndedHandler: (reason: CallEndReason) => void) => {
-  return async(dispatch: Dispatch, getState: () => State): Promise<void> => {
+export const registerToCallAgent = (
+  userId: string,
+  callAgent: CallAgent,
+  callEndedHandler: (reason: CallEndReason) => void
+) => {
+  return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
     setLogLevel('verbose');
 
     setUserId(userId);
@@ -279,8 +283,8 @@ export const registerToCallAgent = (userId: string,callAgent: CallAgent, callEnd
         }
       });
     });
-  }
-}
+  };
+};
 
 export const initCallClient = (unsupportedStateHandler: () => void) => {
   return async (dispatch: Dispatch, getState: () => State): Promise<void> => {

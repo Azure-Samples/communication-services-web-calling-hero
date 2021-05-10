@@ -6,7 +6,7 @@ const mapStateToProps = (state: State) => ({
   userId: state.sdk.userId,
   displayName: state.calls.callAgent?.displayName,
   remoteParticipants: state.calls.remoteParticipants,
-  dominantParticipants: state.calls.dominantParticipants,
+  dominantParticipants: state.calls.dominantParticipants
 });
 
 const connector: any = connect(mapStateToProps);

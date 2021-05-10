@@ -37,9 +37,6 @@ export const removeScreenShareStream = (
   };
 };
 
-export {
-  ADD_SCREENSHARE_STREAM,
-  REMOVE_SCREENSHARE_STREAM
-};
+export { ADD_SCREENSHARE_STREAM, REMOVE_SCREENSHARE_STREAM };
 
 export type StreamTypes = AddScreenShareStreamAction | RemoveScreenShareStreamAction;

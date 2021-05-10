@@ -1,10 +1,6 @@
 import { Reducer } from 'redux';
 import { ParticipantStream } from './index';
-import {
-  ADD_SCREENSHARE_STREAM,
-  StreamTypes,
-  REMOVE_SCREENSHARE_STREAM
-} from '../actions/streams';
+import { ADD_SCREENSHARE_STREAM, StreamTypes, REMOVE_SCREENSHARE_STREAM } from '../actions/streams';
 import { DeviceTypes, SET_VIDEO_DEVICE_INFO } from '../actions/devices';
 
 export interface StreamsState {

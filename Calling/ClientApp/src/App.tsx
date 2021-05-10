@@ -76,11 +76,13 @@ const App = (): JSX.Element => {
       );
     } else if (page === 'call') {
       return (
-        <GroupCall 
+        <GroupCall
           endCallHandler={(): void => setPage('endCall')}
-          groupId={getGroupId()} screenWidth={screenWidth}
+          groupId={getGroupId()}
+          screenWidth={screenWidth}
           localVideoStream={localVideoStream}
-          setLocalVideoStream={setLocalVideoStream}/>
+          setLocalVideoStream={setLocalVideoStream}
+        />
       );
     } else if (page === 'endCall') {
       return (

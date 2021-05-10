@@ -1,6 +1,6 @@
 // © Microsoft Corporation. All rights reserved.
 import React, { useState, useEffect } from 'react';
-import { Label, MessageBar, Overlay, Stack } from '@fluentui/react';
+import { Label, Overlay, Stack } from '@fluentui/react';
 import Header from '../containers/Header';
 import MediaGallery from '../containers/MediaGallery';
 import MediaFullScreen from './MediaFullScreen';
@@ -85,7 +85,7 @@ export default (props: GroupCallProps): JSX.Element => {
           screenWidth={props.screenWidth}
         />
       </Stack.Item>
-      <Stack.Item styles={headerStyles}>
+      <Stack.Item styles={messageBarStyles}>
         <ComplianceBanner callTranscribeState={isBeingTranscribed} callRecordState={isBeingRecorded} />
       </Stack.Item>
       <Stack.Item styles={containerStyles}>

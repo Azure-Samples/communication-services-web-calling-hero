@@ -17,7 +17,6 @@ import {
 } from './styles/GroupCall.styles';
 import {
   Call,
-  LocalVideoStream,
   AudioDeviceInfo,
   VideoDeviceInfo,
   RemoteParticipant,
@@ -36,7 +35,6 @@ export interface GroupCallProps {
   remoteParticipants: RemoteParticipant[];
   callState: string;
   localVideo: boolean;
-  localVideoStream: LocalVideoStream;
   screenShareStreams: ParticipantStream[];
   audioDeviceInfo: AudioDeviceInfo;
   videoDeviceInfo: VideoDeviceInfo;
@@ -46,7 +44,6 @@ export interface GroupCallProps {
   shareScreen: boolean;
   setAudioDeviceInfo(deviceInfo: AudioDeviceInfo): void;
   setVideoDeviceInfo(deviceInfo: VideoDeviceInfo): void;
-  setLocalVideoStream(stream: LocalVideoStream | undefined): void;
   mute(): void;
   isGroup(): void;
   joinGroup(): void;
@@ -56,14 +53,6 @@ export interface GroupCallProps {
 export default (props: GroupCallProps): JSX.Element => {
   const [selectedPane, setSelectedPane] = useState(CommandPanelTypes.None);
   const activeScreenShare = props.screenShareStreams && props.screenShareStreams.length === 1;
-
-  const { callAgent, call, joinGroup } = props;
-
-  useEffect(() => {
-    if (callAgent && !call) {
-      joinGroup();
-    }
-  }, [callAgent, call, joinGroup]);
 
   return (
     <Stack horizontalAlign="center" verticalAlign="center" styles={containerStyles}>

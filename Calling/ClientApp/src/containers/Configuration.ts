@@ -1,12 +1,16 @@
 import { connect } from 'react-redux';
 import ConfigurationScreen, { ConfigurationScreenProps } from '../components/Configuration';
-import { setGroup } from '../core/actions/calls';
+import { setCallAgent, setGroup } from '../core/actions/calls';
 import { setVideoDeviceInfo, setAudioDeviceInfo } from '../core/actions/devices';
-import { initCallAgent, initCallClient, updateDevices } from '../core/sideEffects';
+import { initCallClient, joinGroup, registerToCallAgent, updateDevices } from '../core/sideEffects';
 import { setMic } from '../core/actions/controls';
 import { State } from '../core/reducers';
-import { AudioDeviceInfo, VideoDeviceInfo, LocalVideoStream } from '@azure/communication-calling';
+import { AudioDeviceInfo, VideoDeviceInfo, LocalVideoStream, CallAgent, CallClient, CallEndReason } from '@azure/communication-calling';
 import { setLocalVideoStream } from '../core/actions/streams';
+import { CommunicationUserToken } from '@azure/communication-identity';
+import { utils } from 'Utils/Utils';
+import { AzureCommunicationTokenCredential } from '@azure/communication-common';
+import { setUserId } from 'core/actions/sdk';
 
 const mapStateToProps = (state: State, props: ConfigurationScreenProps) => ({
   deviceManager: state.devices.deviceManager,
@@ -20,7 +24,45 @@ const mapStateToProps = (state: State, props: ConfigurationScreenProps) => ({
   videoDeviceList: state.devices.videoDeviceList,
   audioDeviceList: state.devices.audioDeviceList,
   cameraPermission: state.devices.cameraPermission,
-  microphonePermission: state.devices.microphonePermission
+  microphonePermission: state.devices.microphonePermission,
+  joinGroup: async (callAgent: CallAgent, groupId: string): Promise<void> => {
+    callAgent &&
+      (await joinGroup(
+        callAgent,
+        {
+          groupId
+        },
+        {
+          videoOptions: {
+            localVideoStreams: state.streams.localVideoStream ? [state.streams.localVideoStream] : undefined
+          },
+          audioOptions: { muted: !state.controls.mic }
+        }
+      ));
+  },
+  getToken: async(): Promise<{tokenCredential: AzureCommunicationTokenCredential, userId: string}> => {
+    const tokenResponse: CommunicationUserToken = await utils.getTokenForUser();
+    const userToken = tokenResponse.token;
+    const userId = tokenResponse.user.communicationUserId
+
+    const tokenCredential = new AzureCommunicationTokenCredential({
+      tokenRefresher: (): Promise<string> => {
+        return utils.getRefreshedTokenForUser(userId);
+      },
+      refreshProactively: true,
+      token: userToken
+    });
+
+    return {
+      tokenCredential,
+      userId
+    }
+  },
+  createCallAgent: async (tokenCredential: AzureCommunicationTokenCredential, displayName: string): Promise<CallAgent> => {
+    const callClient = new CallClient();
+    const callAgent: CallAgent = await callClient.createCallAgent(tokenCredential, { displayName });
+    return callAgent;
+  }
 });
 
 const mapDispatchToProps = (dispatch: any, props: ConfigurationScreenProps) => ({
@@ -29,7 +71,11 @@ const mapDispatchToProps = (dispatch: any, props: ConfigurationScreenProps) => (
   setAudioDeviceInfo: (deviceInfo: AudioDeviceInfo): void => dispatch(setAudioDeviceInfo(deviceInfo)),
   setVideoDeviceInfo: (deviceInfo: VideoDeviceInfo): void => dispatch(setVideoDeviceInfo(deviceInfo)),
   setupCallClient: (unsupportedStateHandler: () => void): void => dispatch(initCallClient(unsupportedStateHandler)),
-  setupCallAgent: (displayName: string): void => dispatch(initCallAgent(displayName, props.callEndedHandler)),
+  registerToCallEvents: async (userId: string, callAgent: CallAgent, endCallHandler: (reason: CallEndReason) => void): Promise<void> => {
+    dispatch(setUserId(userId));
+    dispatch(setCallAgent(callAgent));
+    dispatch(registerToCallAgent(userId, callAgent, endCallHandler))
+  },
   setGroup: (groupId: string): void => dispatch(setGroup(groupId)),
   updateDevices: (): void => dispatch(updateDevices())
 });

@@ -1,5 +1,5 @@
 // © Microsoft Corporation. All rights reserved.
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Label, Overlay, Stack } from '@fluentui/react';
 import Header from '../containers/Header';
 import MediaGallery from '../containers/MediaGallery';
@@ -21,7 +21,8 @@ import {
   VideoDeviceInfo,
   RemoteParticipant,
   CallAgent,
-  DeviceManager
+  DeviceManager,
+  LocalVideoStream
 } from '@azure/communication-calling';
 import { ParticipantStream } from 'core/reducers/index.js';
 
@@ -48,6 +49,8 @@ export interface GroupCallProps {
   isGroup(): void;
   joinGroup(): void;
   endCallHandler(): void;
+  localVideoStream: LocalVideoStream;
+  setLocalVideoStream: void;
 }
 
 export default (props: GroupCallProps): JSX.Element => {
@@ -64,6 +67,8 @@ export default (props: GroupCallProps): JSX.Element => {
             props.endCallHandler();
           }}
           screenWidth={props.screenWidth}
+          localVideoStream={props.localVideoStream}
+          setLocalVideoStream={props.setLocalVideoStream}
         />
       </Stack.Item>
       <Stack.Item styles={containerStyles}>
@@ -74,7 +79,7 @@ export default (props: GroupCallProps): JSX.Element => {
                 {activeScreenShare && <MediaFullScreen activeScreenShareStream={props.screenShareStreams[0]} />}
               </Stack.Item>
               <Stack.Item grow styles={!activeScreenShare ? activeContainerClassName : hiddenContainerClassName}>
-                <MediaGallery />
+                <MediaGallery localVideoStream={props.localVideoStream}/>
               </Stack.Item>
               {selectedPane !== CommandPanelTypes.None &&
                 (window.innerWidth > Constants.MINI_HEADER_WINDOW_WIDTH ? (

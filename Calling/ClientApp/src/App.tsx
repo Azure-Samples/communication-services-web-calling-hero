@@ -25,6 +25,7 @@ const App = (): JSX.Element => {
   const [callEndReason, setCallEndReason] = useState<CallEndReason | undefined>();
   const [groupId, setGroupId] = useState('');
   const [screenWidth, setScreenWidth] = useState(0);
+  const [localVideoStream, setLocalVideoStream] = useState(undefined);
 
   useEffect(() => {
     const setWindowWidth = (): void => {
@@ -69,11 +70,17 @@ const App = (): JSX.Element => {
           }}
           groupId={getGroupId()}
           screenWidth={screenWidth}
+          localVideoStream={localVideoStream}
+          setLocalVideoStream={setLocalVideoStream}
         />
       );
     } else if (page === 'call') {
       return (
-        <GroupCall endCallHandler={(): void => setPage('endCall')} groupId={getGroupId()} screenWidth={screenWidth} />
+        <GroupCall 
+          endCallHandler={(): void => setPage('endCall')}
+          groupId={getGroupId()} screenWidth={screenWidth}
+          localVideoStream={localVideoStream}
+          setLocalVideoStream={setLocalVideoStream}/>
       );
     } else if (page === 'endCall') {
       return (

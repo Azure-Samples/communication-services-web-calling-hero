@@ -4,8 +4,6 @@ import { setMicrophone, setShareUnshareScreen, endCall } from '../core/sideEffec
 import { utils } from '../Utils/Utils';
 import { Constants } from '../core/constants';
 import { State } from '../core/reducers';
-import { LocalVideoStream } from '@azure/communication-calling';
-import { setLocalVideoStream } from '../core/actions/streams';
 
 const mapStateToProps = (state: State, props: HeaderProps) => ({
   actionable:
@@ -13,7 +11,6 @@ const mapStateToProps = (state: State, props: HeaderProps) => ({
     state.calls.callState === Constants.RINGING ||
     state.calls.callState === Constants.CONNECTING ||
     state.calls.callState === Constants.CONNECTED,
-  localVideoStream: state.streams.localVideoStream,
   mic: state.controls.mic,
   call: state.calls.call,
   shareScreen: state.controls.shareScreen,
@@ -30,7 +27,6 @@ const mapStateToProps = (state: State, props: HeaderProps) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-  setLocalVideoStream: (localVideoStream: LocalVideoStream): void => dispatch(setLocalVideoStream(localVideoStream)),
   setMic: (mic: boolean): void => dispatch(setMicrophone(mic)),
   setScreenShare: (screenShare: boolean): void => dispatch(setShareUnshareScreen(screenShare)),
   // Only support Desktop -- Chrome | Edge (Chromium) | Safari

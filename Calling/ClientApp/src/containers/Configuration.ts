@@ -6,7 +6,6 @@ import { initCallClient, joinGroup, registerToCallAgent, updateDevices } from '.
 import { setMic } from '../core/actions/controls';
 import { State } from '../core/reducers';
 import { AudioDeviceInfo, VideoDeviceInfo, LocalVideoStream, CallAgent, CallClient, CallEndReason } from '@azure/communication-calling';
-import { setLocalVideoStream } from '../core/actions/streams';
 import { CommunicationUserToken } from '@azure/communication-identity';
 import { utils } from 'Utils/Utils';
 import { AzureCommunicationTokenCredential } from '@azure/communication-common';
@@ -18,14 +17,13 @@ const mapStateToProps = (state: State, props: ConfigurationScreenProps) => ({
   group: state.calls.group,
   mic: state.controls.mic,
   screenWidth: props.screenWidth,
-  localVideoStream: state.streams.localVideoStream,
   audioDeviceInfo: state.devices.audioDeviceInfo,
   videoDeviceInfo: state.devices.videoDeviceInfo,
   videoDeviceList: state.devices.videoDeviceList,
   audioDeviceList: state.devices.audioDeviceList,
   cameraPermission: state.devices.cameraPermission,
   microphonePermission: state.devices.microphonePermission,
-  joinGroup: async (callAgent: CallAgent, groupId: string): Promise<void> => {
+  joinGroup: async (callAgent: CallAgent, groupId: string, localVideoStream: LocalVideoStream): Promise<void> => {
     callAgent &&
       (await joinGroup(
         callAgent,
@@ -34,7 +32,7 @@ const mapStateToProps = (state: State, props: ConfigurationScreenProps) => ({
         },
         {
           videoOptions: {
-            localVideoStreams: state.streams.localVideoStream ? [state.streams.localVideoStream] : undefined
+            localVideoStreams: localVideoStream ? [localVideoStream] : undefined
           },
           audioOptions: { muted: !state.controls.mic }
         }
@@ -66,7 +64,6 @@ const mapStateToProps = (state: State, props: ConfigurationScreenProps) => ({
 });
 
 const mapDispatchToProps = (dispatch: any, props: ConfigurationScreenProps) => ({
-  setLocalVideoStream: (localVideoStream: LocalVideoStream): void => dispatch(setLocalVideoStream(localVideoStream)),
   setMic: (mic: boolean): void => dispatch(setMic(mic)),
   setAudioDeviceInfo: (deviceInfo: AudioDeviceInfo): void => dispatch(setAudioDeviceInfo(deviceInfo)),
   setVideoDeviceInfo: (deviceInfo: VideoDeviceInfo): void => dispatch(setVideoDeviceInfo(deviceInfo)),

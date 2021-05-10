@@ -1,8 +1,6 @@
 import { Reducer } from 'redux';
-import { LocalVideoStream } from '@azure/communication-calling';
 import { ParticipantStream } from './index';
 import {
-  SET_LOCAL_VIDEO_STREAM,
   ADD_SCREENSHARE_STREAM,
   StreamTypes,
   REMOVE_SCREENSHARE_STREAM
@@ -12,12 +10,10 @@ import { DeviceTypes, SET_VIDEO_DEVICE_INFO } from '../actions/devices';
 export interface StreamsState {
   screenShareStreams: ParticipantStream[];
   localVideoRendererIsBusy: boolean;
-  localVideoStream?: LocalVideoStream;
 }
 
 const initialState: StreamsState = {
   localVideoRendererIsBusy: false,
-  localVideoStream: undefined,
   screenShareStreams: []
 };
 
@@ -26,13 +22,6 @@ export const streamsReducer: Reducer<StreamsState, StreamTypes | DeviceTypes> = 
   action: StreamTypes | DeviceTypes
 ): StreamsState => {
   switch (action.type) {
-    case SET_VIDEO_DEVICE_INFO:
-      if (state.localVideoStream && action.videoDeviceInfo) {
-        return { ...state, localVideoStream: new LocalVideoStream(action.videoDeviceInfo) };
-      }
-      return state;
-    case SET_LOCAL_VIDEO_STREAM:
-      return { ...state, localVideoStream: action.localVideoStream };
     case ADD_SCREENSHARE_STREAM:
       const newScreenShareStream: ParticipantStream = { stream: action.stream, user: action.user };
       return { ...state, screenShareStreams: [...state.screenShareStreams, newScreenShareStream] };

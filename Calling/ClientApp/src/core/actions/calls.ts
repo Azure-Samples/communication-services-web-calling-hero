@@ -24,7 +24,7 @@ interface CallRemovedAction {
   type: typeof CALL_REMOVED;
   call: Call | undefined;
   incomingCallEndReason: CallEndReason | undefined;
-  groupCallEndReason: CallEndReason | undefined;
+  callEndReason: CallEndReason | undefined;
 }
 
 interface SetCallStateAction {
@@ -71,7 +71,7 @@ export const callRemoved = (removedCall: Call): CallRemovedAction => {
     type: CALL_REMOVED,
     call: undefined,
     incomingCallEndReason: removedCall.direction === 'Incoming' ? removedCall.callEndReason : undefined,
-    groupCallEndReason: removedCall.callEndReason
+    callEndReason: removedCall.callEndReason
   };
 };
 

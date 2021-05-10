@@ -20,7 +20,7 @@ const mapStateToProps = (state: State, props: GroupCallProps) => ({
   call: state.calls.call,
   shareScreen: state.controls.shareScreen,
   mic: state.controls.mic,
-  groupCallEndReason: state.calls.groupCallEndReason,
+  callEndReason: state.calls.callEndReason,
   join: async (locator: GroupCallLocator | TeamsMeetingLinkLocator) => {
     state.calls.callAgent &&
     

@@ -25,7 +25,8 @@ import {
   CallAgent,
   DeviceManager,
   TeamsMeetingLinkLocator,
-  GroupCallLocator
+  GroupCallLocator,
+  CallEndReason
 } from '@azure/communication-calling';
 import { ParticipantStream } from 'core/reducers/index.js';
 
@@ -47,6 +48,7 @@ export interface GroupCallProps {
   videoDeviceList: VideoDeviceInfo[];
   screenWidth: number;
   shareScreen: boolean;
+  callEndReason: CallEndReason;
   locator: GroupCallLocator | TeamsMeetingLinkLocator;
   isBeingRecorded: boolean;
   isBeingTranscribed: boolean;
@@ -66,13 +68,13 @@ export default (props: GroupCallProps): JSX.Element => {
   const [transcribedBannerViewable, setTranscribedBannerViewable] = useState(false);
   const activeScreenShare = props.screenShareStreams && props.screenShareStreams.length === 1;
 
-  const { callAgent, call, join, locator, isBeingRecorded, isBeingTranscribed } = props;
+  const { callAgent, call, join, locator, isBeingRecorded, isBeingTranscribed, callEndReason } = props;
 
   useEffect(() => {
-    if (callAgent && !call) {
+    if (callAgent && !call && callEndReason === undefined) {
       join(locator);
     }
-  }, [callAgent, call, join, locator]);
+  }, [callAgent, call, join, locator, callEndReason]);
 
   useEffect(() => {
     if (isCallBeingRecorded !== isBeingRecorded) {
@@ -89,7 +91,7 @@ export default (props: GroupCallProps): JSX.Element => {
       setTranscribedBannerViewable(true);
       setIsCallBeingTranscribed(isBeingTranscribed);
     }
-   }, [isBeingRecorded, isBeingTranscribed]);
+   }, [isCallBeingRecorded, isCallBeingTranscribed, isBeingRecorded, isBeingTranscribed]);
 
   return (
     <Stack horizontalAlign="center" verticalAlign="center" styles={containerStyles}>

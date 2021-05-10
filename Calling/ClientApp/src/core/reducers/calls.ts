@@ -18,7 +18,7 @@ export interface CallsState {
   call?: Call;
   callState: string;
   incomingCallEndReason: CallEndReason | undefined;
-  groupCallEndReason: CallEndReason | undefined;
+  callEndReason: CallEndReason | undefined;
   remoteParticipants: RemoteParticipant[];
   attempts: number;
   isBeingRecorded: boolean | undefined;
@@ -31,7 +31,7 @@ const initialState: CallsState = {
   call: undefined,
   callState: 'None',
   incomingCallEndReason: undefined,
-  groupCallEndReason: undefined,
+  callEndReason: undefined,
   remoteParticipants: [],
   attempts: 0,
   isBeingRecorded: undefined,
@@ -51,7 +51,7 @@ export const callsReducer: Reducer<CallsState, CallTypes> = (state = initialStat
         call: undefined,
         remoteParticipants: [],
         incomingCallEndReason: action.incomingCallEndReason,
-        groupCallEndReason: action.groupCallEndReason
+        callEndReason: action.callEndReason
       };
     case SET_CALL_STATE:
       return { ...state, callState: action.callState };

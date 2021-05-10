@@ -22,7 +22,7 @@ import {
 import { CommunicationUserToken } from '@azure/communication-identity';
 import { Dispatch } from 'redux';
 import { utils } from '../Utils/Utils';
-import { callAdded, callRemoved, setCallState, setParticipants, setCallAgent, setRecordingActive } from './actions/calls';
+import { callAdded, callRemoved, setCallState, setParticipants, setCallAgent, setRecordingActive, setTranscribingActive } from './actions/calls';
 import { setMic, setShareScreen } from './actions/controls';
 import {
   setAudioDeviceInfo,
@@ -273,6 +273,12 @@ export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndRe
 
         // if you are not in a teams meeting call you will just get false
         dispatch(setRecordingActive(addedCall.api(Features.Recording).isRecordingActive))
+
+        addedCall.api(Features.Transcription).on('isTranscriptionActiveChanged', (): void => {
+          dispatch(setTranscribingActive(addedCall.api(Features.Transcription).isTranscriptionActive))
+        })
+
+        dispatch(setTranscribingActive(addedCall.api(Features.Transcription).isTranscriptionActive))
 
         // if remote participants have changed, subscribe to the added remote participants
         addedCall.on('remoteParticipantsUpdated', (ev): void => {

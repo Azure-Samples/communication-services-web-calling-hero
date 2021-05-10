@@ -29,6 +29,7 @@ import {
   CallEndReason
 } from '@azure/communication-calling';
 import { ParticipantStream } from 'core/reducers/index.js';
+import { ComplianceBanner } from 'components/ComplianceBanner';
 
 export interface GroupCallProps {
   userId: string;
@@ -62,10 +63,6 @@ export interface GroupCallProps {
 
 export default (props: GroupCallProps): JSX.Element => {
   const [selectedPane, setSelectedPane] = useState(CommandPanelTypes.None);
-  const [isCallBeingRecorded, setIsCallBeingRecorded] = useState<Boolean | undefined>(undefined);
-  const [recordedBannerViewable, setRecordedBannerViewable] = useState(false);
-  const [isCallBeingTranscribed, setIsCallBeingTranscribed] = useState<Boolean | undefined>(undefined);
-  const [transcribedBannerViewable, setTranscribedBannerViewable] = useState(false);
   const activeScreenShare = props.screenShareStreams && props.screenShareStreams.length === 1;
 
   const { callAgent, call, join, locator, isBeingRecorded, isBeingTranscribed, callEndReason } = props;
@@ -75,23 +72,6 @@ export default (props: GroupCallProps): JSX.Element => {
       join(locator);
     }
   }, [callAgent, call, join, locator, callEndReason]);
-
-  useEffect(() => {
-    if (isCallBeingRecorded !== isBeingRecorded) {
-      if (isCallBeingRecorded === undefined && isBeingRecorded === false) {
-        return;
-      }
-      setRecordedBannerViewable(true);
-      setIsCallBeingRecorded(isBeingRecorded);
-    }
-    if (isCallBeingTranscribed !== isBeingTranscribed) {
-      if (isCallBeingTranscribed === undefined && isBeingTranscribed === false) {
-        return;
-      }
-      setTranscribedBannerViewable(true);
-      setIsCallBeingTranscribed(isBeingTranscribed);
-    }
-   }, [isCallBeingRecorded, isCallBeingTranscribed, isBeingRecorded, isBeingTranscribed]);
 
   return (
     <Stack horizontalAlign="center" verticalAlign="center" styles={containerStyles}>
@@ -105,18 +85,9 @@ export default (props: GroupCallProps): JSX.Element => {
           screenWidth={props.screenWidth}
         />
       </Stack.Item>
-      { recordedBannerViewable && <Stack.Item styles={messageBarStyles}>
-      <MessageBar onDismiss={()=>{setRecordedBannerViewable(false)}}>
-        <Label>{ isBeingRecorded ? "Recording started." : "Recording is being saved" }</Label>
-        <div>{ isBeingRecorded ? "This call is being recorded for quality assurance." : "Recording has stopped" }</div>
-      </MessageBar>
-      </Stack.Item> }
-      { transcribedBannerViewable && <Stack.Item styles={messageBarStyles}>
-        <MessageBar onDismiss={()=>{setTranscribedBannerViewable(false)}}>
-          <Label>{ isBeingTranscribed ? "Recording and transcription have started." : "Recording and transcription has stopped."}</Label>
-          <div>{ isBeingTranscribed ? "By attending this meeting, you consent to being included. Privacy policy" : ""}</div>
-        </MessageBar>
-      </Stack.Item>  }
+      <Stack.Item styles={headerStyles}>
+        <ComplianceBanner callTranscribeState={isBeingTranscribed} callRecordState={isBeingRecorded} />
+      </Stack.Item>
       <Stack.Item styles={containerStyles}>
         { props.shareScreen && (
           <div className={loadingStyle}>

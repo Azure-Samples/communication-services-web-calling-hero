@@ -13,9 +13,9 @@ export const mediaGalleryStyle = mergeStyles({
 
 export const substageMediaGalleryStyle = mergeStyles({
   padding: '0.4375rem',
-  width:'100px',
-  minWidth:'100px',
-  height:'100px',
+  width: '100px',
+  minWidth: '100px',
+  height: '100px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -33,4 +33,4 @@ export const mediaGalleryGridStyle = mergeStyles({
 export const mediaGallerySubstageStyle = mergeStyles({
   height: '8.438rem',
   overflowX: 'auto'
-})
+});

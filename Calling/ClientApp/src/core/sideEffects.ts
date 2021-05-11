@@ -82,7 +82,7 @@ export const setShareUnshareScreen = (shareScreen: boolean) => {
 };
 
 const subscribeToParticipant = (participant: RemoteParticipant, call: Call, dispatch: Dispatch): void => {
-  const remoteStreamSelector = RemoteStreamSelector.getInstance(Constants.DOMINTANT_PARTICIPANTS_COUNT, dispatch);
+  const remoteStreamSelector = RemoteStreamSelector.getInstance(Constants.DOMINANT_PARTICIPANTS_COUNT, dispatch);
 
   participant.on('stateChanged', () => {
     remoteStreamSelector.participantStateChanged(

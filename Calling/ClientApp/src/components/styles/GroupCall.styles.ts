@@ -35,7 +35,8 @@ export const activeContainerClassName: IStackItemStyles = {
   root: {
     border: `solid 1px ${palette.neutralLighterAlt}`,
     height: 'calc(100% - 3px)',
-    display: 'initial'
+    display: 'initial',
+    width: '100%'
   }
 };
 

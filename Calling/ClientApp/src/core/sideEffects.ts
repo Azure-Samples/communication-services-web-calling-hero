@@ -13,8 +13,7 @@ import {
   HangUpOptions,
   CallEndReason
 } from '@azure/communication-calling';
-import { AzureCommunicationTokenCredential, CommunicationUserKind } from '@azure/communication-common';
-import { CommunicationUserToken } from '@azure/communication-identity';
+import { CommunicationUserKind } from '@azure/communication-common';
 import { Dispatch } from 'redux';
 import { utils } from '../Utils/Utils';
 import { callAdded, callRemoved, setCallState, setParticipants, setCallAgent } from './actions/calls';
@@ -28,12 +27,12 @@ import {
   setVideoDeviceList,
   setDeviceManager
 } from './actions/devices';
-import { setUserId } from './actions/sdk';
 import { addScreenShareStream, removeScreenShareStream } from './actions/streams';
 import { State } from './reducers';
 import { setLogLevel } from '@azure/logger';
 import RemoteStreamSelector from './RemoteStreamSelector';
 import { Constants } from './constants';
+import { setUserId } from './actions/sdk';
 
 export const setMicrophone = (mic: boolean) => {
   return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
@@ -222,30 +221,16 @@ export const updateDevices = () => {
   };
 };
 
-export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndReason) => void) => {
+export const registerToCallAgent = (
+  userId: string,
+  callAgent: CallAgent,
+  callEndedHandler: (reason: CallEndReason) => void
+) => {
   return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
     setLogLevel('verbose');
-    const callClient = new CallClient();
 
-    const tokenResponse: CommunicationUserToken = await utils.getTokenForUser();
-    const userToken = tokenResponse.token;
-    const userId = tokenResponse.user.communicationUserId;
-    dispatch(setUserId(userId));
-
-    const tokenCredential = new AzureCommunicationTokenCredential({
-      tokenRefresher: (): Promise<string> => {
-        return utils.getRefreshedTokenForUser(userId);
-      },
-      refreshProactively: true,
-      token: userToken
-    });
-    const callAgent: CallAgent = await callClient.createCallAgent(tokenCredential, { displayName: name });
-
-    if (callAgent === undefined) {
-      return;
-    }
-
-    dispatch(setCallAgent(callAgent));
+    setUserId(userId);
+    setCallAgent(callAgent);
 
     callAgent.on('callsUpdated', (e: { added: Call[]; removed: Call[] }): void => {
       e.added.forEach((addedCall) => {

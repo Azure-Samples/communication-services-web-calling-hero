@@ -23,6 +23,12 @@ import {
   fullScreenStyle,
   verticalStackStyle
 } from './styles/Configuration.styles';
+import { AzureCommunicationTokenCredential } from '@azure/communication-common';
+
+export type TokenResponse = {
+  tokenCredential: AzureCommunicationTokenCredential;
+  userId: string;
+};
 
 export interface ConfigurationScreenProps {
   userId: string;
@@ -30,7 +36,11 @@ export interface ConfigurationScreenProps {
   callAgent: CallAgent;
   deviceManager: DeviceManager;
   setupCallClient(unsupportedStateHandler: () => void): void;
-  setupCallAgent(displayName: string): void;
+  setupCallAgent(
+    displayName: string,
+    groupId: string,
+    afterSetupHandler: (callAgent: CallAgent, groupId: string) => void
+  ): void;
   setGroup(groupId: string): void;
   startCallHandler(): void;
   unsupportedStateHandler: () => void;
@@ -47,6 +57,14 @@ export interface ConfigurationScreenProps {
   audioDeviceInfo: AudioDeviceInfo;
   localVideoStream: LocalVideoStream;
   screenWidth: number;
+  joinGroup(callAgent: CallAgent, groupId: string): void;
+  getToken(): Promise<TokenResponse>;
+  createCallAgent(tokenCredential: AzureCommunicationTokenCredential, displayName: string): Promise<CallAgent>;
+  registerToCallEvents(
+    userId: string,
+    callAgent: CallAgent,
+    endCallHandler: (reason: CallEndReason) => void
+  ): Promise<void>;
 }
 
 export default (props: ConfigurationScreenProps): JSX.Element => {
@@ -58,7 +76,7 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
   const [name, setName] = useState(createUserId());
   const [emptyWarning, setEmptyWarning] = useState(false);
 
-  const { groupId, setupCallClient, setupCallAgent, setGroup, unsupportedStateHandler } = props;
+  const { groupId, setupCallClient, setGroup, unsupportedStateHandler } = props;
 
   useEffect(() => {
     setupCallClient(unsupportedStateHandler);
@@ -105,9 +123,16 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
                     setEmptyWarning(true);
                   } else {
                     setEmptyWarning(false);
-                    await setupCallAgent(name);
-                    setGroup(groupId);
+                    //1. Retrieve a token
+                    const { tokenCredential, userId } = await props.getToken();
+                    //2. Initialize the call agent
+                    const callAgent = await props.createCallAgent(tokenCredential, name);
+                    //3. Register for calling events
+                    props.registerToCallEvents(userId, callAgent, props.callEndedHandler);
+                    //4. Join the call
+                    await props.joinGroup(callAgent, groupId);
                     props.startCallHandler();
+                    setGroup(groupId);
                   }
                 }}
               >

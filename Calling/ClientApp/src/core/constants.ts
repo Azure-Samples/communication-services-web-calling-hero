@@ -8,5 +8,5 @@ export class Constants {
   static CONFIGURATION_LOCAL_VIDEO_PREVIEW_ID = 'ConfigurationLocalVideoPreview';
   static LOCAL_VIDEO_PREVIEW_ID = 'LocalVideoPreview';
   static MINI_HEADER_WINDOW_WIDTH = 360;
-  static DOMINTANT_PARTICIPANTS_COUNT = 1;
+  static DOMINANT_PARTICIPANTS_COUNT = 1; // The media gallery is design to work between 1 and 8 dominant participants inclusive
 }

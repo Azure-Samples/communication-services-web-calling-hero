@@ -40,7 +40,7 @@ export default (props: MediaGalleryProps): JSX.Element => {
     }
 
     return rows[length];
-  }, []);
+  }, [rows]);
 
   const calculateNumberOfColumns = React.useCallback((participants, maxStreamsToRender) => {
     const length = Math.min(participants.length, maxStreamsToRender);
@@ -49,7 +49,7 @@ export default (props: MediaGalleryProps): JSX.Element => {
     }
 
     return cols[length];
-  }, []);
+  }, [cols]);
 
   const getMediaGalleryTilesForParticipants = (
     participants: RemoteParticipant[],

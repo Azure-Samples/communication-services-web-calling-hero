@@ -176,5 +176,5 @@ export const ComplianceBanner = (props: ComplianceBannerProps) : JSX.Element => 
       return <></>
     }
 
-    return variant == NO_STATE ? <></> : <MessageBar onDismiss={()=> {setVariant(NO_STATE)}}  dismissButtonAriaLabel="Close">{getBannerMessage(variant)}</MessageBar>
+    return variant === NO_STATE ? <></> : <MessageBar onDismiss={()=> {setVariant(NO_STATE)}}  dismissButtonAriaLabel="Close">{getBannerMessage(variant)}</MessageBar>
 }

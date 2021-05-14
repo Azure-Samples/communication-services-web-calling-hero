@@ -1,6 +1,6 @@
 // © Microsoft Corporation. All rights reserved.
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { Label, Spinner, SpinnerSize } from '@fluentui/react';
 import { RemoteVideoStream, VideoStreamRenderer, VideoStreamRendererView } from '@azure/communication-calling';
 import { videoHint, mediaContainer } from './styles/StreamMedia.styles';
@@ -15,7 +15,7 @@ export interface RemoteStreamMediaProps {
 }
 
 export default (props: RemoteStreamMediaProps): JSX.Element => {
-  let rendererView: VideoStreamRendererView;
+  let rendererView = useRef<VideoStreamRendererView | undefined>();
 
   const streamId = props.stream ? utils.getStreamId(props.label, props.stream) : `${props.label} - no stream`;
 
@@ -56,19 +56,19 @@ export default (props: RemoteStreamMediaProps): JSX.Element => {
       setShowRenderLoading(true);
       const renderer: VideoStreamRenderer = new VideoStreamRenderer(stream);
       // this can block a really long time if we fail to be subscribed to the call and it has to retry
-      const rendererView = await renderer.createView({ scalingMode: 'Crop' });
+      rendererView.current = await renderer.createView({ scalingMode: 'Crop' });
       setShowRenderLoading(false);
       if (container && container.childElementCount === 0) {
-        container.appendChild(rendererView.target);
+        container.appendChild(rendererView.current.target);
       }
     } else {
       setActiveStreamBeingRendered(false);
 
-      if (rendererView) {
-        rendererView.dispose();
+      if (rendererView.current) {
+        rendererView.current.dispose();
       }
     }
-  }, [stream, isParticipantStreamSelected, setShowRenderLoading, setActiveStreamBeingRendered]);
+  }, [stream, isParticipantStreamSelected, setShowRenderLoading, setActiveStreamBeingRendered, activeStreamBeingRendered, rendererView, streamId]);
 
   useEffect(() => {
     if (!stream) {

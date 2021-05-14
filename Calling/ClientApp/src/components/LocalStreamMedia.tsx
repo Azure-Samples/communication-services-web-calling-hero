@@ -1,6 +1,6 @@
 // © Microsoft Corporation. All rights reserved.
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Image, ImageFit, Label } from '@fluentui/react';
 import { LocalVideoStream, VideoStreamRenderer, VideoStreamRendererView } from '@azure/communication-calling';
 import { videoHint, mediaContainer, localVideoContainerStyle } from './styles/StreamMedia.styles';
@@ -13,7 +13,7 @@ export interface LocalStreamMediaProps {
 }
 
 export default (props: LocalStreamMediaProps): JSX.Element => {
-  let rendererView: VideoStreamRendererView;
+  let rendererView = useRef<undefined | VideoStreamRendererView>();
 
   const [activeStreamBeingRendered, setActiveStreamBeingRendered] = useState(false);
 
@@ -35,25 +35,25 @@ export default (props: LocalStreamMediaProps): JSX.Element => {
     (async () => {
       if (stream) {
         const renderer: VideoStreamRenderer = new VideoStreamRenderer(stream);
-        rendererView = await renderer.createView({ scalingMode: 'Crop', isMirrored: true  });
+        rendererView.current = await renderer.createView({ scalingMode: 'Crop', isMirrored: true  });
 
         const container = document.getElementById(Constants.LOCAL_VIDEO_PREVIEW_ID);
 
         if (container && container.childElementCount === 0) {
-          container.appendChild(rendererView.target);
+          container.appendChild(rendererView.current.target);
           setActiveStreamBeingRendered(true);
         }
       } else {
-        if (rendererView) {
-          rendererView.dispose();
+        if (rendererView.current) {
+          rendererView.current.dispose();
           setActiveStreamBeingRendered(false);
         }
       }
     })();
 
     return () => {
-      if (rendererView) {
-        rendererView.dispose();
+      if (rendererView.current) {
+        rendererView.current.dispose();
         setActiveStreamBeingRendered(false);
       }
     };

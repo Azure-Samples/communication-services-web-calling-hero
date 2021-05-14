@@ -100,9 +100,7 @@ const App = () => {
       return (
         <EndCall
           message={'You left the call'}
-          rejoinHandler={() => {
-            window.location.href = window.location.href;
-          }}
+          rejoinHandler={() => window.location.reload()}
           homeHandler={() => {
             window.location.href = window.location.href.split('?')[0];
           }}

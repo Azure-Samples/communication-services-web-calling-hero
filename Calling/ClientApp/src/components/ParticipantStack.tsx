@@ -86,7 +86,7 @@ export default (props: ParticipantStackProps): JSX.Element => {
     participant: undefined,
     state: 'Connected',
     isScreenSharing: activeScreenShareStream ? utils.getId(screenShareStream.user.identifier) === props.userId : false,
-    isSpeaking: !props.call.isMicrophoneMuted
+    isSpeaking: !props.call.isMuted
   });
   return (
     <Stack className={participantStackStyle} tokens={participantStackTokens}>

@@ -97,7 +97,7 @@ export default (props: MediaGalleryProps): JSX.Element => {
   };
 
   const numberOfColumns = calculateNumberOfColumns(props.remoteParticipants, Constants.DOMINANT_PARTICIPANTS_COUNT);
-  if (numberOfColumns !== gridCol) setGridCol(2);
+  if (numberOfColumns !== gridCol) setGridCol(numberOfColumns);
   const numberOfRows = calculateNumberOfRows(props.remoteParticipants, Constants.DOMINANT_PARTICIPANTS_COUNT);
   if (numberOfRows !== gridRow) setGridRow(numberOfRows);
 

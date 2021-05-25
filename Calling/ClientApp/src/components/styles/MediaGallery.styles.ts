@@ -13,7 +13,8 @@ export const mediaGalleryStyle = mergeStyles({
 export const mediaGalleryGridStyle = mergeStyles({
   height: '100%',
   background: palette.neutralLighterAlt,
-  display: 'grid'
+  display: 'grid',
+  overflow: 'hidden'
 });
 
 export const substageMediaGalleryStyle = mergeStyles({
@@ -31,5 +32,6 @@ export const substageMediaGalleryStyle = mergeStyles({
 
 export const mediaGallerySubstageStyle = mergeStyles({
   height: '8.438rem',
-  overflowX: 'auto'
+  overflowX: 'auto',
+  overflowY: 'hidden'
 });

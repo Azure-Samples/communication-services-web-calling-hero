@@ -25,12 +25,12 @@ export default (props: MediaGalleryProps): JSX.Element => {
   const [gridCol, setGridCol] = useState(1);
   const [gridRow, setGridRow] = useState(1);
 
-  // we only are going to support up to a 3x3 grid for today (1 local + 8 remote)
-  // remote participants 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
-  // local participants  1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1,  1,  1,  1,  1,  1
-  // total participants  1, 2, 3, 4, 5, 6, 7, 8, 9,10, 11, 12, 13, 14, 15, 16
-  const rows          = [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3,   3,  4,  4,  4, 4];
-  const cols          = [1, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4,   4,  4,  4,  4, 4];
+
+  // For now we are only going to support up to a 4x3 grid or 10 participants in a call
+  // Since this is a sample, we will just hard-code how we want the grid to scale
+  // the rows and columns for the number of users in the call
+  const rows          = [1, 1, 2, 2, 2, 2, 3, 3, 3, 3];
+  const cols          = [1, 2, 2, 2, 3, 3, 3, 3, 3, 4];
 
   if (Constants.DOMINANT_PARTICIPANTS_COUNT < 0 || Constants.DOMINANT_PARTICIPANTS_COUNT > rows.length) {
     console.warn(`Please use a value for dominant participants between 0 < x < ${rows.length}`);

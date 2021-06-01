@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   mediaGalleryGridStyle,
   mediaGalleryStyle,
@@ -25,31 +25,20 @@ export default (props: MediaGalleryProps): JSX.Element => {
   const [gridCol, setGridCol] = useState(1);
   const [gridRow, setGridRow] = useState(1);
 
-  if (Constants.DOMINANT_PARTICIPANTS_COUNT < 1 || Constants.DOMINANT_PARTICIPANTS_COUNT > 8) {
-    console.error('Please use a value for dominante participants between 1 <= x <= 8');
+  // For now we are only going to support up to a 4x4 grid or 16 people in a call
+  // Since this is a sample, we will just hard-code how we want the grid to scale
+  // the rows and columns for the number of users in the call
+  // total participants  1, 2, 3, 4, 5, 6, 7, 8, 9,10, 11, 12, 13, 14, 15, 16
+  const rows          = [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3,   3,  4,  4,  4, 4];
+  const cols          = [1, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4,   4,  4,  4,  4, 4];
+
+  if (Constants.DOMINANT_PARTICIPANTS_COUNT < 0 || Constants.DOMINANT_PARTICIPANTS_COUNT > rows.length) {
+    console.warn(`Please use a value for dominant participants between 0 < x < ${rows.length}`);
   }
 
-  // we only are going to support up to a 3x3 grid for today (1 local + 8 remote)
-  const rows = [1, 1, 2, 2, 2, 2, 3, 3, 3];
-  const cols = [1, 2, 2, 2, 3, 3, 3, 3, 3];
+  const numRemoteParticipantsToRender = Math.min(Constants.DOMINANT_PARTICIPANTS_COUNT, rows.length - 1);
 
-  const calculateNumberOfRows = React.useCallback((participants, maxStreamsToRender) => {
-    const length = Math.min(participants.length, maxStreamsToRender);
-    if (length - 1 >= rows.length) {
-      return 3;
-    }
-
-    return rows[length];
-  }, []);
-
-  const calculateNumberOfColumns = React.useCallback((participants, maxStreamsToRender) => {
-    const length = Math.min(participants.length, maxStreamsToRender);
-    if (length - 1 >= cols.length) {
-      return 3;
-    }
-
-    return cols[length];
-  }, []);
+  const clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max);
 
   const getMediaGalleryTilesForParticipants = (
     participants: RemoteParticipant[],
@@ -68,14 +57,13 @@ export default (props: MediaGalleryProps): JSX.Element => {
       </div>
     ));
 
-    // create a LocalStreamMedia component for the local participant
+    // for now we will always add the local user to the main stage
     const localParticipantMediaGalleryItem = (
       <div key="localParticipantTile" className={mediaGalleryStyle}>
         <LocalStreamMedia label={displayName} stream={props.localVideoStream} />
       </div>
     );
 
-    // add the LocalStreamMedia at the beginning of the list
     remoteParticipantsMediaGalleryItems.unshift(localParticipantMediaGalleryItem);
 
     return remoteParticipantsMediaGalleryItems;
@@ -96,29 +84,39 @@ export default (props: MediaGalleryProps): JSX.Element => {
     return remoteParticipantsMediaGalleryItems;
   };
 
-  const numberOfColumns = calculateNumberOfColumns(props.remoteParticipants, Constants.DOMINANT_PARTICIPANTS_COUNT);
-  if (numberOfColumns !== gridCol) setGridCol(numberOfColumns);
-  const numberOfRows = calculateNumberOfRows(props.remoteParticipants, Constants.DOMINANT_PARTICIPANTS_COUNT);
-  if (numberOfRows !== gridRow) setGridRow(numberOfRows);
+  // determine number of rows/columns to add to the grid
+  const numberStreamsToRender = useMemo(() => clamp(props.remoteParticipants.length, 0, numRemoteParticipantsToRender), [props.remoteParticipants.length])
+  if (cols[numberStreamsToRender] !== gridCol) {
+    if (numberStreamsToRender > cols.length - 1) {
+      throw `attempting to set up a number of columns in the gallery for an unexpected number of participants ${numberStreamsToRender}`
+    }
+    setGridCol(cols[numberStreamsToRender]);
+  }
 
+  if (rows[numberStreamsToRender] !== gridRow) {
+    if (numberStreamsToRender > rows.length - 1) {
+      throw `attempting to set up a number of rows in the gallery for an expected unnumber of participants ${numberStreamsToRender}`
+    }
+    setGridRow(rows[numberStreamsToRender]);
+  } 
+
+  // sort by dominance
   const participantsToLayout = props.remoteParticipants.sort((a, b) => {
     const isParticipantADominant =
       props.dominantParticipants.filter((p) => p.participantId === utils.getId(a.identifier)).length > 0;
-    const isParticiantBDominant =
+    const isParticipantBDominant =
       props.dominantParticipants.filter((p) => p.participantId === utils.getId(b.identifier)).length > 0;
-    if (isParticipantADominant && !isParticiantBDominant) {
+    if (isParticipantADominant && !isParticipantBDominant) {
       return -1;
-    } else if (!isParticipantADominant && isParticiantBDominant) {
+    } else if (!isParticipantADominant && isParticipantBDominant) {
       return 1;
     }
     return 0;
   });
 
-  // we want to reserve the main stage for video streams we are going to render.
-  // we determine the number of participants to render based on how we can select dominant participants
-  const mainStageParticipants = participantsToLayout.slice(0, Constants.DOMINANT_PARTICIPANTS_COUNT);
-  // the rest of the participants will go to the sub-stage.
-  const substageParticipants = participantsToLayout.slice(Constants.DOMINANT_PARTICIPANTS_COUNT);
+  const mainStageParticipants = participantsToLayout.slice(0, numRemoteParticipantsToRender);
+  const substageParticipants = participantsToLayout.slice(numRemoteParticipantsToRender);
+  // don't show the substage if its not necessary
   const isSubstageVisible = substageParticipants.length > 0;
   return (
     <Stack style={{ height: '100%' }}>

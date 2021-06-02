@@ -26,14 +26,14 @@ export default (props: MediaGalleryProps): JSX.Element => {
   const [gridRow, setGridRow] = useState(1);
 
   if (Constants.DOMINANT_PARTICIPANTS_COUNT < 1 || Constants.DOMINANT_PARTICIPANTS_COUNT > 8) {
-    console.error('Please use a value for dominante participants between 1 <= x <= 8');
+    console.error('Please use a value for dominant participants between 1 <= x <= 8');
   }
 
   // For now we are only going to support up to a 4x3 grid or 10 participants in a call
   // Since this is a sample, we will just hard-code how we want the grid to scale
   // the rows and columns for the number of users in the call
-  const rows          = [1, 1, 2, 2, 2, 2, 3, 3, 3, 3];
-  const cols          = [1, 2, 2, 2, 3, 3, 3, 3, 3, 4];
+  const rows = [1, 1, 2, 2, 2, 2, 3, 3, 3, 3];
+  const cols = [1, 2, 2, 2, 3, 3, 3, 3, 3, 4];
 
   const calculateNumberOfRows = React.useCallback((participants, maxStreamsToRender) => {
     const length = Math.min(participants.length, maxStreamsToRender);

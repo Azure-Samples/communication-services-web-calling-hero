@@ -10,8 +10,8 @@ export const mediaControlStyles = mergeStyles({
   overflow: 'hidden'
 });
 export const OkButtonStyles = mergeStyles({
-    position: 'relative',
-    right: '34%'
+  position: 'relative',
+  right: '34%'
 });
 export const controlButtonStyle = mergeStyles({
   backgroundColor: palette.white,

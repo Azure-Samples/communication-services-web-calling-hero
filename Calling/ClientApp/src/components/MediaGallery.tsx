@@ -29,8 +29,8 @@ export default (props: MediaGalleryProps): JSX.Element => {
   // Since this is a sample, we will just hard-code how we want the grid to scale
   // the rows and columns for the number of users in the call
   // total participants  1, 2, 3, 4, 5, 6, 7, 8, 9,10, 11, 12, 13, 14, 15, 16
-  const rows          = [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3,   3,  4,  4,  4, 4];
-  const cols          = [1, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4,   4,  4,  4,  4, 4];
+  const rows = [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4];
+  const cols = [1, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4];
 
   if (Constants.DOMINANT_PARTICIPANTS_COUNT < 0 || Constants.DOMINANT_PARTICIPANTS_COUNT > rows.length) {
     console.warn(`Please use a value for dominant participants between 0 < x < ${rows.length}`);
@@ -85,20 +85,23 @@ export default (props: MediaGalleryProps): JSX.Element => {
   };
 
   // determine number of rows/columns to add to the grid
-  const numberStreamsToRender = useMemo(() => clamp(props.remoteParticipants.length, 0, numRemoteParticipantsToRender), [props.remoteParticipants.length])
+  const numberStreamsToRender = useMemo(
+    () => clamp(props.remoteParticipants.length, 0, numRemoteParticipantsToRender),
+    [props.remoteParticipants.length]
+  );
   if (cols[numberStreamsToRender] !== gridCol) {
     if (numberStreamsToRender > cols.length - 1) {
-      throw `attempting to set up a number of columns in the gallery for an unexpected number of participants ${numberStreamsToRender}`
+      throw `attempting to set up a number of columns in the gallery for an unexpected number of participants ${numberStreamsToRender}`;
     }
     setGridCol(cols[numberStreamsToRender]);
   }
 
   if (rows[numberStreamsToRender] !== gridRow) {
     if (numberStreamsToRender > rows.length - 1) {
-      throw `attempting to set up a number of rows in the gallery for an expected unnumber of participants ${numberStreamsToRender}`
+      throw `attempting to set up a number of rows in the gallery for an expected unnumber of participants ${numberStreamsToRender}`;
     }
     setGridRow(rows[numberStreamsToRender]);
-  } 
+  }
 
   // sort by dominance
   const participantsToLayout = props.remoteParticipants.sort((a, b) => {

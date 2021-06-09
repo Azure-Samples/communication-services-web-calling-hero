@@ -1,4 +1,4 @@
-﻿import { connect } from 'react-redux';
+import { connect } from 'react-redux';
 import CallRecording, { CallRecordingProps } from '../components/CallRecording';
 import { State } from '../core/reducers';
 //Use this code if you have to implement pause/resume recording

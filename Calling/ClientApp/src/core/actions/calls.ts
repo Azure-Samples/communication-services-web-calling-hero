@@ -79,27 +79,27 @@ interface StopRecordingAction {
 }
 
 interface SetServerCallIdAction {
-    type: typeof SET_SERVER_CALL_ID,
-    serverCallId: string
+    type: typeof SET_SERVER_CALL_ID;
+    serverCallId: string;
 }
 
 interface ResetRecordingStatusAction {
-    type: typeof RESET_RECORDING_STATUS,
+    type: typeof RESET_RECORDING_STATUS;
 }
 
 interface BannerVisibleAction {
-    type: typeof BANNER_VISIBLE,
-    bannerVisible: boolean
+    type: typeof BANNER_VISIBLE;
+    bannerVisible: boolean;
 }
 
 interface DialogBoxVisibleAction {
-    type: typeof DIALOGBOX_VISIBLE,
-    dialogBoxVisible: boolean
+    type: typeof DIALOGBOX_VISIBLE;
+    dialogBoxVisible: boolean;
 }
 
 interface RecordingErrorAction {
-    type: typeof RECORDING_ERROR,
-    recordingError: string
+    type: typeof RECORDING_ERROR;
+    recordingError: string;
 }
 
 export const setCallAgent = (callAgent: CallAgent): SetCallAgentAction => {

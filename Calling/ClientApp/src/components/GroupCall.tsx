@@ -74,13 +74,13 @@ export default (props: GroupCallProps): JSX.Element => {
         props.dialogBoxVisiblilty(false);
     }
     useEffect(() => {
-        if (props.recordingStatus == Constants.STARTED) {
-            const message = props.recordingId == '' ? 'This meeting is being recorded. By joining you are giving consent for this meeting to be recorded.'
+        if (props.recordingStatus === Constants.STARTED) {
+            const message = props.recordingId === '' ? 'This meeting is being recorded. By joining you are giving consent for this meeting to be recorded.'
                 : 'You are recording this meeting, Be sure to let everyone know they are being recorded.';
-            const header = props.recordingId == '' ? "Recording has started." : "You're recording";
+            const header = props.recordingId === '' ? "Recording has started." : "You're recording";
             setBannerMessages({ Header: header, Message: message, LinkText: '' })
         }
-        else if (props.recordingStatus == Constants.STOPPED) {
+        else if (props.recordingStatus === Constants.STOPPED) {
             setBannerMessages({ Header: 'Recording is being saved', Message: 'Recording has stopped. You can find the recording in blob storage.', LinkText: '' })
         }
 
@@ -101,10 +101,10 @@ export default (props: GroupCallProps): JSX.Element => {
                 />
             </Stack.Item>
             <Stack.Item styles={headerStyles}>
-                {props.isDialogBoxVisiblile && (props.recordingError != '') && <DialogBox message={props.recordingError} isDialogBoxVisiblile={props.isDialogBoxVisiblile} dismissDialogBox={dismissDialogBox} />}
+                {props.isDialogBoxVisiblile && (props.recordingError !== '') && <DialogBox message={props.recordingError} isDialogBoxVisiblile={props.isDialogBoxVisiblile} dismissDialogBox={dismissDialogBox} />}
             </Stack.Item>
             <Stack.Item styles={containerStyles}>
-                {(props.bannerVisiblilty) && props.recordingStatus != "" &&
+                {(props.bannerVisiblilty) && props.recordingStatus !== "" &&
                     <Banner bannerMessages={bannerMessages} dismissBanner={dismissBanner} />
                 }
 

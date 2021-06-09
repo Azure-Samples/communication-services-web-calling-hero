@@ -33,11 +33,11 @@ export const utils = {
     startRecording: async (id: string): Promise<RecordingApiResponse> => {
         const response = await fetch('/recording/startRecording?serverCallId=' + id);
         if (response.ok) {
-            var recordingid = await response.json();
+            const recordingid = await response.json();
             return { recordingId: recordingid, message: '' };
         }
-        var output = await response.json();
-        var errorMessage = output.message || "Recording could not be started";
+        const output = await response.json();
+        const errorMessage = output.message || "Recording could not be started";
         return { recordingId: '', message: errorMessage };
     },
     //Use this code if you have to implement pause/resume recording

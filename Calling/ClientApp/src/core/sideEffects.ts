@@ -228,7 +228,7 @@ export const updateDevices = () => {
 
 export const resetRecordingState = () => {
     return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
-        let state = getState();
+        const state = getState();
         if (state.calls) {
             dispatch(resetRecordingStatus());
         } else {
@@ -239,7 +239,7 @@ export const resetRecordingState = () => {
 
 export const startRecord = () => {
     return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
-        let state = getState();
+        const state = getState();
         if (state.calls !== undefined && state.calls.serverCallId) {
             dispatch(startRecording(Constants.STARTING, ''));
             const response: RecordingApiResponse = await utils.startRecording(state.calls.serverCallId);
@@ -293,7 +293,7 @@ export const startRecord = () => {
 
 export const stopRecord = () => {
     return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
-        let state = getState();
+        const state = getState();
         if (state.calls !== undefined && state.calls.serverCallId && state.calls.recordingId !== undefined) {
             const response: RecordingActionResponse = await utils.stopRecording(state.calls.serverCallId, state.calls.recordingId);
             if (response && !response.message) {
@@ -331,7 +331,7 @@ export const registerToCallAgent = (
                 dispatch(callAdded(addedCall));
 
                 const callRecordingApi = addedCall.api(Features.Recording);
-                const isRecordingActiveChangedHandler = () => {
+                const isRecordingActiveChangedHandler = (): void => {
                     if (callRecordingApi.isRecordingActive) {
                         if (getState().calls.recordingId === '') {
                             dispatch(startRecording('', Constants.STARTED));

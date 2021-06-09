@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { IconButton, Stack } from "@fluentui/react";
 import { bannerStyle, headerStyle, dismissButtonStyle,
     bannerWarningStyle, iconColor, bannerMessageStyle, bannerDismissOuterStyle
@@ -6,7 +6,11 @@ import { bannerStyle, headerStyle, dismissButtonStyle,
 
 export interface BannerProps {
     dismissBanner(): void;
-    bannerMessages: {Header: string, Message: string, LinkText: string };
+    bannerMessages: {
+        Header: string;
+        Message: string;
+        LinkText: string;
+    };
 }
 
 export default (props: BannerProps): JSX.Element => {

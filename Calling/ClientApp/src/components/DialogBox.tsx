@@ -1,4 +1,4 @@
-﻿// © Microsoft Corporation. All rights reserved.
+// © Microsoft Corporation. All rights reserved.
 import React from 'react';
 import { Stack, MessageBar, MessageBarType, DefaultButton } from '@fluentui/react';
 import { Dialog, DialogType, DialogFooter } from 'office-ui-fabric-react/lib/Dialog';
@@ -7,9 +7,9 @@ import {
 } from './styles/MediaControls.styles';
 
 export interface DialogBoxProps {
-    message: string,
-    dismissDialogBox(): void,
-    isDialogBoxVisiblile: boolean
+    message: string;
+    dismissDialogBox(): void;
+    isDialogBoxVisiblile: boolean;
 }
 const modalPropsStyles = { main: { width: 340 } };
 const dialogContentProps = {

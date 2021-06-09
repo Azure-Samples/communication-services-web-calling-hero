@@ -31,14 +31,18 @@ export const utils = {
     throw new Error('Invalid token response');
   },
   startRecording: async (id: string): Promise<RecordingApiResponse> => {
-    const response = await fetch('/recording/startRecording?serverCallId=' + id);
-    if (response.ok) {
-      const recordingid = await response.json();
-      return { recordingId: recordingid, message: '' };
+    try {
+      const response = await fetch('/recording/startRecording?serverCallId=' + id);
+      if (response.ok) {
+        const recordingid = await response.json();
+        return { recordingId: recordingid, message: '' };
+      }
+      const output = await response.json();
+      const errorMessage = output.message || 'Recording could not be started';
+      return { recordingId: '', message: errorMessage };
+    } catch (e) {
+      return { recordingId: '', message: 'Recording could not be started' };
     }
-    const output = await response.json();
-    const errorMessage = output.message || 'Recording could not be started';
-    return { recordingId: '', message: errorMessage };
   },
   //Use this code if you have to implement pause/resume recording
   /*pauseRecording: async (serverCallId: string, recordingId: string): Promise<RecordingActionResponse> => {
@@ -56,13 +60,17 @@ export const utils = {
         return { message: "Recording could not be resumed" };
     },*/
   stopRecording: async (serverCallId: string, recordingId: string): Promise<RecordingActionResponse> => {
-    const response = await fetch(
-      '/recording/stopRecording?serverCallId=' + serverCallId + '&recordingId=' + recordingId
-    );
-    if (response.ok) {
-      return { message: '' };
+    try {
+      const response = await fetch(
+        '/recording/stopRecording?serverCallId=' + serverCallId + '&recordingId=' + recordingId
+      );
+      if (response.ok) {
+        return { message: '' };
+      }
+      return { message: 'Recording could not be stopped' };
+    } catch (e) {
+      return { message: 'Recording could not be stopped' };
     }
-    return { message: 'Recording could not be stopped' };
   },
   isSelectedAudioDeviceInList(selected: AudioDeviceInfo, list: AudioDeviceInfo[]): boolean {
     return list.filter((item) => item.name === selected.name).length > 0;

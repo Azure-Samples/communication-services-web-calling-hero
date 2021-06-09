@@ -60,12 +60,7 @@ namespace Calling.Controllers
                     {
                         recordingData.Add(serverCallId, string.Empty);
                     }
-
                     recordingData[serverCallId] = recordingId;
-
-                    CallRecordingState state = CallRecordingState.Inactive;
-                    var recordingStateResponse = await conversationClient.GetRecordingStateAsync(serverCallId, recordingId).ConfigureAwait(false);
-                    state = recordingStateResponse.Value.RecordingState == null ? CallRecordingState.Inactive : (CallRecordingState)recordingStateResponse.Value.RecordingState;
 
                     return Json(recordingId);
                 }
@@ -76,7 +71,8 @@ namespace Calling.Controllers
             }
             catch (Exception ex)
             {
-                if (ex.Message.Contains(CallRecodingActiveErrorCode)){
+                if (ex.Message.Contains(CallRecodingActiveErrorCode))
+                {
                     return BadRequest(new { Message = CallRecodingActiveError });
                 }
                 return Json(new { Exception = ex });
@@ -133,7 +129,7 @@ namespace Calling.Controllers
         {
             try
             {
-               if (!string.IsNullOrEmpty(serverCallId))
+                if (!string.IsNullOrEmpty(serverCallId))
                 {
                     if (string.IsNullOrEmpty(recordingId))
                     {
@@ -172,8 +168,10 @@ namespace Calling.Controllers
         {
             try
             {
-                if (!string.IsNullOrEmpty(serverCallId)){ 
-                    if (string.IsNullOrEmpty(recordingId)){
+                if (!string.IsNullOrEmpty(serverCallId))
+                {
+                    if (string.IsNullOrEmpty(recordingId))
+                    {
                         recordingId = recordingData[serverCallId];
                     }
                     else

@@ -30,6 +30,8 @@ Additional documentation for this sample can be found on [Microsoft Docs](https:
 - [Visual Studio (2019 and above)](https://visualstudio.microsoft.com/vs/)
 - [.NET Core 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1) (Make sure to install version that corresponds with your visual studio instance, 32 vs 64 bit)
 - Create an Azure Communication Services resource. For details, see [Create an Azure Communication Resource](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource). You'll need to record your resource **connection string** for this quickstart.
+- An Azure blob storage account and container, for details, see [Create a storage account](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-portal). You'll need to record your blob **connection string** and **container name** for this quickstart.
+- An Azure Event grid Web hook, for details, see [Record and download calls with Event Grid](https://docs.microsoft.com/en-us/azure/communication-services/quickstarts/voice-video-calling/download-recording-file-sample).
 
 ## Code structure
 
@@ -39,15 +41,85 @@ Additional documentation for this sample can be found on [Microsoft Docs](https:
 		- ./Calling/ClientApp/src/Containers : Connects the redux functionality to the React components
 		- ./Calling/ClientApp/src/Core : Containers a redux wrapper around the Azure Communication Services Web Calling SDK
 	- ./ClientApp/src/index.js : Entry point for the client app
-- ./Calling/Controllers : Server app core logic for client app to get a token to use with the Azure Communication Services Web Calling SDK
+- ./Calling/Controllers :
+	- ./Calling/Controllers/UserTokenController.cs : Server app core logic for client app to get access token to use with the Azure Communication Services Web Calling SDK.
+	- ./Calling/Controllers/CallRecordingController.cs : Server app core logic to start and stop a call recording session.
 - ./Calling/Program.cs : Entry point for the server app program logic
 - ./Calling/Startup.cs : Entry point for the server app startup logic
+
+## Call recording management from client app
+
+[!NOTE] This API is provided as a preview for developers and may change based on feedback that we receive. Do not use this API in a production environment. To use this api please use 'beta' release of ACS Calling Web SDK
+
+Call recording is an extended feature of the core Call API. You first need to obtain the recording feature API object:
+
+```JavaScript
+const callRecordingApi = call.api(Features.Recording);
+```
+Then, to can check if the call is being recorded, inspect the `isRecordingActive` property of `callRecordingApi`, it returns Boolean.
+
+```JavaScript
+const isResordingActive = callRecordingApi.isRecordingActive;
+```
+You can also subscribe to recording changes:
+
+```JavaScript
+const isRecordingActiveChangedHandler = () => {
+  console.log(callRecordingApi.isRecordingActive);
+};
+
+callRecordingApi.on('isRecordingActiveChanged', isRecordingActiveChangedHandler);
+```
+
+Get server call id which can be used to start or stop a recording sessions:
+
+Once the call is connected use the `getServerCallId` method to get the server call id.
+
+```JavaScript
+callAgent.on('callsUpdated', (e: { added: Call[]; removed: Call[] }): void => {
+    e.added.forEach((addedCall) => {
+        addedCall.on('stateChanged', (): void => {
+            if (addedCall.state === 'Connected') {
+                addedCall.info.getServerCallId().then(result => {
+                    dispatch(setServerCallId(result));
+                }).catch(err => {
+                    console.log(err);
+                });
+            }
+        });
+    });
+});
+```
+
+## Start recording session using 'StartRecordingAsync' server API
+
+Use the  server call id received in response of method `getServerCallId`.
+
+```csharp
+var startRecordingResponse = await conversationClient.StartRecordingAsync(<servercallid>, <callbackuri>).ConfigureAwait(false);
+```
+The `StartRecordingAsync` API response contains the recording id of the recording session.
+
+## Stop recording session using 'StopRecordingAsync' server API
+
+Use the  recording id received in response of  `StartRecordingAsync`.
+
+```csharp
+ await conversationClient.StopRecordingAsync(<servercallid>, <recordingid>).ConfigureAwait(false);
+```
 
 ## Before running the sample for the first time
 1. Open an instance of PowerShell, Windows Terminal, Command Prompt or equivalent and navigate to the directory that you'd like to clone the sample to.
 2. `git clone https://github.com/Azure-Samples/communication-services-web-calling-hero.git`
 3. Get the `Connection String` from the Azure portal. For more information on connection strings, see [Create an Azure Communication Resources](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource)
-4. Once you get the `Connection String`, add the connection string to the **Calling/appsetting.json** file found under the Calling folder. Input your connection string in the variable: `ResourceConnectionString`.
+4. Add following variables in **Calling/appsettings.json** file found under the Service .NET folder:
+    - `ResourceConnectionString`: Connection string from the Azure portal.
+    - `CallbackUri`: Callback uri for receiving state change callbacks.
+    - `AccessKey`: Access key of the ACS communication resource.
+    - `DownloadUri`: The uri to download the recording in the variable, its format should be `https://<ACS_RESOURCE_NAME>.communication.azure.com/recording/download/`.
+    - `ApiVersion`: ACS SDK api version.
+    - `BlobStorageConnectionString`:  Connection string of the blob storage where call recoding data is saved.
+    - `ContainerName`: ContainerName of the blob storage used for saving call recording data.
 
 ## Locally deploying the sample app
 
@@ -68,9 +140,16 @@ Additional documentation for this sample can be found on [Microsoft Docs](https:
 
 1. Right click the `Calling` project and select Publish.
 2. Create a new publish profile and select your app name, Azure subscription, resource group and etc.
-3. Before publish, add your connection string with `Edit App Service Settings`, and fill in `ResourceConnectionString` as key and connection string (copy from appsettings.json) as value
+3. Before publish, add the following keys and provide your values (copy from appsettings.json) with  `Edit App Service Settings` :
+	-  `ResourceConnectionString` as connection string from Azure portal.
+	-  `CallbackUri` as the key of callback uri of the application.
+	-  `AccessKey` as the key of access key of ACS communication resource as value.
+	-  `DownloadUri` as the key of uri to download the recording in the variable.
+	-  `ApiVersion` as the key of ACS SDK api version.
+	-  `BlobStorageConnectionString` as the key of connection string of the blob storage where call recoding data is saved.
+	-  `ContainerName` as the key of container name of the blob storage used for saving call recording data.
 
-**Note**: While you may use http://localhost for local testing, the sample when deployed will only work when served over https. The SDK [does not support http](https://docs.microsoft.com/en-us/azure/communication-services/concepts/voice-video-calling/calling-sdk-features#user-webrtc-over-https).
+**Note**: While you may use http://localhost for local testing, the sample when deployed will only work when served over https. The SDK [does not support http](https://docs.microsoft.com/azure/communication-services/concepts/voice-video-calling/calling-sdk-features#user-webrtc-over-https).
 
 ## Building off of the sample
 
@@ -86,4 +165,4 @@ If you would like to build off of this sample to add calling capabilities to you
 - [Redux](https://redux.js.org/) - Client-side state management
 - [FluentUI](https://developer.microsoft.com/en-us/fluentui#/) - Microsoft powered UI library
 - [React](https://reactjs.org/) - Library for building user interfaces
-- [ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core?view=aspnetcore-3.1) - Framework for building web applications
+- [ASP.NET Core](https://docs.microsoft.com/aspnet/core/introduction-to-aspnet-core?view=aspnetcore-3.1) - Framework for building web applications

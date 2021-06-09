@@ -46,3 +46,71 @@ export const loadingStyle = mergeStyles({
   justifyContent: 'center',
   alignItems: 'center'
 });
+
+export const bannerStyle = mergeStyles({
+    backgroundColor: '#444477',
+    height: '36px',
+    position: 'absolute',
+    color: 'white',
+    width: '100%',
+    textAlign: 'center',
+    lineHeight: '36px',
+    zIndex: '9',
+});
+export const bannerDivStyle = mergeStyles({
+    display: 'inline-block'
+});
+export const bannerMessageStyle = mergeStyles({
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    width: '50%',
+    textOverflow: 'ellipsis',
+    display: 'inline-block',
+    textAlign: 'left',
+    '@media (max-width: 500px)': {
+        width: '30%',
+    }
+});
+export const headerStyle = mergeStyles({
+    fontWeight: 'bold',
+    display: 'inline-block',
+    overflow: 'hidden'
+});
+export const dismissButtonStyle = mergeStyles({
+    lineHeight: '22px',
+    float: 'right',
+    backgroundColor: 'transparent',
+    border: '1px solid #bdb7b7',
+    color: 'white',
+    padding: '0 15px',
+    margin: '6px',
+    cursor: 'pointer',
+    position: 'absolute',
+    right: '0'
+});
+export const bannerWarningStyle = mergeStyles({
+    color: 'white',
+    position: 'relative',
+    top: '3px',
+    display: 'inline-block',
+    overflow: 'hidden',
+    marginLeft: '8%',
+    '@media (min-width: 1750px)': {
+        marginLeft: '20%',
+    },
+    '@media (min-width: 2000px)': {
+        marginLeft: '22%',
+    },
+    '@media (min-width: 3550px)': {
+        marginLeft: '32%',
+    }
+});
+export const iconColor = mergeStyles({
+    color: "white",
+    backgroundColor: 'transparent'
+});
+export const bannerDismissOuterStyle = mergeStyles({
+    display: 'inline',
+    position: 'absolute',
+    right: '0'
+});

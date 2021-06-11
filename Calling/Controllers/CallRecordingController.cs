@@ -22,7 +22,7 @@ namespace Calling.Controllers
         private readonly string blobStorageConnectionString;
         private readonly string callbackUri;
         private readonly string containerName;
-        private readonly ConversationClient conversationClient;
+        private readonly CallingServerClient callingServerClient;
         private readonly string downloadUri;
         private const string CallRecodingActiveErrorCode = "8553";
         private const string CallRecodingActiveError = "Recording is already in progress, one recording can be active at one time.";
@@ -36,7 +36,7 @@ namespace Calling.Controllers
             blobStorageConnectionString = configuration["BlobStorageConnectionString"];
             callbackUri = configuration["CallbackUri"];
             containerName = configuration["ContainerName"];
-            conversationClient = new ConversationClient(configuration["ResourceConnectionString"]);
+            callingServerClient = new CallingServerClient(configuration["ResourceConnectionString"]);
             downloadUri = configuration["DownloadUri"];
             Logger = logger;
         }
@@ -54,7 +54,7 @@ namespace Calling.Controllers
                 if (!string.IsNullOrEmpty(serverCallId))
                 {
                     var uri = new Uri(callbackUri);
-                    var startRecordingResponse = await conversationClient.StartRecordingAsync(serverCallId, uri).ConfigureAwait(false);
+                    var startRecordingResponse = await callingServerClient.InitializeServerCall(serverCallId).StartRecordingAsync(uri).ConfigureAwait(false);
                     var recordingId = startRecordingResponse.Value.RecordingId;
                     if (!recordingData.ContainsKey(serverCallId))
                     {
@@ -103,7 +103,7 @@ namespace Calling.Controllers
                             recordingData[serverCallId] = recordingId;
                         }
                     }
-                    await conversationClient.PauseRecordingAsync(serverCallId, recordingId);
+                    await callingServerClient.InitializeServerCall(serverCallId).PauseRecordingAsync(recordingId);
 
                     return Ok();
                 }
@@ -142,7 +142,7 @@ namespace Calling.Controllers
                             recordingData[serverCallId] = recordingId;
                         }
                     }
-                    await conversationClient.ResumeRecordingAsync(serverCallId, recordingId);
+                    await callingServerClient.InitializeServerCall(serverCallId).ResumeRecordingAsync(recordingId);
                     return Ok();
                 }
                 else
@@ -182,7 +182,7 @@ namespace Calling.Controllers
                         }
                     }
 
-                    await conversationClient.StopRecordingAsync(serverCallId, recordingId).ConfigureAwait(false);
+                    await callingServerClient.InitializeServerCall(serverCallId).StopRecordingAsync(recordingId).ConfigureAwait(false);
                     if (recordingData.ContainsKey(serverCallId))
                     {
                         recordingData.Remove(serverCallId);

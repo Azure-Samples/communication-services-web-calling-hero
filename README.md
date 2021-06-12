@@ -91,12 +91,28 @@ callAgent.on('callsUpdated', (e: { added: Call[]; removed: Call[] }): void => {
 });
 ```
 
-## Start recording session using 'StartRecordingAsync' server API
+## Create a calling server client
 
-Use the  server call id received in response of method `getServerCallId`.
+To create a calling server client, you'll use your Communication Services connection string and pass to calling server client class.
 
 ```csharp
-var startRecordingResponse = await conversationClient.StartRecordingAsync(<servercallid>, <callbackuri>).ConfigureAwait(false);
+this.callingServerClient = new CallingServerClient("<Connection_String>");
+```
+
+## Initialize server call
+
+To initialize `ServerCall` object, you will use `CallingServerClient` object and `serverCallId` received in response of method `getServerCallId` on client side.
+
+```csharp
+this.serverCall = this.callingServerClient.InitializeServerCall(serverCallId);
+```
+
+## Start recording session using 'StartRecordingAsync' server API
+
+Use the `ServerCall` start recording.
+
+```csharp
+var startRecordingResponse = await this.serverCall.StartRecordingAsync(uri).ConfigureAwait(false);
 ```
 The `StartRecordingAsync` API response contains the recording id of the recording session.
 
@@ -105,7 +121,7 @@ The `StartRecordingAsync` API response contains the recording id of the recordin
 Use the  recording id received in response of  `StartRecordingAsync`.
 
 ```csharp
- await conversationClient.StopRecordingAsync(<servercallid>, <recordingid>).ConfigureAwait(false);
+ await this.serverCall.StopRecordingAsync(recordingId).ConfigureAwait(false);
 ```
 
 ## Before running the sample for the first time

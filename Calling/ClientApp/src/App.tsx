@@ -1,5 +1,5 @@
 // © Microsoft Corporation. All rights reserved.
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import GroupCall from './containers/GroupCall';
 import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
@@ -27,7 +27,7 @@ const App = (): JSX.Element => {
   const [screenWidth, setScreenWidth] = useState(0);
   const [localVideoStream, setLocalVideoStream] = useState(undefined);
 
-  const unsupportedStateHandler = useMemo((): void => setPage('unsupported'),[]);
+  const unsupportedStateHandler = useCallback((): void => setPage('unsupported'),[]);
 
   useEffect(() => {
     const setWindowWidth = (): void => {

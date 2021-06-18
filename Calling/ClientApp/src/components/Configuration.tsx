@@ -78,7 +78,9 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
 
   const { groupId, setupCallClient, setGroup, unsupportedStateHandler } = props;
 
-  const memoizedSetupCallClient = useCallback(() => setupCallClient(unsupportedStateHandler), [unsupportedStateHandler]);
+  const memoizedSetupCallClient = useCallback(() => setupCallClient(unsupportedStateHandler), [
+    unsupportedStateHandler
+  ]);
   useEffect(() => {
     memoizedSetupCallClient();
   }, [memoizedSetupCallClient]);

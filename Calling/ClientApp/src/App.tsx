@@ -27,7 +27,7 @@ const App = (): JSX.Element => {
   const [screenWidth, setScreenWidth] = useState(0);
   const [localVideoStream, setLocalVideoStream] = useState(undefined);
 
-  const unsupportedStateHandler = useCallback((): void => setPage('unsupported'),[]);
+  const unsupportedStateHandler = useCallback((): void => setPage('unsupported'), []);
 
   useEffect(() => {
     const setWindowWidth = (): void => {

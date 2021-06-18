@@ -1,7 +1,7 @@
-import { CallClient } from "@azure/communication-calling";
+import { CallClient } from '@azure/communication-calling';
 
 const SET_USERID = 'SET_USERID';
-const SET_CALL_CLIENT =  'SET_CALL_CLIENT';
+const SET_CALL_CLIENT = 'SET_CALL_CLIENT';
 const SET_DISPLAY_NAME = 'SET_DISPLAY_NAME';
 
 interface SetUserIdAction {

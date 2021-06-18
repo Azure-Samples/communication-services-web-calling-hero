@@ -17,7 +17,7 @@ export const sdkReducer: Reducer<SdkState, SdkTypes> = (state = initialState, ac
     case SET_USERID:
       return { ...state, userId: action.userId };
     case SET_CALL_CLIENT:
-      return { ...state, callClient: action.callClient }
+      return { ...state, callClient: action.callClient };
     case SET_DISPLAY_NAME:
       return { ...state, displayName: action.displayName };
     default:

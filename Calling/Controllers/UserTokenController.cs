@@ -31,7 +31,7 @@ namespace Calling
         {
             try
             {
-                Response<(CommunicationUserIdentifier User, AccessToken Token)> response = await _client.CreateUserWithTokenAsync(scopes: new[] { CommunicationTokenScope.VoIP });
+                Response <CommunicationUserIdentifierAndToken> response = await _client.CreateUserAndTokenAsync(scopes: new[] { CommunicationTokenScope.VoIP });
 
                 var responseValue = response.Value;
 
@@ -43,8 +43,8 @@ namespace Calling
                 var clientResponse = new
                 {
                     user = jsonFormattedUser,
-                    token = responseValue.Token.Token,
-                    expiresOn = responseValue.Token.ExpiresOn
+                    token = responseValue.AccessToken.Token,
+                    expiresOn = responseValue.AccessToken.ExpiresOn
                 };
                 
                 return this.Ok(clientResponse);
@@ -67,7 +67,7 @@ namespace Calling
             try
             {
                 CommunicationUserIdentifier identifier = new CommunicationUserIdentifier(identity);
-                Response<AccessToken> response = await _client.IssueTokenAsync(identifier, scopes: new[] { CommunicationTokenScope.VoIP });
+                Response<AccessToken> response = await _client.GetTokenAsync(identifier, scopes: new[] { CommunicationTokenScope.VoIP });
 
                 var responseValue = response.Value;
                 var clientResponse = new

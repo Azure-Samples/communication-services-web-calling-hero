@@ -25,12 +25,15 @@ export default (props: MediaGalleryProps): JSX.Element => {
   const [gridCol, setGridCol] = useState(1);
   const [gridRow, setGridRow] = useState(1);
 
-  // For now we are only going to support up to a 4x4 grid or 16 people in a call
+  if (Constants.DOMINANT_PARTICIPANTS_COUNT < 1 || Constants.DOMINANT_PARTICIPANTS_COUNT > 8) {
+    console.error('Please use a value for dominant participants between 1 <= x <= 8');
+  }
+
+  // For now we are only going to support up to a 4x3 grid or 10 participants in a call
   // Since this is a sample, we will just hard-code how we want the grid to scale
   // the rows and columns for the number of users in the call
-  // total participants  1, 2, 3, 4, 5, 6, 7, 8, 9,10, 11, 12, 13, 14, 15, 16
-  const rows = [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4];
-  const cols = [1, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4];
+  const rows = [1, 1, 2, 2, 2, 2, 3, 3, 3, 3];
+  const cols = [1, 2, 2, 2, 3, 3, 3, 3, 3, 4];
 
   if (Constants.DOMINANT_PARTICIPANTS_COUNT < 0 || Constants.DOMINANT_PARTICIPANTS_COUNT > rows.length) {
     console.warn(`Please use a value for dominant participants between 0 < x < ${rows.length}`);
@@ -98,7 +101,7 @@ export default (props: MediaGalleryProps): JSX.Element => {
 
   if (rows[numberStreamsToRender] !== gridRow) {
     if (numberStreamsToRender > rows.length - 1) {
-      throw `attempting to set up a number of rows in the gallery for an expected unnumber of participants ${numberStreamsToRender}`;
+      throw `attempting to set up a number of rows in the gallery for an expected number of participants ${numberStreamsToRender}`;
     }
     setGridRow(rows[numberStreamsToRender]);
   }

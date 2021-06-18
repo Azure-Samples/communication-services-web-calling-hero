@@ -12,9 +12,11 @@ import {
   separatorContainerStyle,
   separatorStyles,
   pivotItemStyle,
-  headerCenteredContainer
+  headerCenteredContainer,
+  feedbackContainer
 } from './styles/Header.styles';
 import { ParticipantStream } from 'core/reducers';
+import { FeedbackButton } from './FeedbackButton';
 
 export interface HeaderProps {
   selectedPane: CommandPanelTypes;
@@ -85,6 +87,9 @@ export default (props: HeaderProps): JSX.Element => {
       id="header"
       className={props.screenWidth > Constants.MINI_HEADER_WINDOW_WIDTH ? headerContainer : headerCenteredContainer}
     >
+      <Stack.Item grow={1} className={feedbackContainer}>
+        <FeedbackButton />
+      </Stack.Item>
       <Pivot
         onKeyDownCapture={(e): void => {
           if ((e.target as HTMLElement).id === CommandPanelTypes.People && e.keyCode === 39) e.preventDefault();

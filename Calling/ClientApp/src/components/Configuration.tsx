@@ -1,6 +1,6 @@
 // © Microsoft Corporation. All rights reserved.
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Stack, Spinner, PrimaryButton } from '@fluentui/react';
 import LocalPreview from './LocalPreview';
 import LocalSettings from './LocalSettings';
@@ -11,7 +11,8 @@ import {
   LocalVideoStream,
   DeviceManager,
   CallAgent,
-  CallEndReason
+  CallEndReason,
+  CallClient
 } from '@azure/communication-calling';
 import { VideoCameraEmphasisIcon } from '@fluentui/react-icons-northstar';
 import {
@@ -27,10 +28,11 @@ import {
 export interface ConfigurationScreenProps {
   userId: string;
   groupId: string;
+  callClient: CallClient;
   callAgent: CallAgent;
   deviceManager: DeviceManager;
   setupCallClient(unsupportedStateHandler: () => void): void;
-  setupCallAgent(displayName: string): void;
+  setupCallAgent(callClient: CallClient, displayName: string): void;
   startCallHandler(): void;
   unsupportedStateHandler: () => void;
   callEndedHandler: (reason: CallEndReason) => void;
@@ -57,11 +59,13 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
   const [name, setName] = useState(createUserId());
   const [emptyWarning, setEmptyWarning] = useState(false);
 
-  const {setupCallClient, setupCallAgent, unsupportedStateHandler} = props;
+  const {setupCallClient, setupCallAgent, unsupportedStateHandler, callClient} = props;
+
+  const memoizedSetupCallClient = useCallback(() => setupCallClient(unsupportedStateHandler), [unsupportedStateHandler]);
 
   useEffect(() => {
-    setupCallClient(unsupportedStateHandler);
-  }, [setupCallClient, unsupportedStateHandler]);
+    memoizedSetupCallClient();
+  }, [memoizedSetupCallClient]);
 
   return (
     <Stack className={mainContainerStyle} horizontalAlign="center" verticalAlign="center">
@@ -104,7 +108,7 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
                     setEmptyWarning(true);
                   } else {
                     setEmptyWarning(false);
-                    await setupCallAgent(name);
+                    await setupCallAgent(callClient, name);
                     props.startCallHandler();
                   }
                 }}

@@ -38,7 +38,7 @@ import {
   setVideoDeviceList,
   setDeviceManager
 } from './actions/devices';
-import { setUserId } from './actions/sdk';
+import { setCallClient, setUserId } from './actions/sdk';
 import { addScreenShareStream, removeScreenShareStream } from './actions/streams';
 import { State } from './reducers';
 import { setLogLevel } from '@azure/logger';
@@ -232,11 +232,12 @@ export const updateDevices = () => {
   };
 };
 
-export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndReason) => void) => {
+export const initCallAgent = (
+  callClient: CallClient,
+  name: string,
+  callEndedHandler: (reason: CallEndReason) => void
+) => {
   return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
-    setLogLevel('verbose');
-    let callClient = new CallClient();
-
     const tokenResponse: CommunicationUserToken = await utils.getTokenForUser();
     const userToken = tokenResponse.token;
     const userId = tokenResponse.user.communicationUserId;
@@ -359,6 +360,7 @@ export const initCallClient = (unsupportedStateHandler: () => void) => {
 
     const deviceManager: DeviceManager = await callClient.getDeviceManager();
 
+    dispatch(setCallClient(callClient));
     dispatch(setDeviceManager(deviceManager));
     subscribeToDeviceManager(deviceManager, dispatch, getState);
   };

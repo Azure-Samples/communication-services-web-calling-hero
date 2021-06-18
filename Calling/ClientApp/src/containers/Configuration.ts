@@ -4,11 +4,12 @@ import { setVideoDeviceInfo, setAudioDeviceInfo } from '../core/actions/devices'
 import { initCallAgent, initCallClient, updateDevices } from '../core/sideEffects';
 import { setMic } from '../core/actions/controls';
 import { State } from '../core/reducers';
-import { AudioDeviceInfo, VideoDeviceInfo, LocalVideoStream } from '@azure/communication-calling';
+import { AudioDeviceInfo, VideoDeviceInfo, LocalVideoStream, CallClient } from '@azure/communication-calling';
 import { setLocalVideoStream } from '../core/actions/streams';
 
 const mapStateToProps = (state: State, props: ConfigurationScreenProps) => ({
   deviceManager: state.devices.deviceManager,
+  callClient: state.sdk.callClient,
   callAgent: state.calls.callAgent,
   mic: state.controls.mic,
   screenWidth: props.screenWidth,
@@ -27,7 +28,8 @@ const mapDispatchToProps = (dispatch: any, props: ConfigurationScreenProps) => (
   setAudioDeviceInfo: (deviceInfo: AudioDeviceInfo) => dispatch(setAudioDeviceInfo(deviceInfo)),
   setVideoDeviceInfo: (deviceInfo: VideoDeviceInfo) => dispatch(setVideoDeviceInfo(deviceInfo)),
   setupCallClient: (unsupportedStateHandler: () => void) => dispatch(initCallClient(unsupportedStateHandler)),
-  setupCallAgent: (displayName: string) => dispatch(initCallAgent(displayName, props.callEndedHandler)),
+  setupCallAgent: (callClient: CallClient, displayName: string) =>
+    dispatch(initCallAgent(callClient, displayName, props.callEndedHandler)),
   updateDevices: () => dispatch(updateDevices())
 });
 

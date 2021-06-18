@@ -33,6 +33,10 @@ export const headerCenteredContainer = mergeStyles(headerContainer, {
   justifyContent: 'center'
 });
 
+export const feedbackContainer = mergeStyles({
+  marginLeft: '1rem'
+});
+
 export const separatorContainerStyle = mergeStyles({
   display: 'inline-block',
   padding: '0 1rem',

@@ -1,0 +1,203 @@
+import {
+  Checkbox,
+  CommandButton,
+  DefaultButton,
+  Dialog,
+  DialogFooter,
+  DialogType,
+  Dropdown,
+  IDropdownOption,
+  Label,
+  PrimaryButton,
+  TextField
+} from '@fluentui/react';
+import { v1 as createGUID } from 'uuid';
+import { CustomerHubIcon } from '@fluentui/react-icons-northstar';
+import { store } from 'core/store';
+import { Feedback } from 'feedbacks/Feedback';
+import { getLogs } from 'feedbacks/logger';
+import { uploadFeedback } from 'feedbacks/submitFeedback';
+import React, { useCallback, useState } from 'react';
+import { controlButtonStyle, fullWidth } from './styles/MediaControls.styles';
+import { isScreenShotAvailable, captureScreenshot } from 'Utils/captureScreenshot';
+
+export const FeedbackButton = (): JSX.Element => {
+  const [hidden, setHidden] = useState(true);
+  const togglePopup = useCallback(() => {
+    setHidden(!hidden);
+  }, [hidden]);
+
+  return (
+    <>
+      <CommandButton onClick={togglePopup} className={controlButtonStyle}>
+        <div className={fullWidth}>
+          <CustomerHubIcon size="medium" />
+        </div>
+      </CommandButton>
+      {!hidden && <FeedbackPopup toggleHidden={togglePopup} />}
+    </>
+  );
+};
+
+type FeedbackPopupProps = {
+  toggleHidden: () => void;
+};
+
+const options: IDropdownOption[] = [
+  { key: 'Calling - Audio', text: 'Calling - Audio' },
+  { key: 'Calling - Call drops', text: 'Calling - Call drops' },
+  { key: 'Calling - Other', text: 'Calling - Other' },
+  { key: 'Calling - Video', text: 'Calling - Video' },
+  { key: 'Calling - Screen sharing', text: 'Calling - Screen sharing' },
+  { key: 'Participants list', text: 'Participants list' },
+  { key: 'Join experience', text: 'Join experience' },
+  { key: 'App Crashing', text: 'App Crashing' },
+  { key: 'Others', text: 'Others' }
+];
+
+const modalProps = {
+  isBlocking: false,
+  styles: { main: { maxWidth: 650, minWidth: 450 } }
+};
+
+const screenShotStyle = {
+  width: '16.75rem',
+  objectFit: 'cover' as const
+};
+
+const dialogContentProps = {
+  type: DialogType.largeHeader,
+  title: 'Feedback',
+  subText: 'Something went wrong? Please provide feedback here!'
+};
+
+const FeedbackPopup = (props: FeedbackPopupProps): JSX.Element => {
+  const [feedbackType, setFeedbackType] = useState<string>('');
+  const [comment, setComment] = useState<string>('');
+  const [guid, setGuid] = useState<string>('');
+  const [isScreenShotDialogOn, setIsScreenShotDialogOn] = useState<boolean>(false);
+  const [screenShot, setScreenShot] = useState<HTMLCanvasElement>();
+  const [isHidden, setIsHidden] = useState<boolean>(false);
+
+  const takeScreenShot = useCallback(async () => {
+    const screenShot = await captureScreenshot();
+    setScreenShot(screenShot);
+  }, []);
+
+  const submitFeedback = useCallback(async () => {
+    const feedback = createFeedback(feedbackType, comment);
+    await uploadFeedback(feedback, screenShot);
+    setGuid(feedback.guid);
+  }, [feedbackType, comment, screenShot]);
+
+  const feedbackInput = (
+    <>
+      <Label>What is this related to? (Required)</Label>
+      <Dropdown
+        defaultSelectedKey={'Calling - Audio'}
+        options={options}
+        onChange={(_, item): void => {
+          setFeedbackType(item?.key as string);
+        }}
+      />
+      <Label>What are you seeing? Has it always been that way? Any step to repro?</Label>
+      <TextField
+        onChange={(_, value): void => {
+          setComment(value ?? '');
+        }}
+        multiline
+        rows={6}
+      />
+      <Checkbox
+        label="Include screen shot"
+        checked={!!screenShot}
+        onChange={(_, value): void => (value ? setIsScreenShotDialogOn(value ?? false) : setScreenShot(undefined))}
+      />
+      {isScreenShotDialogOn && (
+        <ScreenShotInstruction
+          onDismiss={(): void => {
+            setIsScreenShotDialogOn(false);
+          }}
+          onTakeScreenShot={takeScreenShot}
+          setIsParentHidden={setIsHidden}
+        />
+      )}
+      {screenShot && <img src={screenShot?.toDataURL()} style={screenShotStyle} alt='screen shot'/>}
+    </>
+  );
+
+  const feedbackSubmitted = (
+    <>
+      <Label>Please provide this guid to developers for targeting the case:</Label>
+      <TextField value={guid} readOnly />
+    </>
+  );
+
+  return (
+    <Dialog
+      dialogContentProps={dialogContentProps}
+      modalProps={modalProps}
+      hidden={isHidden}
+      onDismiss={props.toggleHidden}
+    >
+      {!guid && feedbackInput}
+      {guid && feedbackSubmitted}
+      <DialogFooter>
+        {!guid && <PrimaryButton onClick={submitFeedback} text="Send" />}
+        <DefaultButton onClick={props.toggleHidden} text="Close" />
+      </DialogFooter>
+    </Dialog>
+  );
+};
+
+const createFeedback = (feedbackType: string, comment: string): Feedback => {
+  const callId = store.getState().calls.call?.id ?? 'Not Found';
+  return {
+    logs: getLogs(),
+    callId: callId,
+    comments: comment,
+    guid: createGUID(),
+    type: feedbackType
+  };
+};
+
+const screenShotDialogContentProps = {
+  type: DialogType.largeHeader,
+  title: 'Take a screen shot',
+  subText: isScreenShotAvailable()
+    ? 'Ready to take a screen shot? Please click [Microsoft Edge tab]/[Chrome tab] in next popup and choose the current tab!'
+    : 'Sorry, screen shot is not available for your browser.'
+};
+
+type ScreenShotPopupProps = {
+  onTakeScreenShot: () => Promise<void>;
+  onDismiss: () => void;
+  setIsParentHidden: (value: boolean) => void;
+};
+
+const ScreenShotInstruction = ({ onTakeScreenShot, onDismiss, setIsParentHidden }: ScreenShotPopupProps): JSX.Element => {
+  const [isHidden, setIsHidden] = useState<boolean>(false);
+  const takeScreenShot = async (): Promise<void> => {
+    setIsParentHidden(true);
+    setIsHidden(true);
+    try {
+      await onTakeScreenShot();
+    } catch {}
+
+    setIsParentHidden(false);
+    onDismiss();
+  };
+  return (
+    <Dialog
+      dialogContentProps={screenShotDialogContentProps}
+      modalProps={modalProps}
+      hidden={isHidden}
+      onDismiss={onDismiss}
+    >
+      <DialogFooter>
+        {isScreenShotAvailable() && <PrimaryButton onClick={takeScreenShot} text="I am ready!" />}
+        <DefaultButton onClick={onDismiss} text="Never mind" />
+      </DialogFooter>
+    </Dialog>
+  );
+};

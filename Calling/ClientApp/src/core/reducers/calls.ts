@@ -60,9 +60,9 @@ export const callsReducer: Reducer<CallsState, CallTypes> = (state = initialStat
     case SET_PARTICIPANTS:
       return { ...state, remoteParticipants: action.remoteParticipants };
     case SET_RECORDING_ACTIVE:
-      return { ...state, isBeingRecorded: action.active }
+      return { ...state, isBeingRecorded: action.active };
     case SET_TRANSCRIBING_ACTIVE:
-      return { ...state, isBeingTranscribed: action.active}
+      return { ...state, isBeingTranscribed: action.active };
     default:
       return state;
   }

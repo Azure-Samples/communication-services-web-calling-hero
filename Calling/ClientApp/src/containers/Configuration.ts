@@ -26,11 +26,9 @@ const mapDispatchToProps = (dispatch: any, props: ConfigurationScreenProps) => (
   setMic: (mic: boolean) => dispatch(setMic(mic)),
   setAudioDeviceInfo: (deviceInfo: AudioDeviceInfo) => dispatch(setAudioDeviceInfo(deviceInfo)),
   setVideoDeviceInfo: (deviceInfo: VideoDeviceInfo) => dispatch(setVideoDeviceInfo(deviceInfo)),
-  setupCallClient: (unsupportedStateHandler: () => void) =>
-    dispatch(initCallClient( unsupportedStateHandler)),
-  setupCallAgent: (displayName: string) =>
-    dispatch(initCallAgent(displayName, props.callEndedHandler)),
-  updateDevices: () => dispatch(updateDevices()),
+  setupCallClient: (unsupportedStateHandler: () => void) => dispatch(initCallClient(unsupportedStateHandler)),
+  setupCallAgent: (displayName: string) => dispatch(initCallAgent(displayName, props.callEndedHandler)),
+  updateDevices: () => dispatch(updateDevices())
 });
 
 const connector: any = connect(mapStateToProps, mapDispatchToProps);

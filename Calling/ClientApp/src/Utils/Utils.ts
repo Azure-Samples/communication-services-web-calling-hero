@@ -1,8 +1,6 @@
 // © Microsoft Corporation. All rights reserved.
 import { AudioDeviceInfo, VideoDeviceInfo, RemoteVideoStream } from '@azure/communication-calling';
-import {
-  CommunicationIdentifierKind
-} from '@azure/communication-common';
+import { CommunicationIdentifierKind } from '@azure/communication-common';
 import { CommunicationUserToken } from '@azure/communication-identity';
 import preval from 'preval.macro';
 
@@ -18,7 +16,7 @@ export const utils = {
     throw new Error('Invalid token response');
   },
   getRefreshedTokenForUser: async (identity: string): Promise<string> => {
-    const response = await fetch(`/refreshToken/${identity}`)
+    const response = await fetch(`/refreshToken/${identity}`);
     if (response.ok) {
       let content = await response.json();
       return content.token;
@@ -43,7 +41,7 @@ export const utils = {
     return window.navigator.userAgent.match(/(Firefox)/g) ? true : false;
   },
   getId: (identifier: CommunicationIdentifierKind): string => {
-    switch(identifier.kind) {
+    switch (identifier.kind) {
       case 'communicationUser':
         return identifier.communicationUserId;
       case 'phoneNumber':
@@ -52,8 +50,8 @@ export const utils = {
         return identifier.microsoftTeamsUserId;
       case 'unknown':
         return identifier.id;
-      default :
-        return ''
+      default:
+        return '';
     }
   },
   getStreamId: (userId: string, stream: RemoteVideoStream): string => {

@@ -89,7 +89,6 @@ export const setParticipants = (participants: RemoteParticipant[]): SetParticipa
   };
 };
 
-
 export const setRecordingActive = (isActive: boolean): SetRecordingActiveAction => {
   return {
     type: SET_RECORDING_ACTIVE,
@@ -119,7 +118,7 @@ export {
   SET_PARTICIPANTS,
   SET_RECORDING_ACTIVE,
   SET_TRANSCRIBING_ACTIVE,
-  SET_DOMINANT_PARTICIPANTS,
+  SET_DOMINANT_PARTICIPANTS
 };
 
 export type CallTypes =

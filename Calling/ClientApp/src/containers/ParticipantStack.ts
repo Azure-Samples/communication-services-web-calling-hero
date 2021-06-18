@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { removeParticipant } from '../core/sideEffects';
 import { State } from '../core/reducers';
 import ParticipantStack from '../components/ParticipantStack';
-import { CommunicationUserKind} from '@azure/communication-common';
+import { CommunicationUserKind } from '@azure/communication-common';
 
 const mapStateToProps = (state: State) => ({
   userId: state.sdk.userId,

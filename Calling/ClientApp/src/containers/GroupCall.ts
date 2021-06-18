@@ -3,7 +3,7 @@ import GroupCall, { GroupCallProps } from '../components/GroupCall';
 import { join, setMicrophone } from '../core/sideEffects';
 import { setLocalVideoStream } from '../core/actions/streams';
 import { setVideoDeviceInfo, setAudioDeviceInfo } from '../core/actions/devices';
-import { 
+import {
   AudioDeviceInfo,
   VideoDeviceInfo,
   LocalVideoStream,
@@ -23,15 +23,12 @@ const mapStateToProps = (state: State, props: GroupCallProps) => ({
   callEndReason: state.calls.callEndReason,
   join: async (locator: GroupCallLocator | TeamsMeetingLinkLocator) => {
     state.calls.callAgent &&
-    
-      await join(
-        state.calls.callAgent,
-        locator,
-        {
-          videoOptions: { localVideoStreams: state.streams.localVideoStream ? [state.streams.localVideoStream] : undefined },
-          audioOptions: { muted: !state.controls.mic }
-        }
-      );
+      (await join(state.calls.callAgent, locator, {
+        videoOptions: {
+          localVideoStreams: state.streams.localVideoStream ? [state.streams.localVideoStream] : undefined
+        },
+        audioOptions: { muted: !state.controls.mic }
+      }));
   },
   remoteParticipants: state.calls.remoteParticipants,
   callState: state.calls.callState,

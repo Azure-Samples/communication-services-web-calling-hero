@@ -15,14 +15,19 @@ import {
   TeamsMeetingLinkLocator,
   Features
 } from '@azure/communication-calling';
-import {
-  AzureCommunicationTokenCredential,
-  CommunicationUserKind
-} from '@azure/communication-common';
+import { AzureCommunicationTokenCredential, CommunicationUserKind } from '@azure/communication-common';
 import { CommunicationUserToken } from '@azure/communication-identity';
 import { Dispatch } from 'redux';
 import { utils } from '../Utils/Utils';
-import { callAdded, callRemoved, setCallState, setParticipants, setCallAgent, setRecordingActive, setTranscribingActive } from './actions/calls';
+import {
+  callAdded,
+  callRemoved,
+  setCallState,
+  setParticipants,
+  setCallAgent,
+  setRecordingActive,
+  setTranscribingActive
+} from './actions/calls';
 import { setMic, setShareScreen } from './actions/controls';
 import {
   setAudioDeviceInfo,
@@ -86,20 +91,17 @@ export const setShareUnshareScreen = (shareScreen: boolean) => {
   };
 };
 
-const subscribeToParticipant = (
-  participant: RemoteParticipant,
-  call: Call,
-  dispatch: Dispatch
-): void => {
+const subscribeToParticipant = (participant: RemoteParticipant, call: Call, dispatch: Dispatch): void => {
   let remoteStreamSelector = RemoteStreamSelector.getInstance(Constants.DOMINANT_PARTICIPANTS_COUNT, dispatch);
 
   participant.on('stateChanged', () => {
     remoteStreamSelector.participantStateChanged(
       utils.getId(participant.identifier),
       participant.displayName ?? '',
-      participant.state, 
-      !participant.isMuted, 
-      participant.videoStreams[0].isAvailable);
+      participant.state,
+      !participant.isMuted,
+      participant.videoStreams[0].isAvailable
+    );
     dispatch(setParticipants([...call.remoteParticipants.values()]));
   });
 
@@ -121,10 +123,11 @@ const subscribeToParticipant = (
             dispatch(removeScreenShareStream(addedStream, participant));
           }
         });
-  
-        if (addedStream.isAvailable) { dispatch(addScreenShareStream(addedStream, participant)); }
-      }
-      else if (addedStream.mediaStreamType === 'Video') {
+
+        if (addedStream.isAvailable) {
+          dispatch(addScreenShareStream(addedStream, participant));
+        }
+      } else if (addedStream.mediaStreamType === 'Video') {
         addedStream.on('isAvailableChanged', () => {
           remoteStreamSelector.participantVideoChanged(utils.getId(participant.identifier), addedStream.isAvailable);
         });
@@ -134,7 +137,11 @@ const subscribeToParticipant = (
   });
 };
 
-const updateAudioDevices = async (deviceManager: DeviceManager, dispatch: Dispatch, getState: () => State): Promise<void> => {
+const updateAudioDevices = async (
+  deviceManager: DeviceManager,
+  dispatch: Dispatch,
+  getState: () => State
+): Promise<void> => {
   const microphoneList: AudioDeviceInfo[] = await deviceManager.getMicrophones();
   dispatch(setAudioDeviceList(microphoneList));
 
@@ -150,7 +157,11 @@ const updateAudioDevices = async (deviceManager: DeviceManager, dispatch: Dispat
   }
 };
 
-const updateVideoDevices = async (deviceManager: DeviceManager, dispatch: Dispatch, getState: () => State): Promise<void> => {
+const updateVideoDevices = async (
+  deviceManager: DeviceManager,
+  dispatch: Dispatch,
+  getState: () => State
+): Promise<void> => {
   const cameraList: VideoDeviceInfo[] = await deviceManager.getCameras();
   dispatch(setVideoDeviceList(cameraList));
 
@@ -165,7 +176,11 @@ const updateVideoDevices = async (deviceManager: DeviceManager, dispatch: Dispat
   }
 };
 
-const subscribeToDeviceManager = async (deviceManager: DeviceManager, dispatch: Dispatch, getState: () => State): Promise<void> => {
+const subscribeToDeviceManager = async (
+  deviceManager: DeviceManager,
+  dispatch: Dispatch,
+  getState: () => State
+): Promise<void> => {
   // listen for any new events
   deviceManager.on('videoDevicesUpdated', async () => {
     updateVideoDevices(deviceManager, dispatch, getState);
@@ -175,7 +190,7 @@ const subscribeToDeviceManager = async (deviceManager: DeviceManager, dispatch: 
     updateAudioDevices(deviceManager, dispatch, getState);
   });
 
-  deviceManager.askDevicePermission({ audio: true,  video: true}).then((e: DeviceAccess) => {
+  deviceManager.askDevicePermission({ audio: true, video: true }).then((e: DeviceAccess) => {
     if (e.audio !== undefined) {
       if (e.audio) {
         dispatch(setMicrophonePermission('Granted'));
@@ -224,12 +239,12 @@ export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndRe
 
     const tokenResponse: CommunicationUserToken = await utils.getTokenForUser();
     const userToken = tokenResponse.token;
-    const userId = tokenResponse.user.communicationUserId
+    const userId = tokenResponse.user.communicationUserId;
     dispatch(setUserId(userId));
-    
+
     const tokenCredential = new AzureCommunicationTokenCredential({
-      tokenRefresher: ():Promise<string> => {
-        return utils.getRefreshedTokenForUser(userId)
+      tokenRefresher: (): Promise<string> => {
+        return utils.getRefreshedTokenForUser(userId);
       },
       refreshProactively: true,
       token: userToken
@@ -244,8 +259,7 @@ export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndRe
 
     callAgent.on('callsUpdated', (e: { added: Call[]; removed: Call[] }): void => {
       e.added.forEach((addedCall) => {
-
-        console.log(`Call added : Call Id = ${addedCall.id}`)
+        console.log(`Call added : Call Id = ${addedCall.id}`);
 
         const state = getState();
         if (state.calls.call && addedCall.direction === 'Incoming') {
@@ -265,20 +279,20 @@ export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndRe
           dispatch(setShareScreen(addedCall.isScreenSharingOn));
         });
 
-        dispatch(setShareScreen(addedCall.isScreenSharingOn))
+        dispatch(setShareScreen(addedCall.isScreenSharingOn));
 
         addedCall.api(Features.Recording).on('isRecordingActiveChanged', (): void => {
-          dispatch(setRecordingActive(addedCall.api(Features.Recording).isRecordingActive))
+          dispatch(setRecordingActive(addedCall.api(Features.Recording).isRecordingActive));
         });
 
         // if you are not in a teams meeting call you will just get false
-        dispatch(setRecordingActive(addedCall.api(Features.Recording).isRecordingActive))
+        dispatch(setRecordingActive(addedCall.api(Features.Recording).isRecordingActive));
 
         addedCall.api(Features.Transcription).on('isTranscriptionActiveChanged', (): void => {
-          dispatch(setTranscribingActive(addedCall.api(Features.Transcription).isTranscriptionActive))
-        })
+          dispatch(setTranscribingActive(addedCall.api(Features.Transcription).isTranscriptionActive));
+        });
 
-        dispatch(setTranscribingActive(addedCall.api(Features.Transcription).isTranscriptionActive))
+        dispatch(setTranscribingActive(addedCall.api(Features.Transcription).isTranscriptionActive));
 
         // if remote participants have changed, subscribe to the added remote participants
         addedCall.on('remoteParticipantsUpdated', (ev): void => {
@@ -302,11 +316,15 @@ export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndRe
           dispatch(callRemoved(removedCall));
 
           // if we were not allowed into invited into a Teams call
-          if (removedCall.callEndReason && removedCall.callEndReason.code === 0 && removedCall.callEndReason.subCode === 5854) {
+          if (
+            removedCall.callEndReason &&
+            removedCall.callEndReason.code === 0 &&
+            removedCall.callEndReason.subCode === 5854
+          ) {
             removedCall.callEndReason && callEndedHandler(removedCall.callEndReason);
             return;
           }
-          
+
           if (removedCall.callEndReason && removedCall.callEndReason.code !== 0) {
             removedCall.callEndReason && callEndedHandler(removedCall.callEndReason);
             return;
@@ -314,55 +332,64 @@ export const initCallAgent = (name: string, callEndedHandler: (reason: CallEndRe
         }
       });
     });
-  }
-}
+  };
+};
 
 export const initCallClient = (unsupportedStateHandler: () => void) => {
   return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
-      let callClient;
+    let callClient;
 
-      // check if chrome on ios OR firefox browser
-      if (utils.isOnIphoneAndNotSafari() || utils.isUnsupportedBrowser()) {
-        unsupportedStateHandler();
-        return;
-      }
+    // check if chrome on ios OR firefox browser
+    if (utils.isOnIphoneAndNotSafari() || utils.isUnsupportedBrowser()) {
+      unsupportedStateHandler();
+      return;
+    }
 
-      try {
-        setLogLevel('verbose')
-        callClient = new CallClient();
-      } catch (e) {
-        unsupportedStateHandler();
-        return;
-      }
+    try {
+      setLogLevel('verbose');
+      callClient = new CallClient();
+    } catch (e) {
+      unsupportedStateHandler();
+      return;
+    }
 
-      if (!callClient) {
-        return;
-      }
+    if (!callClient) {
+      return;
+    }
 
-      const deviceManager: DeviceManager = await callClient.getDeviceManager();
+    const deviceManager: DeviceManager = await callClient.getDeviceManager();
 
-      dispatch(setDeviceManager(deviceManager));
-      subscribeToDeviceManager(deviceManager, dispatch, getState);
+    dispatch(setDeviceManager(deviceManager));
+    subscribeToDeviceManager(deviceManager, dispatch, getState);
   };
-}
+};
 
 // what does the forEveryone parameter really mean?
 export const endCall = async (call: Call, options: HangUpOptions): Promise<void> => {
   await call.hangUp(options).catch((e: CommunicationServicesError) => console.error(e));
 };
 
-export const join = async(callAgent: CallAgent, locator: GroupCallLocator | TeamsMeetingLinkLocator, callOptions: JoinCallOptions): Promise<void> => {
-  const isGroupCallLocator = (locator: GroupCallLocator | TeamsMeetingLinkLocator): locator is GroupCallLocator => { return true}
+export const join = async (
+  callAgent: CallAgent,
+  locator: GroupCallLocator | TeamsMeetingLinkLocator,
+  callOptions: JoinCallOptions
+): Promise<void> => {
+  const isGroupCallLocator = (locator: GroupCallLocator | TeamsMeetingLinkLocator): locator is GroupCallLocator => {
+    return true;
+  };
 
   if (isGroupCallLocator(locator)) {
     return joinGroup(callAgent, locator, callOptions);
-  }
-  else {
+  } else {
     return joinTeamsMeeting(callAgent, locator, callOptions);
   }
-}
+};
 
-const joinGroup = async (callAgent: CallAgent, context: GroupCallLocator, callOptions: JoinCallOptions): Promise<void> => {
+const joinGroup = async (
+  callAgent: CallAgent,
+  context: GroupCallLocator,
+  callOptions: JoinCallOptions
+): Promise<void> => {
   try {
     await callAgent.join(context, callOptions);
   } catch (e) {
@@ -371,7 +398,11 @@ const joinGroup = async (callAgent: CallAgent, context: GroupCallLocator, callOp
   }
 };
 
-const joinTeamsMeeting = async (callAgent: CallAgent, context: TeamsMeetingLinkLocator, callOptions: JoinCallOptions): Promise<void> => {
+const joinTeamsMeeting = async (
+  callAgent: CallAgent,
+  context: TeamsMeetingLinkLocator,
+  callOptions: JoinCallOptions
+): Promise<void> => {
   try {
     await callAgent.join(context, callOptions);
   } catch (e) {
@@ -384,9 +415,6 @@ export const addParticipant = async (call: Call, user: CommunicationUserKind): P
   await call.addParticipant(user);
 };
 
-export const removeParticipant = async (
-  call: Call,
-  user: CommunicationUserKind
-): Promise<void> => {
+export const removeParticipant = async (call: Call, user: CommunicationUserKind): Promise<void> => {
   await call.removeParticipant(user).catch((e: CommunicationServicesError) => console.error(e));
 };

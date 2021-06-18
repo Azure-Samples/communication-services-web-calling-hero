@@ -17,7 +17,7 @@ export const messageBarStyles: IStackStyles = {
   root: {
     width: '100%'
   }
-}
+};
 export const paneStyles: IStackItemStyles = {
   root: {
     width: '17.875rem'

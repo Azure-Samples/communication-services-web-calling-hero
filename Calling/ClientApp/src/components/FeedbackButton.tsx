@@ -11,15 +11,12 @@ import {
   PrimaryButton,
   TextField
 } from '@fluentui/react';
-import { v1 as createGUID } from 'uuid';
 import { CustomerHubIcon } from '@fluentui/react-icons-northstar';
-import { store } from 'core/store';
-import { Feedback } from 'feedbacks/Feedback';
-import { getLogs } from 'feedbacks/logger';
 import { uploadFeedback } from 'feedbacks/submitFeedback';
 import React, { useCallback, useState } from 'react';
 import { controlButtonStyle, fullWidth } from './styles/MediaControls.styles';
 import { isScreenShotAvailable, captureScreenshot } from 'Utils/captureScreenshot';
+import { createFeedback } from 'Utils/createFeedback';
 
 export const FeedbackButton = (): JSX.Element => {
   const [hidden, setHidden] = useState(true);
@@ -148,17 +145,6 @@ const FeedbackPopup = (props: FeedbackPopupProps): JSX.Element => {
       </DialogFooter>
     </Dialog>
   );
-};
-
-const createFeedback = (feedbackType: string, comment: string): Feedback => {
-  const callId = store.getState().calls.call?.id ?? 'Not Found';
-  return {
-    logs: getLogs(),
-    callId: callId,
-    comments: comment,
-    guid: createGUID(),
-    type: feedbackType
-  };
 };
 
 const screenShotDialogContentProps = {

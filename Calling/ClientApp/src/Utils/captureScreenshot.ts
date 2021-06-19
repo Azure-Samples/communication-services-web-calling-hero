@@ -1,3 +1,8 @@
+import { store } from "core/store";
+import { Feedback } from "feedbacks/Feedback";
+import { getLogs } from "feedbacks/logger";
+import { v1 as createGUID } from 'uuid';
+
 export const captureScreenshot = async (): Promise<HTMLCanvasElement> => {
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');

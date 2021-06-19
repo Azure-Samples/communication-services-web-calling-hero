@@ -3,5 +3,5 @@ export type Feedback = {
   type: string;
   logs: string[];
   comments: string;
-  guid: string;
+  feedbackId: string;
 };

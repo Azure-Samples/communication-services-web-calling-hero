@@ -11,12 +11,12 @@ export const uploadFeedback = async (feedback: Feedback, screenShotCanvas: HTMLC
 
     const blobServiceClient = new BlobServiceClient(settings.sasUri);
     const containerClient = blobServiceClient.getContainerClient(settings.containerName);
-    const blockBlobClient = containerClient.getBlockBlobClient('logs-' + feedback.guid + '.json');
+    const blockBlobClient = containerClient.getBlockBlobClient(`logs-${feedback.feedbackId}.json`);
     const serializedFeedback = JSON.stringify(feedback, null, 4);
     const logPromise = blockBlobClient.upload(serializedFeedback, serializedFeedback.length);
     let screenShotPromise = undefined;
     if (screenShotCanvas) {
-      const blockBlobClient = containerClient.getBlockBlobClient('screenShot-' + feedback.guid + '.png');
+      const blockBlobClient = containerClient.getBlockBlobClient(`screenShot-${feedback.feedbackId}.png`);
       const screenShotBlob = await getCanvasBlob(screenShotCanvas);
       if (screenShotBlob != null) {
         screenShotPromise = blockBlobClient.uploadData(screenShotBlob);

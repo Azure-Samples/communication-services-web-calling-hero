@@ -84,7 +84,7 @@ const FeedbackPopup = (props: FeedbackPopupProps): JSX.Element => {
   const submitFeedback = useCallback(async () => {
     const feedback = createFeedback(feedbackType, comment);
     await uploadFeedback(feedback, screenShot);
-    setGuid(feedback.guid);
+    setGuid(feedback.feedbackId);
   }, [feedbackType, comment, screenShot]);
 
   const feedbackInput = (

@@ -1,6 +1,14 @@
 import { BlobServiceClient } from '@azure/storage-blob';
 import { Feedback } from './Feedback';
 
+const getCanvasBlob = (canvas: HTMLCanvasElement): Promise<Blob | null> => {
+  return new Promise((resolve) => {
+    canvas.toBlob((blob) => {
+      resolve(blob);
+    }, 'image/png');
+  });
+};
+
 export const uploadFeedback = async (feedback: Feedback, screenShotCanvas: HTMLCanvasElement | undefined): Promise<void> => {
   try {
     const response = await fetch('/blobSettings');
@@ -26,12 +34,4 @@ export const uploadFeedback = async (feedback: Feedback, screenShotCanvas: HTMLC
   } catch (error) {
     console.log(error);
   }
-};
-
-const getCanvasBlob = (canvas: HTMLCanvasElement): Promise<Blob | null> => {
-  return new Promise((resolve, reject) => {
-    canvas.toBlob((blob) => {
-      resolve(blob);
-    }, 'image/png');
-  });
 };

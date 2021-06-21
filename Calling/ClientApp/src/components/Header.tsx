@@ -1,5 +1,5 @@
 // © Microsoft Corporation. All rights reserved.
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Separator, Pivot, PivotItem, Stack } from '@fluentui/react';
 import { Call, LocalVideoStream, VideoDeviceInfo } from '@azure/communication-calling';
 import MediaControls from './MediaControls';
@@ -17,6 +17,7 @@ import {
 } from './styles/Header.styles';
 import { ParticipantStream } from 'core/reducers';
 import { FeedbackButton } from './FeedbackButton';
+import { utils } from 'Utils/Utils';
 
 export interface HeaderProps {
   selectedPane: CommandPanelTypes;
@@ -43,6 +44,15 @@ export interface HeaderProps {
 }
 
 export default (props: HeaderProps): JSX.Element => {
+  const [isFeedbackEnabled, setIsFeedbackEnabled] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const settings = await utils.getFeedbackSettings();
+      setIsFeedbackEnabled(settings.isFeedbackEnabled);
+    })();
+  }, [])
+
   const togglePeople = (selectedPane: string, setSelectedPane: (pane: string) => void) => {
     return selectedPane !== CommandPanelTypes.People
       ? setSelectedPane(CommandPanelTypes.People)
@@ -87,9 +97,9 @@ export default (props: HeaderProps): JSX.Element => {
       id="header"
       className={props.screenWidth > Constants.MINI_HEADER_WINDOW_WIDTH ? headerContainer : headerCenteredContainer}
     >
-      <Stack.Item grow={1} className={feedbackContainer}>
+      {isFeedbackEnabled && <Stack.Item grow={1} className={feedbackContainer}>
         <FeedbackButton />
-      </Stack.Item>
+      </Stack.Item>}
       <Pivot
         onKeyDownCapture={(e) => {
           if ((e.target as HTMLElement).id === CommandPanelTypes.People && e.keyCode === 39) e.preventDefault();

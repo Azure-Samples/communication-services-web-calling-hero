@@ -10,23 +10,26 @@ namespace Calling
     {
         private readonly string _blobSasUri;
         private readonly string _blobContainerName;
+        private readonly string _isFeedbackEnabled;
 
         public BlobSettingsController(IConfiguration configuration)
         {
             _blobSasUri = configuration["LogBlobSasUri"];
             _blobContainerName = configuration["LogBlobContainerName"];
+            _isFeedbackEnabled = configuration["IsFeedbackEnabled"];
         }
 
         /// <summary>
         /// Gets Blob settings for log service
         /// </summary>
         /// <returns></returns>
-        [Route("/blobSettings")]
+        [Route("/feedbackSettings")]
         [HttpGet]
         public async Task<IActionResult> GetAsync()
         {
             var clientResponse = new
             {
+                isFeedbackEnabled = _isFeedbackEnabled,
                 sasUri = _blobSasUri,
                 containerName = _blobContainerName,
             };

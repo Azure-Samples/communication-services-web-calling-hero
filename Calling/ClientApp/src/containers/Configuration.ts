@@ -77,7 +77,7 @@ const mapStateToProps = (state: State, props: ConfigurationScreenProps) => ({
   }
 });
 
-const mapDispatchToProps = (dispatch: any, props: ConfigurationScreenProps) => ({
+const mapDispatchToProps = (dispatch: any) => ({
   setMic: (mic: boolean): void => dispatch(setMic(mic)),
   setAudioDeviceInfo: (deviceInfo: AudioDeviceInfo): void => dispatch(setAudioDeviceInfo(deviceInfo)),
   setVideoDeviceInfo: (deviceInfo: VideoDeviceInfo): void => dispatch(setVideoDeviceInfo(deviceInfo)),

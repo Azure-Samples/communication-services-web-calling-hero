@@ -1,6 +1,6 @@
 // © Microsoft Corporation. All rights reserved.
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Stack, Spinner, PrimaryButton } from '@fluentui/react';
 import LocalPreview from './LocalPreview';
 import LocalSettings from './LocalSettings';
@@ -78,12 +78,9 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
 
   const { groupId, setupCallClient, setGroup, unsupportedStateHandler } = props;
 
-  const memoizedSetupCallClient = useCallback(() => setupCallClient(unsupportedStateHandler), [
-    unsupportedStateHandler
-  ]);
   useEffect(() => {
-    memoizedSetupCallClient();
-  }, [memoizedSetupCallClient]);
+    setupCallClient(unsupportedStateHandler);
+  }, [setupCallClient, unsupportedStateHandler]);
 
   return (
     <Stack className={mainContainerStyle} horizontalAlign="center" verticalAlign="center">

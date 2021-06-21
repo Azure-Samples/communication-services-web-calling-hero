@@ -10,7 +10,6 @@ import {
   VideoDeviceInfo,
   LocalVideoStream,
   CallAgent,
-  CallClient,
   CallEndReason
 } from '@azure/communication-calling';
 import { CommunicationUserToken } from '@azure/communication-identity';
@@ -67,13 +66,18 @@ const mapStateToProps = (state: State, props: ConfigurationScreenProps) => ({
     tokenCredential: AzureCommunicationTokenCredential,
     displayName: string
   ): Promise<CallAgent> => {
-    const callClient = new CallClient();
+    const callClient = state.sdk.callClient;
+
+    if (callClient === undefined) {
+      throw new Error('CallClient is not initialized');
+    }
+
     const callAgent: CallAgent = await callClient.createCallAgent(tokenCredential, { displayName });
     return callAgent;
   }
 });
 
-const mapDispatchToProps = (dispatch: any, props: ConfigurationScreenProps) => ({
+const mapDispatchToProps = (dispatch: any) => ({
   setMic: (mic: boolean): void => dispatch(setMic(mic)),
   setAudioDeviceInfo: (deviceInfo: AudioDeviceInfo): void => dispatch(setAudioDeviceInfo(deviceInfo)),
   setVideoDeviceInfo: (deviceInfo: VideoDeviceInfo): void => dispatch(setVideoDeviceInfo(deviceInfo)),

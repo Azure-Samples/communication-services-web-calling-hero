@@ -1,4 +1,4 @@
-# Contributing to [project-title]
+# Contributing to Azure Communication Services Sample Apps
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
@@ -12,10 +12,22 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
+ - [Sample App Purpose](#purpose)
  - [Code of Conduct](#coc)
  - [Issues and Bugs](#issue)
  - [Feature Requests](#feature)
  - [Submission Guidelines](#submit)
+
+## <a name="purpose"></a>Sample App Purpose
+Sample apps are built to help showcase the capabilities of Azure Communication Services. 
+This app uses all best practices and follows limitations related to the service.
+As you contribute make sure to follow service guidelines or your work might not be accepted.
+The app is built on top of the existing Azure Communiation Services SDKs, and will not diverge from the capabilities offered by the SDK.
+This means that if the feature desired is not supported on the SDK, please don't try to hack it into the sample. 
+
+The sample is continously updated as new features are added to the underlying SDKs and feel free to contribute any features that are supported.
+In the case of the calling app, two samples are available, one on the `main` branch and another on the `public-preview` branch. 
+If the feature you are looking to add is currently in `public preview`, meaning it is only available on `beta` packages, make sure to contribute to the correct branch.
 
 ## <a name="coc"></a> Code of Conduct
 Help us keep this project open and inclusive. Please read and follow our [Code of Conduct](https://opensource.microsoft.com/codeofconduct/).

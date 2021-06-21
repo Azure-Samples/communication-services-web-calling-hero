@@ -32,7 +32,7 @@ import { State } from './reducers';
 import { setLogLevel } from '@azure/logger';
 import RemoteStreamSelector from './RemoteStreamSelector';
 import { Constants } from './constants';
-import { setUserId } from './actions/sdk';
+import { setCallClient, setUserId } from './actions/sdk';
 
 export const setMicrophone = (mic: boolean) => {
   return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
@@ -309,7 +309,7 @@ export const initCallClient = (unsupportedStateHandler: () => void) => {
     }
 
     const deviceManager: DeviceManager = await callClient.getDeviceManager();
-
+    dispatch(setCallClient(callClient));
     dispatch(setDeviceManager(deviceManager));
     subscribeToDeviceManager(deviceManager, dispatch, getState);
   };

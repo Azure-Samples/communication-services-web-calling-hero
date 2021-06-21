@@ -10,8 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Communication.Identity" Version="1.0.0-beta.4" />
-    <PackageReference Include="Azure.Communication.Common" Version="1.0.0-beta.4" />
+    <PackageReference Include="Azure.Communication.Identity" Version="1.0.0" />
+    <PackageReference Include="Azure.Communication.Common" Version="1.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="3.1.8" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.8" />
   </ItemGroup>

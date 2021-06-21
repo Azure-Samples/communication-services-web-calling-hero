@@ -21,6 +21,8 @@ A separate branch with Teams Interop capabilities is [available](https://github.
 
 Additional documentation for this sample can be found on [Microsoft Docs](https://docs.microsoft.com/azure/communication-services/samples/calling-hero-sample).
 
+Before contributing to this sample, please read our [contribution guidelines](./CONTRIBUTING.md).
+
 ![Homepage](./Media/homepage-sample-calling.png)
 
 ## Prerequisites

@@ -1,4 +1,5 @@
 import { BlobServiceClient } from '@azure/storage-blob';
+import { utils } from 'Utils/Utils';
 import { Feedback } from './Feedback';
 
 const getCanvasBlob = (canvas: HTMLCanvasElement): Promise<Blob | null> => {
@@ -11,11 +12,7 @@ const getCanvasBlob = (canvas: HTMLCanvasElement): Promise<Blob | null> => {
 
 export const uploadFeedback = async (feedback: Feedback, screenShotCanvas: HTMLCanvasElement | undefined): Promise<void> => {
   try {
-    const response = await fetch('/blobSettings');
-    if (!response.ok) {
-      throw new Error('Failed to get blob settings from server!');
-    }
-    const settings = await response.json();
+    const settings = await utils.getFeedbackSettings();
 
     const blobServiceClient = new BlobServiceClient(settings.sasUri);
     const containerClient = blobServiceClient.getContainerClient(settings.containerName);

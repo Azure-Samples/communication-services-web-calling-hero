@@ -2,6 +2,7 @@
 import { AudioDeviceInfo, VideoDeviceInfo, RemoteVideoStream } from '@azure/communication-calling';
 import { CommunicationIdentifierKind } from '@azure/communication-common';
 import { CommunicationUserToken } from '@azure/communication-identity';
+import { FeedbackSettings } from 'feedbacks/FeedbackSettings';
 import preval from 'preval.macro';
 
 export const utils = {
@@ -14,6 +15,17 @@ export const utils = {
       return response.json();
     }
     throw new Error('Invalid token response');
+  },
+  getFeedbackSettings: async (): Promise<FeedbackSettings> => {
+    const response = await fetch('/feedbackSettings');
+    if (!response.ok) {
+      throw new Error('Failed to get blob settings from server!');
+    }
+    const retJson = await response.json();
+    return {
+      ...retJson,
+      isFeedbackEnabled: retJson.isFeedbackEnabled.toLowerCase() === 'true'
+    };
   },
   getRefreshedTokenForUser: async (identity: string): Promise<string> => {
     const response = await fetch(`/refreshToken/${identity}`);

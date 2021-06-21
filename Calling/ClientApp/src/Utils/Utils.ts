@@ -18,7 +18,7 @@ export const utils = {
   getRefreshedTokenForUser: async (identity: string): Promise<string> => {
     const response = await fetch(`/refreshToken/${identity}`);
     if (response.ok) {
-      let content = await response.json();
+      const content = await response.json();
       return content.token;
     }
     throw new Error('Invalid token response');

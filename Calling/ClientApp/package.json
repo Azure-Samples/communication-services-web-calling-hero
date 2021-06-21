@@ -7,6 +7,7 @@
     "@azure/communication-calling": "1.0.1-beta.2",
     "@azure/communication-common": "1.0.0",
     "@azure/communication-identity": "1.0.0-beta.4",
+    "@azure/storage-blob": "^12.6.0",
     "@fluentui/react": "^7.117.1",
     "@fluentui/react-icons-northstar": "^0.51.0",
     "@fluentui/react-northstar": "^0.51.0",

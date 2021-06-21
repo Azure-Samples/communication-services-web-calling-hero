@@ -25,7 +25,7 @@ export default (props: MediaGalleryProps): JSX.Element => {
   const [gridCol, setGridCol] = useState(1);
   const [gridRow, setGridRow] = useState(1);
 
-    // For now we are only going to support up to a 4x3 grid or 10 participants in a call
+  // For now we are only going to support up to a 4x3 grid or 10 participants in a call
   // Since this is a sample, we will just hard-code how we want the grid to scale
   // the rows and columns for the number of users in the call
   const rows = [1, 1, 2, 2, 2, 2, 3, 3, 3, 3];
@@ -90,14 +90,18 @@ export default (props: MediaGalleryProps): JSX.Element => {
   );
   if (cols[numberStreamsToRender] !== gridCol) {
     if (numberStreamsToRender > cols.length - 1) {
-      throw new Error(`attempting to set up a number of columns in the gallery for an unexpected number of participants ${numberStreamsToRender}`);
+      throw new Error(
+        `attempting to set up a number of columns in the gallery for an unexpected number of participants ${numberStreamsToRender}`
+      );
     }
     setGridCol(cols[numberStreamsToRender]);
   }
 
   if (rows[numberStreamsToRender] !== gridRow) {
     if (numberStreamsToRender > rows.length - 1) {
-      throw new Error(`attempting to set up a number of rows in the gallery for an expected number of participants ${numberStreamsToRender}`);
+      throw new Error(
+        `attempting to set up a number of rows in the gallery for an expected number of participants ${numberStreamsToRender}`
+      );
     }
     setGridRow(rows[numberStreamsToRender]);
   }

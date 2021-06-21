@@ -79,7 +79,7 @@ export default (props: ConfigurationScreenProps): JSX.Element => {
   const { groupId, setupCallClient, setGroup, unsupportedStateHandler } = props;
 
   useEffect(() => {
-    setupCallClient(unsupportedStateHandler)
+    setupCallClient(unsupportedStateHandler);
   }, [setupCallClient, unsupportedStateHandler]);
 
   return (

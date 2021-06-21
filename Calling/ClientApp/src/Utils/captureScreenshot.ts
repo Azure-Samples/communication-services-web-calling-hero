@@ -1,4 +1,11 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
+declare class ImageCapture {
+  constructor(track: MediaStreamTrack);
+  grabFrame: () => Promise<ImageBitmap>;
+}
+
+declare class MediaDevicesWithDisplayMedia extends MediaDevices {
+  getDisplayMedia: (constraints?: MediaStreamConstraints | undefined) => Promise<MediaStream>;
+}
 
 export const captureScreenshot = async (): Promise<HTMLCanvasElement> => {
   const canvas = document.createElement('canvas');
@@ -20,12 +27,3 @@ export const captureScreenshot = async (): Promise<HTMLCanvasElement> => {
 export const isScreenShotAvailable = (): boolean => {
   return !!(navigator.mediaDevices as MediaDevicesWithDisplayMedia).getDisplayMedia && !!ImageCapture;
 };
-
-declare class ImageCapture {
-  constructor(track: MediaStreamTrack);
-  grabFrame: () => Promise<ImageBitmap>;
-}
-
-declare class MediaDevicesWithDisplayMedia extends MediaDevices {
-  getDisplayMedia: (constraints?: MediaStreamConstraints | undefined) => Promise<MediaStream>;
-}

@@ -11,6 +11,7 @@ import {
   GroupCallLocator
 } from '@azure/communication-calling';
 import { State } from '../core/reducers';
+import { dialogBoxVisible } from 'core/actions/calls';
 
 const mapStateToProps = (state: State, props: GroupCallProps) => ({
   userId: state.sdk.userId,
@@ -41,6 +42,9 @@ const mapStateToProps = (state: State, props: GroupCallProps) => ({
   audioDeviceList: state.devices.audioDeviceList,
   cameraPermission: state.devices.cameraPermission,
   microphonePermission: state.devices.microphonePermission,
+  recordingStatus: state.calls.recordingStatus,
+  recordingError: state.calls.recordingError,
+  isDialogBoxVisiblile: state.calls.dialogBoxVisible,
   isBeingRecorded: state.calls.isBeingRecorded,
   isBeingTranscribed: state.calls.isBeingTranscribed
 });
@@ -53,6 +57,7 @@ const mapDispatchToProps = (dispatch: any) => ({
   setVideoDeviceInfo: (deviceInfo: VideoDeviceInfo) => {
     dispatch(setVideoDeviceInfo(deviceInfo));
   },
+  dialogBoxVisiblilty: (dialogBoxVisibilty: boolean) => dispatch(dialogBoxVisible(dialogBoxVisibilty)),
   setLocalVideoStream: (localVideoStream: LocalVideoStream) => dispatch(setLocalVideoStream(localVideoStream))
 });
 

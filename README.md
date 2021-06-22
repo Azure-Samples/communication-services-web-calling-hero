@@ -30,6 +30,8 @@ Additional documentation for this sample can be found on [Microsoft Docs](https:
 - [Visual Studio (2019 and above)](https://visualstudio.microsoft.com/vs/)
 - [.NET Core 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1) (Make sure to install version that corresponds with your visual studio instance, 32 vs 64 bit)
 - Create an Azure Communication Services resource. For details, see [Create an Azure Communication Resource](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource). You'll need to record your resource **connection string** for this quickstart.
+- An Azure storage account and container, for details, see [Create a storage account](https://docs.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-portal). You'll need to record your blob **connection string** and **container name** for this quickstart.
+- An Azure Event grid Web hook, for details, see [Record and download calls with Event Grid](https://docs.microsoft.com/azure/communication-services/quickstarts/voice-video-calling/download-recording-file-sample).
 
 ## Code structure
 
@@ -39,15 +41,103 @@ Additional documentation for this sample can be found on [Microsoft Docs](https:
 		- ./Calling/ClientApp/src/Containers : Connects the redux functionality to the React components
 		- ./Calling/ClientApp/src/Core : Containers a redux wrapper around the Azure Communication Services Web Calling SDK
 	- ./ClientApp/src/index.js : Entry point for the client app
-- ./Calling/Controllers : Server app core logic for client app to get a token to use with the Azure Communication Services Web Calling SDK
+- ./Calling/Controllers:
+	- ./Calling/Controllers/UserTokenController.cs : Server app core logic for client app to get a token to use with the Azure Communication Services Web Calling SDK
+	- ./Calling/Controllers/CallRecordingController.cs : Server app core logic to start and stop a call recording session.
 - ./Calling/Program.cs : Entry point for the server app program logic
 - ./Calling/Startup.cs : Entry point for the server app startup logic
+
+## Create a calling server client
+
+To create a calling server client, you'll use your Azure Communication Services connection string and pass it to calling server client object.
+
+```csharp
+CallingServerClient callingServerClient = new CallingServerClient("<Resource_Connection_String>");
+```
+
+## Start recording session using 'StartRecordingAsync' server API
+
+Use the server call id received during initiation of a call.
+
+```csharp
+var startRecordingResponse = await callingServerClient.InitializeServerCall("<servercallid>").StartRecordingAsync("<callbackuri>").ConfigureAwait(false);
+```
+The `StartRecordingAsync` API response contains the recording id of the recording session.
+
+## Stop recording session using 'StopRecordingAsync' server API
+
+Use the recording id received in response of  `StartRecordingAsync`.
+
+```csharp
+ var stopRecording = await callingServerClient.InitializeServerCall("<servercallid>").StopRecordingAsync("<recordingid>").ConfigureAwait(false);
+```
+
+## Pause recording session using 'PauseRecordingAsync' server API
+
+Use the  recording id received in response of  `StartRecordingAsync`.
+
+```csharp
+var pauseRecording = await callingServerClient.InitializeServerCall("<servercallid>").PauseRecordingAsync("<recordingid>");
+```
+
+## Resume recording session using 'ResumeRecordingAsync' server API
+
+Use the recording id received in response of  `StartRecordingAsync`.
+
+```csharp
+var resumeRecording = await callingServerClient.InitializeServerCall("<servercallid>").ResumeRecordingAsync("<recordingid>");
+```
+
+## Download recording File using 'DownloadStreamingAsync' server API
+
+[!NOTE] An Azure Event grid Web hook is required to get the notification callback event when the recorded media is ready for download. For details, see [Record and download calls with Event Grid](https://docs.microsoft.com/en-us/azure/communication-services/quickstarts/voice-video-calling/download-recording-file-sample).
+
+When the recording is available for download, Azure Event Grid will trigger a notification callback event to the application with the following schema.
+
+```
+{
+    "id": string, // Unique guid for event
+    "topic": string, // Azure Communication Services resource id
+    "subject": string, // /recording/call/{call-id}
+    "data": {
+        "recordingStorageInfo": {
+            "recordingChunks": [
+                {
+                    "documentId": string, // Document id for retrieving from AMS storage
+                    "contentLocation": string, //ACS URL where the content is located
+                    "index": int, // Index providing ordering for this chunk in the entire recording
+                    "endReason": string, // Reason for chunk ending: "SessionEnded", "ChunkMaximumSizeExceeded”, etc.
+                }
+            ]
+        },
+        "recordingStartTime": string, // ISO 8601 date time for the start of the recording
+        "recordingDurationMs": int, // Duration of recording in milliseconds
+        "sessionEndReason": string // Reason for call ending: "CallEnded", "InitiatorLeft”, etc.
+    },
+    "eventType": string, // "Microsoft.Communication.RecordingFileStatusUpdated"
+    "dataVersion": string, // "1.0"
+    "metadataVersion": string, // "1"
+    "eventTime": string // ISO 8601 date time for when the event was created
+}
+```
+
+Use `DownloadStreamingAsync` API for downloading the recorded media.
+
+```csharp
+var recordingDownloadUri = new Uri(downloadLocation);
+var response = DownloadExtentions.DownloadStreamingAsync(callingServerClient, recordingDownloadUri);
+```
+The downloadLocation for the recording can be fetched from the `contentLocation` attribute of the `recordingChunk`. `DownloadStreamingAsync` method returns response of type `Response<Stream>`, which contains the downloaded content.
 
 ## Before running the sample for the first time
 1. Open an instance of PowerShell, Windows Terminal, Command Prompt or equivalent and navigate to the directory that you'd like to clone the sample to.
 2. `git clone https://github.com/Azure-Samples/communication-services-web-calling-hero.git`
 3. Get the `Connection String` from the Azure portal. For more information on connection strings, see [Create an Azure Communication Resources](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource)
-4. Once you get the `Connection String`, add the connection string to the **Calling/appsetting.json** file found under the Calling folder. Input your connection string in the variable: `ResourceConnectionString`. 
+4. Add following variables in **Calling/appsettings.json** file:
+    - `ResourceConnectionString`: Connection string from the Azure Communication Service resource.
+    - `CallbackUri`: Callback uri for receiving state change callbacks.
+    - `BlobStorageConnectionString`:  Connection string of the storage account where call recoding data gets uploaded.
+    - `ContainerName`: ContainerName of the blob storage used for uploading call recording data.
 
 ## Locally deploying the sample app
 
@@ -68,7 +158,11 @@ Additional documentation for this sample can be found on [Microsoft Docs](https:
 
 1. Right click the `Calling` project and select Publish.
 2. Create a new publish profile and select your app name, Azure subscription, resource group and etc.
-3. Before publish, add your connection string with `Edit App Service Settings`, and fill in `ResourceConnectionString` as key and connection string (copy from appsettings.json) as value
+3. Before publish, add the following keys and provide your values (copy from appsettings.json) with  `Edit App Service Settings` :
+	-  `ResourceConnectionString` as connection string from Azure Communication Service resource.
+	-  `CallbackUri` as the key of callback uri of the application.
+	-  `BlobStorageConnectionString` as the key of connection string of the storage account where call recoding data gets uploaded.
+	-  `ContainerName` as the key of container name of the blob storage used for uploading call recording data.
 
 **Note**: While you may use http://localhost for local testing, the sample when deployed will only work when served over https. The SDK [does not support http](https://docs.microsoft.com/en-us/azure/communication-services/concepts/voice-video-calling/calling-sdk-features#user-webrtc-over-https).
 

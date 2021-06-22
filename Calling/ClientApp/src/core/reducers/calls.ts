@@ -10,7 +10,12 @@ import {
   CallTypes,
   SET_CALL_AGENT,
   SET_RECORDING_ACTIVE,
-  SET_TRANSCRIBING_ACTIVE
+  SET_TRANSCRIBING_ACTIVE,
+  START_RECORDING,
+  STOP_RECORDING,
+  SET_SERVER_CALL_ID,
+  DIALOGBOX_VISIBLE,
+  RECORDING_ERROR
 } from '../actions/calls';
 
 export interface CallsState {
@@ -24,6 +29,10 @@ export interface CallsState {
   isBeingRecorded: boolean | undefined;
   isBeingTranscribed: boolean | undefined;
   dominantParticipants: SelectionState[];
+  serverCallId: string;
+  recordingStatus: string;
+  recordingError: string;
+  dialogBoxVisible: boolean;
 }
 
 const initialState: CallsState = {
@@ -36,7 +45,11 @@ const initialState: CallsState = {
   attempts: 0,
   isBeingRecorded: undefined,
   isBeingTranscribed: undefined,
-  dominantParticipants: []
+  dominantParticipants: [],
+  serverCallId: '',
+  recordingStatus: '',
+  dialogBoxVisible: false,
+  recordingError: ''
 };
 
 export const callsReducer: Reducer<CallsState, CallTypes> = (state = initialState, action: CallTypes): CallsState => {
@@ -51,7 +64,9 @@ export const callsReducer: Reducer<CallsState, CallTypes> = (state = initialStat
         call: undefined,
         remoteParticipants: [],
         incomingCallEndReason: action.incomingCallEndReason,
-        callEndReason: action.callEndReason
+        callEndReason: action.callEndReason,
+        serverCallId: '',
+        recordingStatus: ''
       };
     case SET_CALL_STATE:
       return { ...state, callState: action.callState };
@@ -62,7 +77,17 @@ export const callsReducer: Reducer<CallsState, CallTypes> = (state = initialStat
     case SET_RECORDING_ACTIVE:
       return { ...state, isBeingRecorded: action.active };
     case SET_TRANSCRIBING_ACTIVE:
-      return { ...state, isBeingTranscribed: action.active };
+      return { ...state, isBeingTranscribed: action.active};
+    case START_RECORDING:
+      return { ...state, recordingStatus: action.status};
+    case STOP_RECORDING:
+      return { ...state, recordingStatus: action.status};
+    case SET_SERVER_CALL_ID:
+      return { ...state, serverCallId: action.serverCallId };
+    case DIALOGBOX_VISIBLE:
+      return { ...state, dialogBoxVisible: action.dialogBoxVisible };
+    case RECORDING_ERROR:
+      return { ...state, recordingError: action.recordingError, dialogBoxVisible: true};
     default:
       return state;
   }

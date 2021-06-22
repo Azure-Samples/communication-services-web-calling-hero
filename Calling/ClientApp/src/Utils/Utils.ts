@@ -4,6 +4,12 @@ import { CommunicationIdentifierKind } from '@azure/communication-common';
 import { CommunicationUserToken } from '@azure/communication-identity';
 import { FeedbackSettings } from 'feedbacks/FeedbackSettings';
 import preval from 'preval.macro';
+export declare interface RecordingApiResponse {
+  message: string;
+}
+export declare interface RecordingActionResponse {
+  message: string;
+}
 
 export const utils = {
   getAppServiceUrl: (): string => {
@@ -34,6 +40,32 @@ export const utils = {
       return content.token;
     }
     throw new Error('Invalid token response');
+  },
+  startRecording: async (id: string): Promise<RecordingApiResponse> => {
+    try {
+      const response = await fetch('/recording/startRecording?serverCallId=' + id);
+      if (response.ok) {
+        return { message: '' };
+      }
+      const output = await response.json();
+      const errorMessage = output.message || 'Recording could not be started';
+      return { message: errorMessage };
+    } catch (e) {
+      return { message: 'Recording could not be started' };
+    }
+  },
+  stopRecording: async (serverCallId: string): Promise<RecordingActionResponse> => {
+    try {
+      const response = await fetch(
+        '/recording/stopRecording?serverCallId=' + serverCallId
+      );
+      if (response.ok) {
+        return { message: '' };
+      }
+      return { message: 'Recording could not be stopped' };
+    } catch (e) {
+      return { message: 'Recording could not be stopped' };
+    }
   },
   isSelectedAudioDeviceInList(selected: AudioDeviceInfo, list: AudioDeviceInfo[]): boolean {
     return list.filter((item) => item.name === selected.name).length > 0;

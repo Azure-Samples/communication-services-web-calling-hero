@@ -16,6 +16,7 @@ import {
   feedbackContainer
 } from './styles/Header.styles';
 import { ParticipantStream } from 'core/reducers';
+import CallRecording from '../containers/CallRecording';
 import { FeedbackButton } from './FeedbackButton';
 import { utils } from 'Utils/Utils';
 
@@ -41,6 +42,7 @@ export interface HeaderProps {
   isLocalScreenShareSupportedInBrowser(): boolean;
   localVideoStream: LocalVideoStream | undefined;
   videoDeviceInfo: VideoDeviceInfo | undefined;
+  recordingStatus: string;
 }
 
 export default (props: HeaderProps): JSX.Element => {
@@ -137,6 +139,7 @@ export default (props: HeaderProps): JSX.Element => {
         />
         <PivotItem itemKey={CommandPanelTypes.None} />
       </Pivot>
+      <CallRecording />
       {props.screenWidth > Constants.MINI_HEADER_WINDOW_WIDTH && (
         <div className={separatorContainerStyle}>
           <Separator styles={separatorStyles} vertical={true} />

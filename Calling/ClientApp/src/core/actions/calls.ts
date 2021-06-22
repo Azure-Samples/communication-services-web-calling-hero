@@ -9,6 +9,11 @@ const SET_PARTICIPANTS = 'SET_PARTICIPANTS';
 const SET_RECORDING_ACTIVE = 'SET_RECORDING_ACTIVE';
 const SET_TRANSCRIBING_ACTIVE = 'SET_TRANSCRIBING_ACTIVE';
 const SET_DOMINANT_PARTICIPANTS = 'SET_DOMINANT_PARTICIPANTS';
+const START_RECORDING = 'START_RECORDING';
+const STOP_RECORDING = 'STOP_RECORDING';
+const SET_SERVER_CALL_ID = 'SET_SERVER_CALL_ID';
+const DIALOGBOX_VISIBLE = 'DIALOGBOX_VISIBLE';
+const RECORDING_ERROR = 'RECORDING_ERROR';
 
 interface SetCallAgentAction {
   type: typeof SET_CALL_AGENT;
@@ -50,6 +55,31 @@ interface SetTranscribingActiveAction {
 interface SetDominantParticipantsAction {
   type: typeof SET_DOMINANT_PARTICIPANTS;
   dominantParticipants: SelectionState[];
+}
+
+interface StartRecordingAction {
+    type: typeof START_RECORDING;
+    status: string;
+}
+
+interface StopRecordingAction {
+    type: typeof STOP_RECORDING;
+    status: string;
+}
+
+interface SetServerCallIdAction {
+    type: typeof SET_SERVER_CALL_ID;
+    serverCallId: string;
+}
+
+interface DialogBoxVisibleAction {
+    type: typeof DIALOGBOX_VISIBLE;
+    dialogBoxVisible: boolean;
+}
+
+interface RecordingErrorAction {
+    type: typeof RECORDING_ERROR;
+    recordingError: string;
 }
 
 export const setCallAgent = (callAgent: CallAgent): SetCallAgentAction => {
@@ -110,6 +140,41 @@ export const setDominantParticipants = (selected: SelectionState[]): SetDominant
   };
 };
 
+export const startRecording = (status: string): StartRecordingAction => {
+    return {
+        type: 'START_RECORDING',
+        status
+    };
+};
+
+export const stopRecording = (status: string): StopRecordingAction => {
+    return {
+        type: 'STOP_RECORDING',
+        status
+    };
+};
+
+export const setServerCallId = (serverCallId: string): SetServerCallIdAction => {
+    return {
+        type: 'SET_SERVER_CALL_ID',
+        serverCallId
+    };
+};
+
+export const dialogBoxVisible = (dialogBoxVisible: boolean): DialogBoxVisibleAction => {
+    return {
+        type: 'DIALOGBOX_VISIBLE',
+        dialogBoxVisible
+    };
+};
+
+export const recordingError = (recordingError: string): RecordingErrorAction => {
+    return {
+        type: 'RECORDING_ERROR',
+        recordingError
+    };
+};
+
 export {
   SET_CALL_AGENT,
   CALL_ADDED,
@@ -118,7 +183,12 @@ export {
   SET_PARTICIPANTS,
   SET_RECORDING_ACTIVE,
   SET_TRANSCRIBING_ACTIVE,
-  SET_DOMINANT_PARTICIPANTS
+  SET_DOMINANT_PARTICIPANTS,
+  START_RECORDING,
+  STOP_RECORDING,
+  SET_SERVER_CALL_ID,
+  RECORDING_ERROR,
+  DIALOGBOX_VISIBLE
 };
 
 export type CallTypes =
@@ -129,4 +199,9 @@ export type CallTypes =
   | CallAddedAction
   | CallRemovedAction
   | SetRecordingActiveAction
-  | SetTranscribingActiveAction;
+  | SetTranscribingActiveAction
+  | StartRecordingAction
+  | StopRecordingAction
+  | SetServerCallIdAction
+  | RecordingErrorAction
+  | DialogBoxVisibleAction;

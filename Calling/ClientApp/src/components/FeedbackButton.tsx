@@ -102,6 +102,7 @@ const FeedbackPopup = (props: FeedbackPopupProps): JSX.Element => {
         onChange={(_, value): void => {
           setComment(value ?? '');
         }}
+        value={comment}
         multiline
         rows={6}
       />

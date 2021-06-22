@@ -18,16 +18,11 @@ import {
 import { AzureCommunicationTokenCredential, CommunicationUserKind } from '@azure/communication-common';
 import { CommunicationUserToken } from '@azure/communication-identity';
 import { Dispatch } from 'redux';
-import { utils } from '../Utils/Utils';
-import {
-  callAdded,
-  callRemoved,
-  setCallState,
-  setParticipants,
-  setCallAgent,
-  setRecordingActive,
-  setTranscribingActive
-} from './actions/calls';
+import { utils, RecordingApiResponse, RecordingActionResponse } from '../Utils/Utils';
+import { callAdded, callRemoved, setCallState, setParticipants, setCallAgent, setRecordingActive, setTranscribingActive, setServerCallId,
+  startRecording,
+  stopRecording,
+  recordingError } from './actions/calls';
 import { setMic, setShareScreen } from './actions/controls';
 import {
   setAudioDeviceInfo,
@@ -232,6 +227,40 @@ export const updateDevices = () => {
   };
 };
 
+export const startRecord = () => {
+    return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
+        const state = getState();
+        if (state.calls !== undefined && state.calls.serverCallId) {
+            const response: RecordingApiResponse = await utils.startRecording(state.calls.serverCallId);
+            if (response && !response.message) {
+                dispatch(startRecording(Constants.STARTED));
+            } else {
+                dispatch(recordingError(response.message));
+                console.error(response.message);
+            }
+        } else {
+            console.error('serverCallId not available');
+            return;
+        }
+    };
+};
+
+export const stopRecord = () => {
+    return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
+        const state = getState();
+        if (state.calls !== undefined && state.calls.serverCallId) {
+            const response: RecordingActionResponse = await utils.stopRecording(
+                state.calls.serverCallId,
+            );
+            if (response && !response.message) {
+                dispatch(stopRecording(Constants.STOPPED));
+            } else {
+                console.error(response.message);
+            }
+        } else return;
+    };
+};
+
 export const initCallAgent = (
   callClient: CallClient,
   name: string,
@@ -272,6 +301,18 @@ export const initCallAgent = (
 
         addedCall.on('stateChanged', (): void => {
           dispatch(setCallState(addedCall.state));
+
+          if (addedCall.state === 'Connected') {
+            addedCall.info
+              .getServerCallId()
+              .then((result) => {
+                console.log('Conversation URL is - ' + result);
+                dispatch(setServerCallId(result));
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          }
         });
 
         dispatch(setCallState(addedCall.state));
@@ -283,7 +324,14 @@ export const initCallAgent = (
         dispatch(setShareScreen(addedCall.isScreenSharingOn));
 
         addedCall.api(Features.Recording).on('isRecordingActiveChanged', (): void => {
-          dispatch(setRecordingActive(addedCall.api(Features.Recording).isRecordingActive));
+          const callRecordingActive = addedCall.api(Features.Recording).isRecordingActive;
+          if (callRecordingActive) {            
+            dispatch(startRecording(Constants.STARTED));           
+          }
+          else if (!callRecordingActive) {           
+            dispatch(stopRecording(Constants.STOPPED));     
+          }
+          dispatch(setRecordingActive(callRecordingActive))
         });
 
         // if you are not in a teams meeting call you will just get false

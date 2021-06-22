@@ -30,6 +30,7 @@ import {
 } from '@azure/communication-calling';
 import { ParticipantStream } from 'core/reducers/index.js';
 import { ComplianceBanner } from 'components/ComplianceBanner';
+import DialogBox from './DialogBox';
 
 export interface GroupCallProps {
   userId: string;
@@ -59,6 +60,10 @@ export interface GroupCallProps {
   mute(): void;
   join(locator: GroupCallLocator | TeamsMeetingLinkLocator): void;
   endCallHandler(): void;
+  recordingStatus: string;
+  recordingError: string;
+  dialogBoxVisiblilty(b: boolean): void;
+  isDialogBoxVisiblile: boolean;
 }
 
 export default (props: GroupCallProps): JSX.Element => {
@@ -72,6 +77,10 @@ export default (props: GroupCallProps): JSX.Element => {
       join(locator);
     }
   }, [callAgent, call, join, locator, callEndReason]);
+
+  const dismissDialogBox = () => {
+    props.dialogBoxVisiblilty(false);
+  };
 
   return (
     <Stack horizontalAlign="center" verticalAlign="center" styles={containerStyles}>
@@ -87,6 +96,15 @@ export default (props: GroupCallProps): JSX.Element => {
       </Stack.Item>
       <Stack.Item styles={messageBarStyles}>
         <ComplianceBanner callTranscribeState={isBeingTranscribed} callRecordState={isBeingRecorded} />
+      </Stack.Item>
+      <Stack.Item styles={headerStyles}>
+        {props.isDialogBoxVisiblile && props.recordingError !== '' && (
+          <DialogBox
+            message={props.recordingError}
+            isDialogBoxVisiblile={props.isDialogBoxVisiblile}
+            dismissDialogBox={dismissDialogBox}
+          />
+        )}
       </Stack.Item>
       <Stack.Item styles={containerStyles}>
         { props.shareScreen && (

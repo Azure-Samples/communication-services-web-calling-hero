@@ -26,7 +26,8 @@ const mapStateToProps = (state: State, props: HeaderProps) => ({
   screenShareStreams: state.streams.screenShareStreams,
   localVideoRendererIsBusy: state.streams.localVideoRendererIsBusy,
   cameraPermission: state.devices.cameraPermission,
-  microphonePermission: state.devices.microphonePermission
+  microphonePermission: state.devices.microphonePermission,
+  recordingStatus: state.calls.recordingStatus
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

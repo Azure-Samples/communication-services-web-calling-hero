@@ -10,4 +10,6 @@ export class Constants {
   static LOCAL_VIDEO_PREVIEW_ID = 'LocalVideoPreview';
   static MINI_HEADER_WINDOW_WIDTH = 360;
   static DOMINANT_PARTICIPANTS_COUNT = 1;
+  static STARTED = 'STARTED';
+  static STOPPED = 'STOPPED';
 }

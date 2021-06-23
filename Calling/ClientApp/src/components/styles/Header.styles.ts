@@ -37,11 +37,24 @@ export const feedbackContainer = mergeStyles({
   marginLeft: '1rem'
 });
 
+export const recordingIcon = mergeStyles({
+  pointerEvents: 'none',
+  i: {
+    color: 'red'
+  }
+});
+
 export const separatorContainerStyle = mergeStyles({
   display: 'inline-block',
   padding: '0 1rem',
   height: '1.875rem'
 });
+
+export const recordingSplitter = mergeStyles({
+  display: 'inline-flex',
+  height: '1.875rem'
+});
+
 export const pivotItemStyle = mergeStyles({
   padding: '0 0.8125rem'
 });

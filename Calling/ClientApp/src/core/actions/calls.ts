@@ -59,12 +59,12 @@ interface SetDominantParticipantsAction {
 
 interface StartRecordingAction {
     type: typeof START_RECORDING;
-    status: string;
+    status: 'STARTED';
 }
 
 interface StopRecordingAction {
     type: typeof STOP_RECORDING;
-    status: string;
+    status: 'STOPPED';
 }
 
 interface SetServerCallIdAction {

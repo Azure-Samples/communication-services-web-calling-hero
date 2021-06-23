@@ -16,7 +16,11 @@ import React, { useCallback, useState } from 'react';
 import { isScreenShotAvailable, captureScreenshot } from 'Utils/captureScreenshot';
 import { createFeedback } from 'Utils/createFeedback';
 
-export const FeedbackButton = (): JSX.Element => {
+type FeedbackButtonProps = {
+  iconOnly?: boolean;
+}
+
+export const FeedbackButton = ({ iconOnly }: FeedbackButtonProps): JSX.Element => {
   const [hidden, setHidden] = useState(true);
   const togglePopup = useCallback(() => {
     setHidden(!hidden);
@@ -26,8 +30,9 @@ export const FeedbackButton = (): JSX.Element => {
     <>
       <CommandButton
         key='Feedback'
-        text='Report a bug'
-        iconProps= {{ iconName: 'Feedback' }}
+        text={iconOnly ? undefined : 'Report a bug'}
+        ariaLabel={iconOnly ? 'Report a bug': undefined}
+        iconProps={{ iconName: 'Feedback' }}
         onClick={togglePopup}
       />
       {!hidden && <FeedbackPopup toggleHidden={togglePopup} />}
@@ -119,7 +124,7 @@ const FeedbackPopup = (props: FeedbackPopupProps): JSX.Element => {
           setIsParentHidden={setIsHidden}
         />
       )}
-      {screenShot && <img src={screenShot?.toDataURL()} style={screenShotStyle} alt='screen shot'/>}
+      {screenShot && <img src={screenShot?.toDataURL()} style={screenShotStyle} alt='screen shot' />}
     </>
   );
 
@@ -168,7 +173,7 @@ const ScreenShotInstruction = ({ onTakeScreenShot, onDismiss, setIsParentHidden 
     setIsHidden(true);
     try {
       await onTakeScreenShot();
-    } catch {}
+    } catch { }
 
     setIsParentHidden(false);
     onDismiss();

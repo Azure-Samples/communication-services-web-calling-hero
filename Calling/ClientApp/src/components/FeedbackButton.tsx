@@ -11,10 +11,8 @@ import {
   PrimaryButton,
   TextField
 } from '@fluentui/react';
-import { CustomerHubIcon } from '@fluentui/react-icons-northstar';
 import { uploadFeedback } from 'feedbacks/submitFeedback';
 import React, { useCallback, useState } from 'react';
-import { controlButtonStyle, fullWidth } from './styles/MediaControls.styles';
 import { isScreenShotAvailable, captureScreenshot } from 'Utils/captureScreenshot';
 import { createFeedback } from 'Utils/createFeedback';
 
@@ -26,11 +24,12 @@ export const FeedbackButton = (): JSX.Element => {
 
   return (
     <>
-      <CommandButton onClick={togglePopup} className={controlButtonStyle}>
-        <div className={fullWidth}>
-          <CustomerHubIcon size="medium" />
-        </div>
-      </CommandButton>
+      <CommandButton
+        key='Feedback'
+        text='Report a bug'
+        iconProps= {{ iconName: 'Feedback' }}
+        onClick={togglePopup}
+      />
       {!hidden && <FeedbackPopup toggleHidden={togglePopup} />}
     </>
   );

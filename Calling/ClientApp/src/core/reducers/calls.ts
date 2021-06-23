@@ -30,7 +30,7 @@ export interface CallsState {
   isBeingTranscribed: boolean | undefined;
   dominantParticipants: SelectionState[];
   serverCallId: string;
-  recordingStatus: string;
+  recordingStatus: 'STARTED' | 'STOPPED';
   recordingError: string;
   dialogBoxVisible: boolean;
 }
@@ -47,7 +47,7 @@ const initialState: CallsState = {
   isBeingTranscribed: undefined,
   dominantParticipants: [],
   serverCallId: '',
-  recordingStatus: '',
+  recordingStatus: 'STOPPED',
   dialogBoxVisible: false,
   recordingError: ''
 };
@@ -66,7 +66,7 @@ export const callsReducer: Reducer<CallsState, CallTypes> = (state = initialStat
         incomingCallEndReason: action.incomingCallEndReason,
         callEndReason: action.callEndReason,
         serverCallId: '',
-        recordingStatus: ''
+        recordingStatus: 'STOPPED'
       };
     case SET_CALL_STATE:
       return { ...state, callState: action.callState };

@@ -59,12 +59,12 @@ interface SetDominantParticipantsAction {
 
 interface StartRecordingAction {
     type: typeof START_RECORDING;
-    status: string;
+    status: 'STARTED';
 }
 
 interface StopRecordingAction {
     type: typeof STOP_RECORDING;
-    status: string;
+    status: 'STOPPED';
 }
 
 interface SetServerCallIdAction {
@@ -140,17 +140,17 @@ export const setDominantParticipants = (selected: SelectionState[]): SetDominant
   };
 };
 
-export const startRecording = (status: string): StartRecordingAction => {
+export const startRecording = (): StartRecordingAction => {
     return {
         type: 'START_RECORDING',
-        status
+        status: 'STARTED'
     };
 };
 
-export const stopRecording = (status: string): StopRecordingAction => {
+export const stopRecording = (): StopRecordingAction => {
     return {
         type: 'STOP_RECORDING',
-        status
+        status: 'STOPPED'
     };
 };
 

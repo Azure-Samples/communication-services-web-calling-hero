@@ -54,6 +54,7 @@ export default (props: LocalStreamMediaProps): JSX.Element => {
     return (): void => {
       if (rendererViewRef) {
         rendererViewRef.current?.dispose();
+        rendererViewRef.current = undefined;
         setActiveStreamBeingRendered(false);
       }
     };

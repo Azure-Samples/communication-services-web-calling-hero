@@ -31,7 +31,7 @@ export interface LocalPreviewProps {
   localVideoStream: LocalVideoStream;
 }
 
-let rendererView: VideoStreamRendererView;
+let rendererView: VideoStreamRendererView | undefined;
 
 export default (props: LocalPreviewProps): JSX.Element => {
   const imageProps = {
@@ -65,6 +65,7 @@ export default (props: LocalPreviewProps): JSX.Element => {
     return (): void => {
       if (rendererView) {
         rendererView.dispose();
+        rendererView = undefined;
       }
     };
   }, [props.localVideoStream]);

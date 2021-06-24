@@ -66,6 +66,7 @@ export default (props: RemoteStreamMediaProps): JSX.Element => {
 
       if (rendererViewRef.current) {
         rendererViewRef.current.dispose();
+        rendererViewRef.current = undefined;
       }
     }
   }, [

@@ -132,8 +132,9 @@ The downloadLocation for the recording can be fetched from the `contentLocation`
 ## Before running the sample for the first time
 1. Open an instance of PowerShell, Windows Terminal, Command Prompt or equivalent and navigate to the directory that you'd like to clone the sample to.
 2. `git clone https://github.com/Azure-Samples/communication-services-web-calling-hero.git`
-3. Get the `Connection String` from the Azure portal. For more information on connection strings, see [Create an Azure Communication Resources](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource)
-4. Add following variables in **Calling/appsettings.json** file:
+3. Add nuget package source https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json for installing Azure.Communication.CallingServer SDK. For details, see [Install and manage packages in Visual Studio](https://docs.microsoft.com/nuget/consume-packages/install-use-packages-visual-studio)
+4. Get the `Connection String` from the Azure portal. For more information on connection strings, see [Create an Azure Communication Resources](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource)
+5. Add following variables in **Calling/appsettings.json** file:
     - `ResourceConnectionString`: Connection string from the Azure Communication Service resource.
     - `CallbackUri`: Callback uri for receiving state change callbacks.
     - `BlobStorageConnectionString`:  Connection string of the storage account where call recoding data gets uploaded.

@@ -17,22 +17,36 @@ namespace Calling.Controllers
     [Route("/recording")]
     public class CallRecordingController : Controller
     {
-        private readonly string blobStorageConnectionString;
+        private readonly string recordingBlobStorageConnectionString;
         private readonly string callbackUri;
-        private readonly string containerName;
+        private readonly string recordingContainerName;
         private readonly CallingServerClient callingServerClient;
         private const string CallRecodingActiveErrorCode = "8553";
         private const string CallRecodingActiveError = "Recording is already in progress, one recording can be active at one time.";
         public ILogger<CallRecordingController> Logger { get; }
         static Dictionary<string, string> recordingData = new Dictionary<string, string>();
+        private readonly string isRecordingEnabled;
 
         public CallRecordingController(IConfiguration configuration, ILogger<CallRecordingController> logger)
         {
-            blobStorageConnectionString = configuration["BlobStorageConnectionString"];
+            recordingBlobStorageConnectionString = configuration["RecordingBlobStorageConnectionString"];
             callbackUri = configuration["CallbackUri"];
-            containerName = configuration["ContainerName"];
+            recordingContainerName = configuration["RecordingContainerName"];
             callingServerClient = new CallingServerClient(configuration["ResourceConnectionString"]);
+            isRecordingEnabled = configuration["IsRecordingEnabled"];
             Logger = logger;
+        }
+
+        [Route("/recordingSettings")]
+        [HttpGet]
+        public IActionResult GetRecording()
+        {
+            var clientResponse = new
+            {
+                isRecordingEnabled = this.isRecordingEnabled,
+            };
+
+            return this.Ok(clientResponse);
         }
 
         /// <summary>
@@ -316,7 +330,7 @@ namespace Calling.Controllers
         private async Task<bool> ProcessFile(string downloadLocation, string documentId, string fileFormat, string downloadType)
         {
             var recordingDownloadUri = new Uri(downloadLocation);
-            var response = DownloadExtentions.DownloadStreamingAsync(callingServerClient, recordingDownloadUri);
+            var response = callingServerClient.DownloadStreamingAsync(recordingDownloadUri);
 
             Logger.LogInformation($"Download {downloadType} response  -- >" + response.Result.GetRawResponse());
             Logger.LogInformation($"Save downloaded {downloadType} -- >");
@@ -331,9 +345,9 @@ namespace Calling.Controllers
                 }
             }
 
-            Logger.LogInformation($"Starting to upload {downloadType} to BlobStorage into container -- > {containerName}");
+            Logger.LogInformation($"Starting to upload {downloadType} to BlobStorage into container -- > {recordingContainerName}");
 
-            var blobStorageHelperInfo = await BlobStorageHelper.UploadFileAsync(blobStorageConnectionString, containerName, filePath, filePath);
+            var blobStorageHelperInfo = await BlobStorageHelper.UploadFileAsync(recordingBlobStorageConnectionString, recordingContainerName, filePath, filePath);
             if (blobStorageHelperInfo.Status)
             {
                 Logger.LogInformation(blobStorageHelperInfo.Message);

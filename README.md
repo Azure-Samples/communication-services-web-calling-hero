@@ -28,7 +28,7 @@ Additional documentation for this sample can be found on [Microsoft Docs](https:
 - Create an Azure account with an active subscription. For details, see [Create an account for free](https://azure.microsoft.com/free/?WT.mc_id=A261C142F)
 - [Node.js (12.18.4 and above)](https://nodejs.org/en/download/)
 - [Visual Studio (2019 and above)](https://visualstudio.microsoft.com/vs/)
-- [.NET Core 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1) (Make sure to install version that corresponds with your visual studio instance, 32 vs 64 bit)
+- [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) (Make sure to install version that corresponds with your visual studio instance, 32 vs 64 bit)
 - Create an Azure Communication Services resource. For details, see [Create an Azure Communication Resource](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource). You'll need to record your resource **connection string** for this quickstart.
 - An Azure storage account and container, for details, see [Create a storage account](https://docs.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-portal). You'll need to record your blob **connection string** and **container name** for this quickstart.
 - An Azure Event grid Web hook, for details, see [Record and download calls with Event Grid](https://docs.microsoft.com/azure/communication-services/quickstarts/voice-video-calling/download-recording-file-sample).
@@ -125,19 +125,20 @@ Use `DownloadStreamingAsync` API for downloading the recorded media.
 
 ```csharp
 var recordingDownloadUri = new Uri(downloadLocation);
-var response = DownloadExtentions.DownloadStreamingAsync(callingServerClient, recordingDownloadUri);
+var response = callingServerClient.DownloadStreamingAsync(recordingDownloadUri);
 ```
 The downloadLocation for the recording can be fetched from the `contentLocation` attribute of the `recordingChunk`. `DownloadStreamingAsync` method returns response of type `Response<Stream>`, which contains the downloaded content.
 
 ## Before running the sample for the first time
 1. Open an instance of PowerShell, Windows Terminal, Command Prompt or equivalent and navigate to the directory that you'd like to clone the sample to.
-2. `git clone https://github.com/Azure-Samples/communication-services-web-calling-hero.git`
+2. `git clone --branch public-preview https://github.com/Azure-Samples/communication-services-web-calling-hero.git`
 3. Get the `Connection String` from the Azure portal. For more information on connection strings, see [Create an Azure Communication Resources](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource)
 4. Add following variables in **Calling/appsettings.json** file:
+5. Add following variables in **Calling/appsettings.json** file:
     - `ResourceConnectionString`: Connection string from the Azure Communication Service resource.
     - `CallbackUri`: Callback uri for receiving state change callbacks.
-    - `BlobStorageConnectionString`:  Connection string of the storage account where call recoding data gets uploaded.
-    - `ContainerName`: ContainerName of the blob storage used for uploading call recording data.
+    - `RecordingBlobStorageConnectionString`:  Connection string of the storage account where call recoding data gets uploaded.
+    - `RecordingContainerName`: ContainerName of the blob storage used for uploading call recording data.
 
 ## Locally deploying the sample app
 
@@ -161,8 +162,8 @@ The downloadLocation for the recording can be fetched from the `contentLocation`
 3. Before publish, add the following keys and provide your values (copy from appsettings.json) with  `Edit App Service Settings` :
 	-  `ResourceConnectionString` as connection string from Azure Communication Service resource.
 	-  `CallbackUri` as the key of callback uri of the application.
-	-  `BlobStorageConnectionString` as the key of connection string of the storage account where call recoding data gets uploaded.
-	-  `ContainerName` as the key of container name of the blob storage used for uploading call recording data.
+	-  `RecordingBlobStorageConnectionString` as the key of connection string of the storage account where call recoding data gets uploaded.
+	-  `RecordingContainerName` as the key of container name of the blob storage used for uploading call recording data.
 
 **Note**: While you may use http://localhost for local testing, the sample when deployed will only work when served over https. The SDK [does not support http](https://docs.microsoft.com/en-us/azure/communication-services/concepts/voice-video-calling/calling-sdk-features#user-webrtc-over-https).
 

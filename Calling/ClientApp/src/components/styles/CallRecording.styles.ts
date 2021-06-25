@@ -8,6 +8,10 @@ export const IconColor = mergeStyles({
   }
 });
 
+export const recordingItemStyle = mergeStyles({
+  paddingLeft: '0.8125rem',
+});
+
 export const recordingIconStyle = mergeStyles({
   color: 'red',
   selectors: {

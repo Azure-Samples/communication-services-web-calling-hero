@@ -134,7 +134,6 @@ The downloadLocation for the recording can be fetched from the `contentLocation`
 2. `git clone --branch public-preview https://github.com/Azure-Samples/communication-services-web-calling-hero.git`
 3. Get the `Connection String` from the Azure portal. For more information on connection strings, see [Create an Azure Communication Resources](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource)
 4. Add following variables in **Calling/appsettings.json** file:
-5. Add following variables in **Calling/appsettings.json** file:
     - `ResourceConnectionString`: Connection string from the Azure Communication Service resource.
     - `CallbackUri`: Callback uri for receiving state change callbacks.
     - `RecordingBlobStorageConnectionString`:  Connection string of the storage account where call recoding data gets uploaded.

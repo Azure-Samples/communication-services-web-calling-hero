@@ -4,7 +4,9 @@ import { IContextualMenuProps, ITooltipHostStyles, TooltipHost } from '@fluentui
 import { MoreIcon } from '@fluentui/react-icons-northstar';
 import { ContextualMenu, IContextualMenuItem } from '@fluentui/react/lib/ContextualMenu';
 import { fullWidth } from './styles/MediaControls.styles';
-import { IconColor } from './styles/CallRecording.styles';
+import { IconColor, recordingItemStyle, recordingIconDivStyle, recordingTextDivStyle } from './styles/CallRecording.styles';
+import { Constants } from '../core/constants';
+import recordingOn from '../assets/RecordingOn.png';
 
 export interface CallRecordingProps {
   startRecording(): void;
@@ -70,7 +72,7 @@ export default (props: CallRecordingProps): JSX.Element => {
         <a ref={linkRef} className={IconColor} onClick={onShowContextualMenu} href="#">
           <div className={fullWidth}>
             <TooltipHost content="More actions" id="moreActions" calloutProps={calloutProps} styles={hostStyles}>
-              <MoreIcon aria-describedby={'moreActions'} size="medium" />
+              <MoreIcon aria-describedby={'moreActions'} size="medium" className={recordingItemStyle}/>
             </TooltipHost>
           </div>
         </a>

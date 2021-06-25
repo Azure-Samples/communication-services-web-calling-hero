@@ -4,6 +4,7 @@ import { CommunicationIdentifierKind } from '@azure/communication-common';
 import { CommunicationUserToken } from '@azure/communication-identity';
 import { FeedbackSettings } from 'feedbacks/FeedbackSettings';
 import preval from 'preval.macro';
+import { RecordingSettings } from '../recording/RecordingSettings';
 export declare interface RecordingApiResponse {
   message: string;
 }
@@ -31,6 +32,17 @@ export const utils = {
     return {
       ...retJson,
       isFeedbackEnabled: retJson.isFeedbackEnabled.toLowerCase() === 'true'
+    };
+  },
+  getRecordingSettings: async (): Promise<RecordingSettings> => {
+    const response = await fetch('/recordingSettings');
+    if (!response.ok) {
+      throw new Error('Failed to get recording settings from server!');
+    }
+    const retJson = await response.json();
+    return {
+      ...retJson,
+      isRecordingEnabled: retJson.isRecordingEnabled.toLowerCase() === 'true'
     };
   },
   getRefreshedTokenForUser: async (identity: string): Promise<string> => {

@@ -49,6 +49,7 @@ export interface HeaderProps {
 
 export default (props: HeaderProps): JSX.Element => {
   const [isFeedbackEnabled, setIsFeedbackEnabled] = useState(false);
+  const [isRecordingEnabled, setIsRecordingEnabled] = useState(false);
   const compressedMode = props.screenWidth <= Constants.MINI_HEADER_WINDOW_WIDTH;
   const isRecordingOn = props.recordingStatus === 'STARTED';
 
@@ -56,6 +57,9 @@ export default (props: HeaderProps): JSX.Element => {
     (async () => {
       const settings = await utils.getFeedbackSettings();
       setIsFeedbackEnabled(settings.isFeedbackEnabled);
+
+      const recordingSettings = await utils.getRecordingSettings();
+      setIsRecordingEnabled(recordingSettings.isRecordingEnabled);
     })();
   }, [])
 
@@ -155,7 +159,9 @@ export default (props: HeaderProps): JSX.Element => {
         />
         <PivotItem itemKey={CommandPanelTypes.None} />
       </Pivot>
-      <CallRecording />
+      {isRecordingEnabled && <Stack>
+        <CallRecording />
+      </Stack>}
       {props.screenWidth > Constants.MINI_HEADER_WINDOW_WIDTH && (
         <div className={separatorContainerStyle}>
           <Separator styles={separatorStyles} vertical={true} />

@@ -326,10 +326,10 @@ export const initCallAgent = (
         addedCall.api(Features.Recording).on('isRecordingActiveChanged', (): void => {
           const callRecordingActive = addedCall.api(Features.Recording).isRecordingActive;
           if (callRecordingActive) {            
-            dispatch(startRecording(Constants.STARTED));           
+            dispatch(startRecording());           
           }
           else if (!callRecordingActive) {           
-            dispatch(stopRecording(Constants.STOPPED));     
+            dispatch(stopRecording());     
           }
           dispatch(setRecordingActive(callRecordingActive))
         });

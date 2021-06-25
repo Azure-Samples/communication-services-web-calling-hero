@@ -233,7 +233,7 @@ export const startRecord = () => {
         if (state.calls !== undefined && state.calls.serverCallId) {
             const response: RecordingApiResponse = await utils.startRecording(state.calls.serverCallId);
             if (response && !response.message) {
-                dispatch(startRecording(Constants.STARTED));
+                dispatch(startRecording());
             } else {
                 dispatch(recordingError(response.message));
                 console.error(response.message);
@@ -253,7 +253,7 @@ export const stopRecord = () => {
                 state.calls.serverCallId,
             );
             if (response && !response.message) {
-                dispatch(stopRecording(Constants.STOPPED));
+                dispatch(stopRecording());
             } else {
                 console.error(response.message);
             }

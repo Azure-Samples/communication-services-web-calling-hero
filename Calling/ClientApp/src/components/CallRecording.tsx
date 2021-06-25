@@ -11,7 +11,7 @@ import recordingOn from '../assets/RecordingOn.png';
 export interface CallRecordingProps {
   startRecording(): void;
   stopRecording(): void;
-  recordingStatus: string;
+  recordingStatus: 'STARTED' | 'STOPPED';
 }
 
 export default (props: CallRecordingProps): JSX.Element => {
@@ -46,7 +46,7 @@ export default (props: CallRecordingProps): JSX.Element => {
             style: { color: 'crimson' }
           },
           text: 'Start recording',
-          disabled: props.recordingStatus === Constants.STARTED,
+          disabled: props.recordingStatus === 'STARTED',
           onClick: onContextMenuItemClick
         },
         {
@@ -56,7 +56,7 @@ export default (props: CallRecordingProps): JSX.Element => {
             style: { color: 'indianred' }
           },
           text: 'Stop recording',
-          disabled: props.recordingStatus === Constants.STOPPED || props.recordingStatus === '',
+          disabled: props.recordingStatus === 'STOPPED',
           onClick: onContextMenuItemClick
         }
       ]
@@ -68,21 +68,6 @@ export default (props: CallRecordingProps): JSX.Element => {
   const hostStyles: Partial<ITooltipHostStyles> = { root: { display: 'inline-block' } };
   return (
     <div>
-      <div className={recordingIconDivStyle}>
-        {props.recordingStatus === Constants.STARTED && (
-          <div>
-            <TooltipHost
-              content="Recording..."
-              id="recordingOnIcon"
-              calloutProps={calloutProps}
-              styles={hostStyles}
-            >
-              <img src={recordingOn} />
-            </TooltipHost>
-            <i className={recordingTextDivStyle}>Recording...</i>
-          </div>
-        )}
-      </div>
       {
         <a ref={linkRef} className={IconColor} onClick={onShowContextualMenu} href="#">
           <div className={fullWidth}>

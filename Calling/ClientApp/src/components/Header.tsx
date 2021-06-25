@@ -1,6 +1,6 @@
 // © Microsoft Corporation. All rights reserved.
 import React, { useEffect, useState } from 'react';
-import { Separator, Pivot, PivotItem, Stack } from '@fluentui/react';
+import { Separator, Pivot, PivotItem, Stack, CommandButton } from '@fluentui/react';
 import { Call, LocalVideoStream, VideoDeviceInfo } from '@azure/communication-calling';
 import MediaControls from './MediaControls';
 import { CommandPanelTypes } from './CommandPanel';
@@ -13,7 +13,9 @@ import {
   separatorStyles,
   pivotItemStyle,
   headerCenteredContainer,
-  feedbackContainer
+  feedbackContainer,
+  recordingIcon,
+  recordingSplitter
 } from './styles/Header.styles';
 import { ParticipantStream } from 'core/reducers';
 import CallRecording from '../containers/CallRecording';
@@ -42,12 +44,14 @@ export interface HeaderProps {
   isLocalScreenShareSupportedInBrowser(): boolean;
   localVideoStream: LocalVideoStream | undefined;
   videoDeviceInfo: VideoDeviceInfo | undefined;
-  recordingStatus: string;
+  recordingStatus: 'STARTED' | 'STOPPED';
 }
 
 export default (props: HeaderProps): JSX.Element => {
   const [isFeedbackEnabled, setIsFeedbackEnabled] = useState(false);
   const [isRecordingEnabled, setIsRecordingEnabled] = useState(false);
+  const compressedMode = props.screenWidth <= Constants.MINI_HEADER_WINDOW_WIDTH;
+  const isRecordingOn = props.recordingStatus === 'STARTED';
 
   useEffect(() => {
     (async () => {
@@ -103,9 +107,21 @@ export default (props: HeaderProps): JSX.Element => {
       id="header"
       className={props.screenWidth > Constants.MINI_HEADER_WINDOW_WIDTH ? headerContainer : headerCenteredContainer}
     >
-      {isFeedbackEnabled && <Stack.Item grow={1} className={feedbackContainer}>
-        <FeedbackButton />
-      </Stack.Item>}
+      <Stack.Item grow={1} className={feedbackContainer}>
+        {isFeedbackEnabled && <FeedbackButton iconOnly={compressedMode} />}
+        {isFeedbackEnabled && isRecordingOn && <div className={recordingSplitter}>
+          <Separator styles={separatorStyles} vertical={true} />
+        </div>}
+        {isRecordingOn &&
+          <CommandButton
+            className={recordingIcon}
+            key='RadioBtnOn'
+            text={compressedMode ? undefined : 'Recording'}
+            ariaLabel={compressedMode ? 'Recording' : undefined}
+            iconProps={{ iconName: 'RadioBtnOn' }}
+          />}
+      </Stack.Item>
+
       <Pivot
         onKeyDownCapture={(e) => {
           if ((e.target as HTMLElement).id === CommandPanelTypes.People && e.keyCode === 39) e.preventDefault();
@@ -166,7 +182,7 @@ export default (props: HeaderProps): JSX.Element => {
         cameraPermission={props.cameraPermission}
         microphonePermission={props.microphonePermission}
         localVideoRendererIsBusy={props.localVideoRendererIsBusy}
-        compressedMode={props.screenWidth <= Constants.MINI_HEADER_WINDOW_WIDTH}
+        compressedMode={compressedMode}
         isLocalScreenShareSupportedInBrowser={props.isLocalScreenShareSupportedInBrowser}
       />
     </Stack>

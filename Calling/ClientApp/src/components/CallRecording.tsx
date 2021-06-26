@@ -4,9 +4,7 @@ import { IContextualMenuProps, ITooltipHostStyles, TooltipHost } from '@fluentui
 import { MoreIcon } from '@fluentui/react-icons-northstar';
 import { ContextualMenu, IContextualMenuItem } from '@fluentui/react/lib/ContextualMenu';
 import { fullWidth } from './styles/MediaControls.styles';
-import { IconColor, recordingItemStyle, recordingIconDivStyle, recordingTextDivStyle } from './styles/CallRecording.styles';
-import { Constants } from '../core/constants';
-import recordingOn from '../assets/RecordingOn.png';
+import { IconColor, recordingItemStyle } from './styles/CallRecording.styles';
 
 export interface CallRecordingProps {
   startRecording(): void;

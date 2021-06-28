@@ -25,7 +25,7 @@ namespace Calling
         /// <returns></returns>
         [Route("/feedbackSettings")]
         [HttpGet]
-        public async Task<IActionResult> GetAsync()
+        public IActionResult Get()
         {
             var clientResponse = new
             {

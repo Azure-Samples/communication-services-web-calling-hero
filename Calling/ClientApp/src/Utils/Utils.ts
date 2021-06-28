@@ -68,9 +68,7 @@ export const utils = {
   },
   stopRecording: async (serverCallId: string): Promise<RecordingActionResponse> => {
     try {
-      const response = await fetch(
-        '/recording/stopRecording?serverCallId=' + serverCallId
-      );
+      const response = await fetch('/recording/stopRecording?serverCallId=' + serverCallId);
       if (response.ok) {
         return { message: '' };
       }

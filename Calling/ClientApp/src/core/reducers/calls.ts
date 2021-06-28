@@ -77,17 +77,17 @@ export const callsReducer: Reducer<CallsState, CallTypes> = (state = initialStat
     case SET_RECORDING_ACTIVE:
       return { ...state, isBeingRecorded: action.active };
     case SET_TRANSCRIBING_ACTIVE:
-      return { ...state, isBeingTranscribed: action.active};
+      return { ...state, isBeingTranscribed: action.active };
     case START_RECORDING:
-      return { ...state, recordingStatus: action.status};
+      return { ...state, recordingStatus: action.status };
     case STOP_RECORDING:
-      return { ...state, recordingStatus: action.status};
+      return { ...state, recordingStatus: action.status };
     case SET_SERVER_CALL_ID:
       return { ...state, serverCallId: action.serverCallId };
     case DIALOGBOX_VISIBLE:
       return { ...state, dialogBoxVisible: action.dialogBoxVisible };
     case RECORDING_ERROR:
-      return { ...state, recordingError: action.recordingError, dialogBoxVisible: true};
+      return { ...state, recordingError: action.recordingError, dialogBoxVisible: true };
     default:
       return state;
   }

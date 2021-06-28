@@ -58,28 +58,28 @@ interface SetDominantParticipantsAction {
 }
 
 interface StartRecordingAction {
-    type: typeof START_RECORDING;
-    status: 'STARTED';
+  type: typeof START_RECORDING;
+  status: 'STARTED';
 }
 
 interface StopRecordingAction {
-    type: typeof STOP_RECORDING;
-    status: 'STOPPED';
+  type: typeof STOP_RECORDING;
+  status: 'STOPPED';
 }
 
 interface SetServerCallIdAction {
-    type: typeof SET_SERVER_CALL_ID;
-    serverCallId: string;
+  type: typeof SET_SERVER_CALL_ID;
+  serverCallId: string;
 }
 
 interface DialogBoxVisibleAction {
-    type: typeof DIALOGBOX_VISIBLE;
-    dialogBoxVisible: boolean;
+  type: typeof DIALOGBOX_VISIBLE;
+  dialogBoxVisible: boolean;
 }
 
 interface RecordingErrorAction {
-    type: typeof RECORDING_ERROR;
-    recordingError: string;
+  type: typeof RECORDING_ERROR;
+  recordingError: string;
 }
 
 export const setCallAgent = (callAgent: CallAgent): SetCallAgentAction => {
@@ -141,38 +141,38 @@ export const setDominantParticipants = (selected: SelectionState[]): SetDominant
 };
 
 export const startRecording = (): StartRecordingAction => {
-    return {
-        type: 'START_RECORDING',
-        status: 'STARTED'
-    };
+  return {
+    type: 'START_RECORDING',
+    status: 'STARTED'
+  };
 };
 
 export const stopRecording = (): StopRecordingAction => {
-    return {
-        type: 'STOP_RECORDING',
-        status: 'STOPPED'
-    };
+  return {
+    type: 'STOP_RECORDING',
+    status: 'STOPPED'
+  };
 };
 
 export const setServerCallId = (serverCallId: string): SetServerCallIdAction => {
-    return {
-        type: 'SET_SERVER_CALL_ID',
-        serverCallId
-    };
+  return {
+    type: 'SET_SERVER_CALL_ID',
+    serverCallId
+  };
 };
 
 export const dialogBoxVisible = (dialogBoxVisible: boolean): DialogBoxVisibleAction => {
-    return {
-        type: 'DIALOGBOX_VISIBLE',
-        dialogBoxVisible
-    };
+  return {
+    type: 'DIALOGBOX_VISIBLE',
+    dialogBoxVisible
+  };
 };
 
 export const recordingError = (recordingError: string): RecordingErrorAction => {
-    return {
-        type: 'RECORDING_ERROR',
-        recordingError
-    };
+  return {
+    type: 'RECORDING_ERROR',
+    recordingError
+  };
 };
 
 export {

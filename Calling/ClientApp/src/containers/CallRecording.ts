@@ -10,7 +10,7 @@ const mapStateToProps = (state: State) => ({
 
 const mapDispatchToProps = (dispatch: any, props: CallRecordingProps) => ({
   startRecording: () => dispatch(startRecord()),
-  stopRecording: () => dispatch(stopRecord()),
+  stopRecording: () => dispatch(stopRecord())
 });
 
 const connector: any = connect(mapStateToProps, mapDispatchToProps);

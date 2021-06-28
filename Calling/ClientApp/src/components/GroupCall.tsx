@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { Label, Overlay, Stack } from '@fluentui/react';
 import Header from '../containers/Header';
 import MediaGallery from '../containers/MediaGallery';
-import MediaFullScreen from './MediaFullScreen';
-import CommandPanel, { CommandPanelTypes } from './CommandPanel';
+import { MediaFullScreen } from './MediaFullScreen';
+import { CommandPanel, CommandPanelTypes } from './CommandPanel';
 import { Constants } from '../core/constants';
 import {
   headerStyles,
@@ -30,7 +30,7 @@ import {
 } from '@azure/communication-calling';
 import { ParticipantStream } from 'core/reducers/index.js';
 import { ComplianceBanner } from 'components/ComplianceBanner';
-import DialogBox from './DialogBox';
+import { DialogBox } from './DialogBox';
 
 export interface GroupCallProps {
   userId: string;
@@ -66,7 +66,7 @@ export interface GroupCallProps {
   isDialogBoxVisiblile: boolean;
 }
 
-export default (props: GroupCallProps): JSX.Element => {
+export const GroupCall = (props: GroupCallProps): JSX.Element => {
   const [selectedPane, setSelectedPane] = useState(CommandPanelTypes.None);
   const activeScreenShare = props.screenShareStreams && props.screenShareStreams.length === 1;
 

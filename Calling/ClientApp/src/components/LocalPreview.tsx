@@ -33,7 +33,7 @@ export interface LocalPreviewProps {
 
 let rendererView: VideoStreamRendererView | undefined;
 
-export default (props: LocalPreviewProps): JSX.Element => {
+export const LocalPreview = (props: LocalPreviewProps): JSX.Element => {
   const imageProps = {
     src: staticMediaSVG.toString(),
     imageFit: ImageFit.cover,
@@ -88,7 +88,7 @@ export default (props: LocalPreviewProps): JSX.Element => {
       >
         <CallVideoIcon size="medium" />
         <Toggle
-          onKeyDownCapture={(e) => {}}
+          onKeyDownCapture={(e) => { e.preventDefault() }}
           checked={props.localVideoStream !== undefined}
           styles={toggleStyle}
           disabled={!props.videoDeviceInfo || props.videoDeviceList.length === 0}

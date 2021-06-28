@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import Header, { HeaderProps } from '../components/Header';
+import { Header, HeaderProps } from '../components/Header';
 import { setMicrophone, setShareUnshareScreen, endCall } from '../core/sideEffects';
 import { utils } from '../Utils/Utils';
 import { Constants } from '../core/constants';

@@ -1,5 +1,5 @@
 import React from 'react';
-import NewLocalSettings from './LocalSettings';
+import { LocalSettings } from './LocalSettings';
 import ParticipantStack from '../containers/ParticipantStack';
 import { VideoDeviceInfo, AudioDeviceInfo, DeviceManager } from '@azure/communication-calling';
 import { Stack } from '@fluentui/react';
@@ -9,7 +9,7 @@ import {
   settingsContainerStyle,
   paneHeaderTextStyle
 } from './styles/CommandPanel.styles';
-import Footer from './Footer';
+import { Footer } from './Footer';
 
 export interface CommandPanelProps {
   selectedPane: string;
@@ -28,7 +28,7 @@ export enum CommandPanelTypes {
   Settings = 'Settings'
 }
 
-export default (props: CommandPanelProps): JSX.Element => {
+export const CommandPanel = (props: CommandPanelProps): JSX.Element => {
 
   return (
     <Stack styles={fullHeightStyles}>
@@ -49,7 +49,7 @@ export default (props: CommandPanelProps): JSX.Element => {
         {props.selectedPane === CommandPanelTypes.Settings && (
           <Stack.Item>
           <div className={settingsContainerStyle}>
-            <NewLocalSettings
+            <LocalSettings
               videoDeviceList={props.videoDeviceList}
               audioDeviceList={props.audioDeviceList}
               audioDeviceInfo={props.audioDeviceInfo}

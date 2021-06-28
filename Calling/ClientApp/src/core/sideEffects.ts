@@ -87,7 +87,7 @@ export const setShareUnshareScreen = (shareScreen: boolean) => {
 };
 
 const subscribeToParticipant = (participant: RemoteParticipant, call: Call, dispatch: Dispatch): void => {
-  let remoteStreamSelector = RemoteStreamSelector.getInstance(Constants.DOMINANT_PARTICIPANTS_COUNT, dispatch);
+  const remoteStreamSelector = RemoteStreamSelector.getInstance(Constants.DOMINANT_PARTICIPANTS_COUNT, dispatch);
 
   participant.on('stateChanged', () => {
     remoteStreamSelector.participantStateChanged(
@@ -419,22 +419,6 @@ export const endCall = async (call: Call, options: HangUpOptions): Promise<void>
   await call.hangUp(options).catch((e: CommunicationServicesError) => console.error(e));
 };
 
-export const join = async (
-  callAgent: CallAgent,
-  locator: GroupCallLocator | TeamsMeetingLinkLocator,
-  callOptions: JoinCallOptions
-): Promise<void> => {
-  const isGroupCallLocator = (locator: GroupCallLocator | TeamsMeetingLinkLocator): locator is GroupCallLocator => {
-    return true;
-  };
-
-  if (isGroupCallLocator(locator)) {
-    return joinGroup(callAgent, locator, callOptions);
-  } else {
-    return joinTeamsMeeting(callAgent, locator, callOptions);
-  }
-};
-
 const joinGroup = async (
   callAgent: CallAgent,
   context: GroupCallLocator,
@@ -458,6 +442,22 @@ const joinTeamsMeeting = async (
   } catch (e) {
     console.log('Failed to join a call', e);
     return;
+  }
+};
+
+export const join = async (
+  callAgent: CallAgent,
+  locator: GroupCallLocator | TeamsMeetingLinkLocator,
+  callOptions: JoinCallOptions
+): Promise<void> => {
+  const isGroupCallLocator = (locator: GroupCallLocator | TeamsMeetingLinkLocator): locator is GroupCallLocator => {
+    return true;
+  };
+
+  if (isGroupCallLocator(locator)) {
+    return joinGroup(callAgent, locator, callOptions);
+  } else {
+    return joinTeamsMeeting(callAgent, locator, callOptions);
   }
 };
 

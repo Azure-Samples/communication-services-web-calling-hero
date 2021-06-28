@@ -12,7 +12,7 @@ export interface CallRecordingProps {
   recordingStatus: 'STARTED' | 'STOPPED';
 }
 
-export default (props: CallRecordingProps): JSX.Element => {
+export const CallRecording = (props: CallRecordingProps): JSX.Element => {
   const linkRef = React.useRef(null);
   const [showContextualMenu, setShowContextualMenu] = React.useState(false);
   const onShowContextualMenu = React.useCallback((ev: React.MouseEvent<HTMLElement>) => {

@@ -12,8 +12,8 @@ export interface LocalStreamMediaProps {
   stream: LocalVideoStream;
 }
 
-export default (props: LocalStreamMediaProps): JSX.Element => {
-  let rendererView = useRef<undefined | VideoStreamRendererView>();
+export const LocalStreamMedia = (props: LocalStreamMediaProps): JSX.Element => {
+  const rendererView = useRef<undefined | VideoStreamRendererView>();
 
   const [activeStreamBeingRendered, setActiveStreamBeingRendered] = useState(false);
 

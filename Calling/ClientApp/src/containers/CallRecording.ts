@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import CallRecording, { CallRecordingProps } from '../components/CallRecording';
+import { CallRecording, CallRecordingProps } from '../components/CallRecording';
 import { State } from '../core/reducers';
 import { startRecord, stopRecord } from '../core/sideEffects';
 

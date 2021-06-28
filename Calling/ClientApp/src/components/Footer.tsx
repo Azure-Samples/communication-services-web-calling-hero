@@ -11,7 +11,7 @@ const copyJoinLink = () => {
     document.execCommand('copy');
   };
 
-export default () => {
+export const Footer = () => {
     return  <Stack styles={paneFooterStyles} tokens={paneFooterTokens}>
     <Separator />
     <div className={footerMainTextStyle}>{invitePeopleString}</div>

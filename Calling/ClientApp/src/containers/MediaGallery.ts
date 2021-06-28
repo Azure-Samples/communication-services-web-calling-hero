@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import MediaGallery from '../components/MediaGallery';
+import { MediaGallery } from '../components/MediaGallery';
 import { State } from '../core/reducers';
 
 const mapStateToProps = (state: State) => ({

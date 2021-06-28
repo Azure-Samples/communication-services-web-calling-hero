@@ -14,7 +14,7 @@ export interface LocalSettingsProps {
   setAudioDeviceInfo(device: AudioDeviceInfo): void;
 }
 
-export default (props: LocalSettingsProps): JSX.Element => {
+export const LocalSettings = (props: LocalSettingsProps): JSX.Element => {
   const defaultPlaceHolder = 'Select an option';
   const cameraLabel = 'Camera';
   const micLabel = 'Microphone';

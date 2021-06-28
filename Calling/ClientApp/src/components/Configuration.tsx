@@ -2,9 +2,9 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { Stack, Spinner, PrimaryButton } from '@fluentui/react';
-import LocalPreview from './LocalPreview';
-import LocalSettings from './LocalSettings';
-import DisplayNameField from './DisplayNameField';
+import { LocalPreview } from './LocalPreview';
+import { LocalSettings } from './LocalSettings';
+import { DisplayNameField } from './DisplayNameField';
 import {
   VideoDeviceInfo,
   AudioDeviceInfo,
@@ -50,7 +50,7 @@ export interface ConfigurationScreenProps {
   screenWidth: number;
 }
 
-export default (props: ConfigurationScreenProps): JSX.Element => {
+export const Configuration = (props: ConfigurationScreenProps): JSX.Element => {
   const spinnerLabel = 'Initializing call client...';
   const buttonText = 'Start call';
 

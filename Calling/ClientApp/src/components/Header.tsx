@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Separator, Pivot, PivotItem, Stack, CommandButton } from '@fluentui/react';
 import { Call, LocalVideoStream, VideoDeviceInfo } from '@azure/communication-calling';
-import MediaControls from './MediaControls';
+import { MediaControls } from './MediaControls';
 import { CommandPanelTypes } from './CommandPanel';
 import { UserFriendsIcon, SettingsIcon } from '@fluentui/react-icons-northstar';
 import { Constants } from 'core/constants';
@@ -47,7 +47,7 @@ export interface HeaderProps {
   recordingStatus: 'STARTED' | 'STOPPED';
 }
 
-export default (props: HeaderProps): JSX.Element => {
+export const Header = (props: HeaderProps): JSX.Element => {
   const [isFeedbackEnabled, setIsFeedbackEnabled] = useState(false);
   const [isRecordingEnabled, setIsRecordingEnabled] = useState(false);
   const compressedMode = props.screenWidth <= Constants.MINI_HEADER_WINDOW_WIDTH;

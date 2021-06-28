@@ -35,7 +35,7 @@ export interface MediaControlsProps {
   isLocalScreenShareSupportedInBrowser(): boolean;
 }
 
-export default (props: MediaControlsProps): JSX.Element => {
+export const MediaControls = (props: MediaControlsProps): JSX.Element => {
   const cameraActive = props.cameraPermission === 'Denied' ? false : props.cameraActive;
   const cameraDisabled = props.cameraPermission === 'Denied';
   const cameraOnClick = props.cameraPermission !== 'Denied' ? props.onCameraChange : undefined;

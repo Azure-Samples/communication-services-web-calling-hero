@@ -14,8 +14,8 @@ export interface RemoteStreamMediaProps {
   isParticipantStreamSelected: boolean;
 }
 
-export default (props: RemoteStreamMediaProps): JSX.Element => {
-  let rendererView = useRef<VideoStreamRendererView | undefined>();
+export const RemoteStreamMedia = (props: RemoteStreamMediaProps): JSX.Element => {
+  const rendererView = useRef<VideoStreamRendererView | undefined>();
 
   const streamId = props.stream ? utils.getStreamId(props.label, props.stream) : `${props.label} - no stream`;
 

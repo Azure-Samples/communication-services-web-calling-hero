@@ -66,7 +66,7 @@ const getParticipants = (
       onRenderItem={onRenderItem}
     />
   ));
-export default (props: ParticipantStackProps): JSX.Element => {
+export const ParticipantStack = (props: ParticipantStackProps): JSX.Element => {
   const activeScreenShareStream = props.screenShareStreams && props.screenShareStreams.length === 1;
   const screenShareStream = props.screenShareStreams[0];
   const participants: CallParticipant[] = props.remoteParticipants.map((participant) => {

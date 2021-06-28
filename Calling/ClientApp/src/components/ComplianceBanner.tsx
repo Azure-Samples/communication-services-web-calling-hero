@@ -5,7 +5,7 @@ export type ComplianceBannerProps = {
     callTranscribeState: boolean;
     callRecordState: boolean;
 }
-export const ComplianceBanner = (props: ComplianceBannerProps) : JSX.Element => {
+export const ComplianceBanner = (props: ComplianceBannerProps): JSX.Element => {
     const [previousCallTranscribeState, setPreviousCallTranscribeState] = useState(false);
     const [previousCallRecordState, setPreviousCallRecordState] = useState(false);
     const [variant, setVariant] = useState(0);

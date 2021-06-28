@@ -19,10 +19,19 @@ import { AzureCommunicationTokenCredential, CommunicationUserKind } from '@azure
 import { CommunicationUserToken } from '@azure/communication-identity';
 import { Dispatch } from 'redux';
 import { utils, RecordingApiResponse, RecordingActionResponse } from '../Utils/Utils';
-import { callAdded, callRemoved, setCallState, setParticipants, setCallAgent, setRecordingActive, setTranscribingActive, setServerCallId,
+import {
+  callAdded,
+  callRemoved,
+  setCallState,
+  setParticipants,
+  setCallAgent,
+  setRecordingActive,
+  setTranscribingActive,
+  setServerCallId,
   startRecording,
   stopRecording,
-  recordingError } from './actions/calls';
+  recordingError
+} from './actions/calls';
 import { setMic, setShareScreen } from './actions/controls';
 import {
   setAudioDeviceInfo,
@@ -87,7 +96,7 @@ export const setShareUnshareScreen = (shareScreen: boolean) => {
 };
 
 const subscribeToParticipant = (participant: RemoteParticipant, call: Call, dispatch: Dispatch): void => {
-  let remoteStreamSelector = RemoteStreamSelector.getInstance(Constants.DOMINANT_PARTICIPANTS_COUNT, dispatch);
+  const remoteStreamSelector = RemoteStreamSelector.getInstance(Constants.DOMINANT_PARTICIPANTS_COUNT, dispatch);
 
   participant.on('stateChanged', () => {
     remoteStreamSelector.participantStateChanged(
@@ -228,37 +237,35 @@ export const updateDevices = () => {
 };
 
 export const startRecord = () => {
-    return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
-        const state = getState();
-        if (state.calls !== undefined && state.calls.serverCallId) {
-            const response: RecordingApiResponse = await utils.startRecording(state.calls.serverCallId);
-            if (response && !response.message) {
-                dispatch(startRecording());
-            } else {
-                dispatch(recordingError(response.message));
-                console.error(response.message);
-            }
-        } else {
-            console.error('serverCallId not available');
-            return;
-        }
-    };
+  return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
+    const state = getState();
+    if (state.calls !== undefined && state.calls.serverCallId) {
+      const response: RecordingApiResponse = await utils.startRecording(state.calls.serverCallId);
+      if (response && !response.message) {
+        dispatch(startRecording());
+      } else {
+        dispatch(recordingError(response.message));
+        console.error(response.message);
+      }
+    } else {
+      console.error('serverCallId not available');
+      return;
+    }
+  };
 };
 
 export const stopRecord = () => {
-    return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
-        const state = getState();
-        if (state.calls !== undefined && state.calls.serverCallId) {
-            const response: RecordingActionResponse = await utils.stopRecording(
-                state.calls.serverCallId,
-            );
-            if (response && !response.message) {
-                dispatch(stopRecording());
-            } else {
-                console.error(response.message);
-            }
-        } else return;
-    };
+  return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
+    const state = getState();
+    if (state.calls !== undefined && state.calls.serverCallId) {
+      const response: RecordingActionResponse = await utils.stopRecording(state.calls.serverCallId);
+      if (response && !response.message) {
+        dispatch(stopRecording());
+      } else {
+        console.error(response.message);
+      }
+    } else return;
+  };
 };
 
 export const initCallAgent = (
@@ -325,13 +332,12 @@ export const initCallAgent = (
 
         addedCall.api(Features.Recording).on('isRecordingActiveChanged', (): void => {
           const callRecordingActive = addedCall.api(Features.Recording).isRecordingActive;
-          if (callRecordingActive) {            
-            dispatch(startRecording());           
+          if (callRecordingActive) {
+            dispatch(startRecording());
+          } else if (!callRecordingActive) {
+            dispatch(stopRecording());
           }
-          else if (!callRecordingActive) {           
-            dispatch(stopRecording());     
-          }
-          dispatch(setRecordingActive(callRecordingActive))
+          dispatch(setRecordingActive(callRecordingActive));
         });
 
         // if you are not in a teams meeting call you will just get false
@@ -419,22 +425,6 @@ export const endCall = async (call: Call, options: HangUpOptions): Promise<void>
   await call.hangUp(options).catch((e: CommunicationServicesError) => console.error(e));
 };
 
-export const join = async (
-  callAgent: CallAgent,
-  locator: GroupCallLocator | TeamsMeetingLinkLocator,
-  callOptions: JoinCallOptions
-): Promise<void> => {
-  const isGroupCallLocator = (locator: GroupCallLocator | TeamsMeetingLinkLocator): locator is GroupCallLocator => {
-    return true;
-  };
-
-  if (isGroupCallLocator(locator)) {
-    return joinGroup(callAgent, locator, callOptions);
-  } else {
-    return joinTeamsMeeting(callAgent, locator, callOptions);
-  }
-};
-
 const joinGroup = async (
   callAgent: CallAgent,
   context: GroupCallLocator,
@@ -458,6 +448,22 @@ const joinTeamsMeeting = async (
   } catch (e) {
     console.log('Failed to join a call', e);
     return;
+  }
+};
+
+export const join = async (
+  callAgent: CallAgent,
+  locator: GroupCallLocator | TeamsMeetingLinkLocator,
+  callOptions: JoinCallOptions
+): Promise<void> => {
+  const isGroupCallLocator = (locator: GroupCallLocator | TeamsMeetingLinkLocator): locator is GroupCallLocator => {
+    return true;
+  };
+
+  if (isGroupCallLocator(locator)) {
+    return joinGroup(callAgent, locator, callOptions);
+  } else {
+    return joinTeamsMeeting(callAgent, locator, callOptions);
   }
 };
 

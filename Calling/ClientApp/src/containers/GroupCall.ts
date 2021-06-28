@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import GroupCall, { GroupCallProps } from '../components/GroupCall';
+import { GroupCall, GroupCallProps } from '../components/GroupCall';
 import { join, setMicrophone } from '../core/sideEffects';
 import { setLocalVideoStream } from '../core/actions/streams';
 import { setVideoDeviceInfo, setAudioDeviceInfo } from '../core/actions/devices';

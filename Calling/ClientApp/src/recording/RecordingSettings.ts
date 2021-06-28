@@ -1,3 +1,3 @@
 export type RecordingSettings = {
-    isRecordingEnabled: boolean;
+  isRecordingEnabled: boolean;
 };

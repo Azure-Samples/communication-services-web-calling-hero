@@ -19,7 +19,7 @@ export interface EndCallProps {
   homeHandler(): void;
 }
 
-export default (props: EndCallProps): JSX.Element => {
+export const EndCall = (props: EndCallProps): JSX.Element => {
   const goHomePage = 'Go to homepage';
   const rejoinCall = 'Rejoin call';
   const feedbackUrl = 'https://docs.microsoft.com/en-us/answers/search.html?c=&includeChildren=&f=&type=question+OR+idea+OR+kbentry+OR+answer+OR+topic+OR+user&redirect=search%2Fsearch&sort=relevance&q=azure-communication-services';

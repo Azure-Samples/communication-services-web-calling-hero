@@ -14,7 +14,7 @@ const dialogContentProps = {
   type: DialogType.normal,
   title: 'Error !'
 };
-export default (props: DialogBoxProps): JSX.Element => {
+export const DialogBox = (props: DialogBoxProps): JSX.Element => {
   const modalProps = React.useMemo(
     () => ({
       isBlocking: true,

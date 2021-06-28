@@ -2,8 +2,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import GroupCall from './containers/GroupCall';
 import { Provider } from 'react-redux';
-import EndCall from './components/EndCall';
-import HomeScreen from './components/HomeScreen';
+import { EndCall } from './components/EndCall';
+import { HomeScreen } from './components/HomeScreen';
 import ConfigurationScreen from './containers/Configuration';
 import { loadTheme, initializeIcons } from '@fluentui/react';
 import { utils } from './Utils/Utils';
@@ -53,6 +53,11 @@ const App = (): JSX.Element => {
     return decodeURIComponent(encodedTeamsMeetingLink);
   }
 
+  const getGroupId = () => {
+    const groupId = getGroupIdFromUrl();
+    return groupId ? groupId : ''
+  };
+
   const getLocator = (): GroupLocator | TeamsMeetingLinkLocator => {
     const meetingLink = getMeetingLink();
     
@@ -62,11 +67,6 @@ const App = (): JSX.Element => {
       return { meetingLink: meetingLink }
     }
   }
-
-  const getGroupId = () => {
-    const groupId = getGroupIdFromUrl();
-    return groupId ? groupId : ''
-  };
 
   const getContent = () => {
     if (page === 'home') {

@@ -10,7 +10,10 @@ const getCanvasBlob = (canvas: HTMLCanvasElement): Promise<Blob | null> => {
   });
 };
 
-export const uploadFeedback = async (feedback: Feedback, screenShotCanvas: HTMLCanvasElement | undefined): Promise<void> => {
+export const uploadFeedback = async (
+  feedback: Feedback,
+  screenShotCanvas: HTMLCanvasElement | undefined
+): Promise<void> => {
   try {
     const settings = await utils.getFeedbackSettings();
 

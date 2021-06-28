@@ -9,10 +9,10 @@ export interface MediaFullScreenProps {
   activeScreenShareStream: ParticipantStream;
 }
 
-export default (props: MediaFullScreenProps): JSX.Element => {
+export const MediaFullScreen = (props: MediaFullScreenProps): JSX.Element => {
   const [loading, setLoading] = useState(true);
   const fullScreenStreamMediaId = 'fullScreenStreamMediaId';
-  let rendererView = useRef<VideoStreamRendererView | undefined>();
+  const rendererView = useRef<VideoStreamRendererView | undefined>();
 
   /**
    * Start stream after DOM has rendered

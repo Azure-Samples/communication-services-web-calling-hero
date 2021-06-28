@@ -7,8 +7,8 @@ import {
 } from './styles/MediaGallery.styles';
 import { RemoteParticipant, LocalVideoStream } from '@azure/communication-calling';
 import { utils } from '../Utils/Utils';
-import LocalStreamMedia from './LocalStreamMedia';
-import RemoteStreamMedia from './RemoteStreamMedia';
+import { LocalStreamMedia } from './LocalStreamMedia';
+import { RemoteStreamMedia } from './RemoteStreamMedia';
 import { SelectionState } from 'core/RemoteStreamSelector';
 import { Stack } from '@fluentui/react';
 import { Constants } from '../core/constants';
@@ -21,7 +21,7 @@ export interface MediaGalleryProps {
   dominantParticipants: SelectionState[];
 }
 
-export default (props: MediaGalleryProps): JSX.Element => {
+export const MediaGallery = (props: MediaGalleryProps): JSX.Element => {
   const [gridCol, setGridCol] = useState(1);
   const [gridRow, setGridRow] = useState(1);
 

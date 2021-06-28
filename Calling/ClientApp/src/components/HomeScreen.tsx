@@ -30,7 +30,7 @@ const imageStyleProps: IImageStyles = {
   root: {}
 };
 
-export default (props: HomeScreenProps): JSX.Element => {
+export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
   const [meetingUrl, setMeetingUrl] = useState('');
   const groupId: string = createGUID();
   const iconName = 'SkypeCircleCheck';

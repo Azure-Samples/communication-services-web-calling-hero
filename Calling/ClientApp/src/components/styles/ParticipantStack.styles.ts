@@ -22,7 +22,7 @@ export const overFlowButtonStyles: IButtonStyles = {
   }
 };
 export const participantStackStyle = mergeStyles({
-  maxHeight: '21.875rem',
+  maxHeight: '100%',
   overflow: 'auto',
   paddingLeft: '1.125rem',
   paddingRight: '1.125rem'

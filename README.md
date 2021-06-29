@@ -17,7 +17,7 @@ This is a sample application to show how the Azure Communication Services Callin
 The client-side application is a React based user interface which uses Redux for handling complex state while leveraging Microsoft Fluent UI. 
 Powering this front-end is a C# web application powered by ASP.NET Core to connect this application with Azure Communication Services. 
 
-This sample includes [**Teams Interop**](https://docs.microsoft.com/azure/communication-services/concepts/teams-interop), which allows users to join an on going Teams meeting as a guest user. This functionality is in **Public Preview**. Please use the main branch sample for any production scenarios.
+This sample includes [**Teams Interop**](https://docs.microsoft.com/azure/communication-services/concepts/teams-interop), which allows users to join an on going Teams meeting as a guest user, and [Call Recording](https://docs.microsoft.com/azure/communication-services/concepts/voice-video-calling/call-recording), which allows users to record calls. This functionality is in **Public Preview**. Please use the main branch sample for any production scenarios.
 
 Additional documentation for this sample can be found on [Microsoft Docs](https://docs.microsoft.com/azure/communication-services/samples/calling-hero-sample).
 

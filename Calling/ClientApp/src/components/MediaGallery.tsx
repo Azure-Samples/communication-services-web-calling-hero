@@ -31,11 +31,13 @@ export default (props: MediaGalleryProps): JSX.Element => {
   const rows = [1, 1, 2, 2, 2, 2, 3, 3, 3, 3];
   const cols = [1, 2, 2, 2, 3, 3, 3, 3, 3, 4];
 
-  if (Constants.DOMINANT_PARTICIPANTS_COUNT < 0 || Constants.DOMINANT_PARTICIPANTS_COUNT > rows.length - 1) {
+  const dominantParticipantCount = utils.isSafari() ? Constants.DOMINANT_PARTICIPANTS_COUNT_SAFARI : Constants.DOMINANT_PARTICIPANTS_COUNT;
+
+  if (dominantParticipantCount < 0 || dominantParticipantCount > rows.length - 1) {
     console.warn(`Please use a value for dominant participants between 0 <= x <= ${rows.length - 1}`);
   }
 
-  const numRemoteParticipantsToRender = Math.min(Constants.DOMINANT_PARTICIPANTS_COUNT, rows.length - 1);
+  const numRemoteParticipantsToRender = Math.min(dominantParticipantCount, rows.length - 1);
 
   const clamp = (num: number, min: number, max: number): number => Math.min(Math.max(num, min), max);
 

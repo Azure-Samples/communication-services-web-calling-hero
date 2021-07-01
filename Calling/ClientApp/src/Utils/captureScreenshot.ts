@@ -25,5 +25,9 @@ export const captureScreenshot = async (): Promise<HTMLCanvasElement> => {
 };
 
 export const isScreenShotAvailable = (): boolean => {
-  return !!(navigator.mediaDevices as MediaDevicesWithDisplayMedia).getDisplayMedia && !!ImageCapture;
+  return (
+    !!(window?.navigator?.mediaDevices as MediaDevicesWithDisplayMedia)?.getDisplayMedia &&
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    !!(window as any).ImageCapture
+  );
 };

@@ -8,7 +8,8 @@ export class Constants {
   static CONFIGURATION_LOCAL_VIDEO_PREVIEW_ID = 'ConfigurationLocalVideoPreview';
   static LOCAL_VIDEO_PREVIEW_ID = 'LocalVideoPreview';
   static MINI_HEADER_WINDOW_WIDTH = 360;
-  // The media gallery is design to work between 1 and 8 dominant participants inclusive
-  static DOMINANT_PARTICIPANTS_COUNT_SAFARI = 1; // For safari browsers we want to set the default to 1 remote participant that can show their video based on quality constraints
-  static DOMINANT_PARTICIPANTS_COUNT = 4; // For non-safari browsers we want to set the default to 4 remote participant that can show their video based on quality constraints
+  // For safari browsers we want to set the default to 1 remote participant that can show their video based on quality constraints
+  static DOMINANT_PARTICIPANTS_COUNT_SAFARI = 1;
+  // For non-safari browsers we want to set the default to 4 remote participant that can show their video based on quality constraints
+  static DOMINANT_PARTICIPANTS_COUNT = 4; 
 }

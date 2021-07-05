@@ -11,5 +11,5 @@ export class Constants {
   // For safari browsers we want to set the default to 1 remote participant that can show their video based on quality constraints
   static DOMINANT_PARTICIPANTS_COUNT_SAFARI = 1;
   // For non-safari browsers we want to set the default to 4 remote participant that can show their video based on quality constraints
-  static DOMINANT_PARTICIPANTS_COUNT = 4; 
+  static DOMINANT_PARTICIPANTS_COUNT = 4;
 }

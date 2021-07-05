@@ -31,7 +31,9 @@ export default (props: MediaGalleryProps): JSX.Element => {
   const rows = [1, 1, 2, 2, 2, 2, 3, 3, 3, 3];
   const cols = [1, 2, 2, 2, 3, 3, 3, 3, 3, 4];
 
-  const dominantParticipantCount = utils.isSafari() ? Constants.DOMINANT_PARTICIPANTS_COUNT_SAFARI : Constants.DOMINANT_PARTICIPANTS_COUNT;
+  const dominantParticipantCount = utils.isSafari()
+    ? Constants.DOMINANT_PARTICIPANTS_COUNT_SAFARI
+    : Constants.DOMINANT_PARTICIPANTS_COUNT;
 
   if (dominantParticipantCount < 0 || dominantParticipantCount > rows.length - 1) {
     console.warn(`Please use a value for dominant participants between 0 <= x <= ${rows.length - 1}`);

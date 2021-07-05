@@ -123,6 +123,11 @@ export const utils = {
     }
     return false;
   },
+  isSafari(): boolean {
+    // https://stackoverflow.com/questions/7944460/detect-safari-browser
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    return isSafari;
+  },
   getBuildTime: (): string => {
     const dateTimeStamp = preval`module.exports = new Date().toLocaleString();`;
     return dateTimeStamp;

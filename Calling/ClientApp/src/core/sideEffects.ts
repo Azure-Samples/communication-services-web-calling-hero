@@ -96,7 +96,10 @@ export const setShareUnshareScreen = (shareScreen: boolean) => {
 };
 
 const subscribeToParticipant = (participant: RemoteParticipant, call: Call, dispatch: Dispatch): void => {
-  const remoteStreamSelector = RemoteStreamSelector.getInstance(Constants.DOMINANT_PARTICIPANTS_COUNT, dispatch);
+  const dominantParticipantCount = utils.isSafari()
+    ? Constants.DOMINANT_PARTICIPANTS_COUNT_SAFARI
+    : Constants.DOMINANT_PARTICIPANTS_COUNT;
+  const remoteStreamSelector = RemoteStreamSelector.getInstance(dominantParticipantCount, dispatch);
 
   participant.on('stateChanged', () => {
     remoteStreamSelector.participantStateChanged(

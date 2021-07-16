@@ -315,25 +315,26 @@ namespace Calling.Controllers
                         "json",
                         "metadata");
                 }
-
-                return Ok();
             }
             catch (Exception ex)
             {
-                return Json(new { Exception = ex });
+                Logger.LogInformation($"Exception Message -- > {ex.Message}");
+                Logger.LogInformation($"Exception Stack Trace -- > {ex.StackTrace}");
             }
+
+            return Ok();
         }
 
         private async Task<bool> ProcessFile(string downloadLocation, string documentId, string fileFormat, string downloadType)
         {
             var recordingDownloadUri = new Uri(downloadLocation);
-            var response = callingServerClient.DownloadStreamingAsync(recordingDownloadUri);
+            var response = await callingServerClient.DownloadStreamingAsync(recordingDownloadUri);
 
-            Logger.LogInformation($"Download {downloadType} response  -- >" + response.Result.GetRawResponse());
+            Logger.LogInformation($"Download {downloadType} response  -- >" + response.GetRawResponse());
             Logger.LogInformation($"Save downloaded {downloadType} -- >");
 
-            string filePath = ".\\" + documentId + "." + fileFormat;
-            using (Stream streamToReadFrom = response.Result.Value)
+            string filePath = string.Format("{0}.{1}", documentId, fileFormat);
+            using (Stream streamToReadFrom = response.Value)
             {
                 using (Stream streamToWriteTo = System.IO.File.Open(filePath, FileMode.Create))
                 {

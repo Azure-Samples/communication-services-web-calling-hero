@@ -22,7 +22,7 @@ namespace Calling.Controllers
         private const string CallRecodingActiveErrorCode = "8553";
         private const string CallRecodingActiveError = "Recording is already in progress, one recording can be active at one time.";
         public ILogger<CallRecordingController> Logger { get; }
-        static Dictionary<string, string> recordingData = new Dictionary<string, string>();
+        static Dictionary<string, RecordingInfo> recordingData = new Dictionary<string, RecordingInfo>();
         private readonly string isRecordingEnabled;
 
         public CallRecordingController(IConfiguration configuration, ILogger<CallRecordingController> logger)
@@ -64,12 +64,13 @@ namespace Calling.Controllers
 
                     Logger.LogInformation($"StartRecordingAsync response -- >  {startRecordingResponse.GetRawResponse()}, Recording Id: {startRecordingResponse.Value.RecordingId}");
 
-                    var recordingId = startRecordingResponse.Value.RecordingId;
-                    if (!recordingData.ContainsKey(serverCallId))
+                    if (recordingData.ContainsKey(serverCallId))
                     {
-                        recordingData.Add(serverCallId, string.Empty);
+                        recordingData.Remove(serverCallId);
                     }
-                    recordingData[serverCallId] = recordingId;
+
+                    var recordingId = startRecordingResponse.Value.RecordingId;
+                    recordingData.Add(serverCallId, new RecordingInfo(recordingId, string.Empty));
 
                     return Json(recordingId);
                 }
@@ -103,13 +104,13 @@ namespace Calling.Controllers
                 {
                     if (string.IsNullOrEmpty(recordingId))
                     {
-                        recordingId = recordingData[serverCallId];
+                        recordingId = recordingData[serverCallId].recordingId;
                     }
                     else
                     {
                         if (!recordingData.ContainsKey(serverCallId))
                         {
-                            recordingData[serverCallId] = recordingId;
+                            recordingData[serverCallId] = new RecordingInfo(recordingId, string.Empty);
                         }
                     }
                     var pauseRecording = await callingServerClient.InitializeServerCall(serverCallId).PauseRecordingAsync(recordingId);
@@ -143,13 +144,13 @@ namespace Calling.Controllers
                 {
                     if (string.IsNullOrEmpty(recordingId))
                     {
-                        recordingId = recordingData[serverCallId];
+                        recordingId = recordingData[serverCallId].recordingId;
                     }
                     else
                     {
                         if (!recordingData.ContainsKey(serverCallId))
                         {
-                            recordingData[serverCallId] = recordingId;
+                            recordingData[serverCallId] = new RecordingInfo(recordingId, string.Empty);
                         }
                     }
                     var resumeRecording = await callingServerClient.InitializeServerCall(serverCallId).ResumeRecordingAsync(recordingId);
@@ -184,23 +185,19 @@ namespace Calling.Controllers
                 {
                     if (string.IsNullOrEmpty(recordingId))
                     {
-                        recordingId = recordingData[serverCallId];
+                        recordingId = recordingData[serverCallId].recordingId;
                     }
                     else
                     {
                         if (!recordingData.ContainsKey(serverCallId))
                         {
-                            recordingData[serverCallId] = recordingId;
+                            recordingData[serverCallId] = new RecordingInfo(recordingId, string.Empty);
                         }
                     }
 
                     var stopRecording = await callingServerClient.InitializeServerCall(serverCallId).StopRecordingAsync(recordingId).ConfigureAwait(false);
                     Logger.LogInformation($"StopRecordingAsync response -- > {stopRecording}");
 
-                    if (recordingData.ContainsKey(serverCallId))
-                    {
-                        recordingData.Remove(serverCallId);
-                    }
                     return Ok();
                 }
                 else
@@ -211,6 +208,47 @@ namespace Calling.Controllers
             catch (Exception ex)
             {
                 return Json(new { Exception = ex });
+            }
+        }
+
+        /// <summary>
+        /// Method to get recording Link
+        /// </summary>
+        /// <param name="serverCallId">Conversation id of the call</param>
+        /// <param name="recordingId">Recording id of the call</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("getRecordingLink")]
+        public IActionResult GetRecordingLink(string serverCallId)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(serverCallId))
+                {
+                    string downloadRecordingURL = null;
+
+                    if (recordingData.ContainsKey(serverCallId))
+                    {
+                        downloadRecordingURL = recordingData[serverCallId].recordingUri;
+                    }
+
+                    Logger.LogInformation($"Recording download link -- > {downloadRecordingURL}");
+
+                    var response = new
+                    {
+                        uri = downloadRecordingURL,
+                    };
+
+                    return Ok(response);
+                }
+                else
+                {
+                    return BadRequest(new { Message = "serverCallId is invalid" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Exception = ex.Message });
             }
         }
 
@@ -235,13 +273,13 @@ namespace Calling.Controllers
                 {
                     if (string.IsNullOrEmpty(recordingId))
                     {
-                        recordingId = recordingData[serverCallId];
+                        recordingId = recordingData[serverCallId].recordingId;
                     }
                     else
                     {
                         if (!recordingData.ContainsKey(serverCallId))
                         {
-                            recordingData[serverCallId] = recordingId;
+                            recordingData[serverCallId] = new RecordingInfo(recordingId, string.Empty);
                         }
                     }
 
@@ -296,8 +334,20 @@ namespace Calling.Controllers
                 if (cloudEvent.EventType == SystemEventNames.AcsRecordingFileStatusUpdated)
                 {
                     Logger.LogInformation($"Event type is -- > {cloudEvent.EventType}");
-
                     Logger.LogInformation("Microsoft.Communication.RecordingFileStatusUpdated response  -- >" + cloudEvent.Data);
+                    Logger.LogInformation("Microsoft.Communication.RecordingFileStatusUpdated subject  -- >" + cloudEvent.Subject);
+
+                    string recordingId = string.Empty;
+
+                    if(!string.IsNullOrWhiteSpace(cloudEvent.Subject))
+                    {
+                        string[] subjectPaths = cloudEvent.Subject.Split("/");
+
+                        if (subjectPaths.Length >= 6)
+                        {
+                            recordingId = subjectPaths[5];
+                        }
+                    }
 
                     var eventData = cloudEvent.Data.ToObjectFromJson<AcsRecordingFileStatusUpdatedEventData>();
 
@@ -306,7 +356,7 @@ namespace Calling.Controllers
                     await ProcessFile(eventData.RecordingStorageInfo.RecordingChunks[0].ContentLocation,
                         eventData.RecordingStorageInfo.RecordingChunks[0].DocumentId,
                         "mp4",
-                        "recording");
+                        "recording", recordingId);
 
                     Logger.LogInformation("Start processing metadata -- >");
 
@@ -325,7 +375,7 @@ namespace Calling.Controllers
             return Ok();
         }
 
-        private async Task<bool> ProcessFile(string downloadLocation, string documentId, string fileFormat, string downloadType)
+        private async Task<bool> ProcessFile(string downloadLocation, string documentId, string fileFormat, string downloadType, string recordingId = null)
         {
             var recordingDownloadUri = new Uri(downloadLocation);
             var response = await callingServerClient.DownloadStreamingAsync(recordingDownloadUri);
@@ -348,6 +398,19 @@ namespace Calling.Controllers
             var blobStorageHelperInfo = await BlobStorageHelper.UploadFileAsync(recordingBlobStorageConnectionString, recordingContainerName, filePath, filePath);
             if (blobStorageHelperInfo.Status)
             {
+                if (!string.IsNullOrEmpty(recordingId))
+                {
+                    foreach (KeyValuePair<string, RecordingInfo> data in recordingData)
+                    {
+                        if (string.Equals(data.Value.recordingId, recordingId))
+                        {
+                            Logger.LogInformation("Download uri for recording file -- > {0}", blobStorageHelperInfo.Uri);
+                            recordingData[data.Key] = new RecordingInfo(recordingId, blobStorageHelperInfo.Uri);
+                            break;
+                        }
+                    }
+                }
+
                 Logger.LogInformation(blobStorageHelperInfo.Message);
                 Logger.LogInformation($"Deleting temporary {downloadType} file being created");
 

@@ -77,6 +77,20 @@ export const utils = {
       return { message: 'Recording could not be stopped' };
     }
   },
+  getRecordingLink: async (id: string): Promise<string> => {
+    try {
+      const response = await fetch('/recording/getRecordingLink?serverCallId=' + id);
+      if (response.ok) {
+        const content = await response.json();
+        return content.uri;
+      } else {
+        return '';
+      }
+    } catch (e) {
+      console.error('Recording is not available for download at this moment. Please try again later.');
+      return '';
+    }
+  },
   isSelectedAudioDeviceInList(selected: AudioDeviceInfo, list: AudioDeviceInfo[]): boolean {
     return list.filter((item) => item.name === selected.name).length > 0;
   },

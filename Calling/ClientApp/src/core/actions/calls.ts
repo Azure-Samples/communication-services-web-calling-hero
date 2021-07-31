@@ -14,6 +14,7 @@ const STOP_RECORDING = 'STOP_RECORDING';
 const SET_SERVER_CALL_ID = 'SET_SERVER_CALL_ID';
 const DIALOGBOX_VISIBLE = 'DIALOGBOX_VISIBLE';
 const RECORDING_ERROR = 'RECORDING_ERROR';
+const SET_RECORDING_LINK = 'SET_RECORDING_LINK';
 
 interface SetCallAgentAction {
   type: typeof SET_CALL_AGENT;
@@ -80,6 +81,11 @@ interface DialogBoxVisibleAction {
 interface RecordingErrorAction {
   type: typeof RECORDING_ERROR;
   recordingError: string;
+}
+
+interface RecordingLinkAction {
+  type: typeof SET_RECORDING_LINK;
+  recordingLink: string;
 }
 
 export const setCallAgent = (callAgent: CallAgent): SetCallAgentAction => {
@@ -175,6 +181,13 @@ export const recordingError = (recordingError: string): RecordingErrorAction => 
   };
 };
 
+export const recordingLink = (recordingLink: string): RecordingLinkAction => {
+  return {
+    type: 'SET_RECORDING_LINK',
+    recordingLink
+  };
+};
+
 export {
   SET_CALL_AGENT,
   CALL_ADDED,
@@ -188,7 +201,8 @@ export {
   STOP_RECORDING,
   SET_SERVER_CALL_ID,
   RECORDING_ERROR,
-  DIALOGBOX_VISIBLE
+  DIALOGBOX_VISIBLE,
+  SET_RECORDING_LINK
 };
 
 export type CallTypes =
@@ -204,4 +218,5 @@ export type CallTypes =
   | StopRecordingAction
   | SetServerCallIdAction
   | RecordingErrorAction
-  | DialogBoxVisibleAction;
+  | DialogBoxVisibleAction
+  | RecordingLinkAction;

@@ -29,7 +29,7 @@ import {
   CallEndReason
 } from '@azure/communication-calling';
 import { ParticipantStream } from 'core/reducers/index.js';
-import { ComplianceBanner } from 'components/ComplianceBanner';
+import ComplianceBanner from '../containers/ComplianceBanner';
 import { DialogBox } from './DialogBox';
 
 export interface GroupCallProps {
@@ -88,8 +88,8 @@ export const GroupCall = (props: GroupCallProps): JSX.Element => {
         <Header
           selectedPane={selectedPane}
           setSelectedPane={setSelectedPane}
-          endCallHandler={() => { 
-            props.endCallHandler(); 
+          endCallHandler={() => {
+            props.endCallHandler();
           }}
           screenWidth={props.screenWidth}
         />
@@ -107,42 +107,38 @@ export const GroupCall = (props: GroupCallProps): JSX.Element => {
         )}
       </Stack.Item>
       <Stack.Item styles={containerStyles}>
-        { props.shareScreen && (
+        {props.shareScreen && (
           <div className={loadingStyle}>
-          <Label>Your screen is being shared</Label>
-        </div>)
-        }
-        { props.callState === Constants.CONNECTED &&
-          (
-            <Stack horizontal styles={containerStyles}>
-              <Stack.Item grow styles={activeScreenShare ? activeContainerClassName : hiddenContainerClassName}>
-                {activeScreenShare && <MediaFullScreen activeScreenShareStream={props.screenShareStreams[0]} />}
-              </Stack.Item>
-              <Stack.Item grow styles={!activeScreenShare ? activeContainerClassName : hiddenContainerClassName}>
-                <MediaGallery />
-              </Stack.Item>
-              {selectedPane !== CommandPanelTypes.None && (
-                  window.innerWidth > Constants.MINI_HEADER_WINDOW_WIDTH ?
+            <Label>Your screen is being shared</Label>
+          </div>
+        )}
+        {props.callState === Constants.CONNECTED && (
+          <Stack horizontal styles={containerStyles}>
+            <Stack.Item grow styles={activeScreenShare ? activeContainerClassName : hiddenContainerClassName}>
+              {activeScreenShare && <MediaFullScreen activeScreenShareStream={props.screenShareStreams[0]} />}
+            </Stack.Item>
+            <Stack.Item grow styles={!activeScreenShare ? activeContainerClassName : hiddenContainerClassName}>
+              <MediaGallery />
+            </Stack.Item>
+            {selectedPane !== CommandPanelTypes.None &&
+              (window.innerWidth > Constants.MINI_HEADER_WINDOW_WIDTH ? (
                 <Stack.Item disableShrink styles={paneStyles}>
                   <CommandPanel {...props} selectedPane={selectedPane} setSelectedPane={setSelectedPane} />
                 </Stack.Item>
-                :
+              ) : (
                 <Overlay styles={overlayStyles}>
-                    <CommandPanel {...props} selectedPane={selectedPane} setSelectedPane={setSelectedPane} />
+                  <CommandPanel {...props} selectedPane={selectedPane} setSelectedPane={setSelectedPane} />
                 </Overlay>
-              )}
-            </Stack>
-          )
-        }
-        {
-          props.callState === Constants.LOBBY && (
-            <Stack horizontal styles={containerStyles}>
-              <div className={loadingStyle} style={{width:'100%'}}>
-                <Label>Waiting to be admitted</Label>
-              </div>
-            </Stack>
-          )
-        }
+              ))}
+          </Stack>
+        )}
+        {props.callState === Constants.LOBBY && (
+          <Stack horizontal styles={containerStyles}>
+            <div className={loadingStyle} style={{ width: '100%' }}>
+              <Label>Waiting to be admitted</Label>
+            </div>
+          </Stack>
+        )}
       </Stack.Item>
     </Stack>
   );

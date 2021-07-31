@@ -30,7 +30,8 @@ import {
   setServerCallId,
   startRecording,
   stopRecording,
-  recordingError
+  recordingError,
+  recordingLink
 } from './actions/calls';
 import { setMic, setShareScreen } from './actions/controls';
 import {
@@ -268,6 +269,28 @@ export const stopRecord = () => {
         console.error(response.message);
       }
     } else return;
+  };
+};
+
+export const getRecordLink = () => {
+  return async (dispatch: Dispatch, getState: () => State): Promise<string> => {
+    const state = getState();
+    if (state.calls !== undefined && state.calls.serverCallId) {
+      const uri = await utils.getRecordingLink(state.calls.serverCallId);
+
+      if (uri !== null && uri !== '') {
+        dispatch(recordingLink(uri));
+        return uri;
+      } else {
+        dispatch(recordingError(Constants.CALL_RECORDING_DOWNLOAD_ERROR));
+        console.error(Constants.CALL_RECORDING_DOWNLOAD_ERROR);
+        dispatch(recordingLink(''));
+        return '';
+      }
+    } else {
+      dispatch(recordingLink(''));
+      return '';
+    }
   };
 };
 

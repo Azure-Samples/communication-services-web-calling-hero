@@ -10,8 +10,8 @@ const mapStateToProps = (state: State) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-    getRecordingLink: (): Promise<string> => dispatch(getRecordLink()),
-    setRecordingLink: (): void => dispatch(recordingLink(''))
+  getRecordingLink: (): Promise<string> => dispatch(getRecordLink()),
+  setRecordingLink: (): void => dispatch(recordingLink(''))
 });
 
 const connector: any = connect(mapStateToProps, mapDispatchToProps);

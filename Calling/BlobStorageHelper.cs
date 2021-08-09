@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Azure.Storage.Sas;
 
 namespace Calling
 {
@@ -84,6 +85,12 @@ namespace Calling
                 FileStream uploadFileStream = File.OpenRead(filePath);
                 BlobContentInfo status = await blobClient.UploadAsync(uploadFileStream, true);
                 uploadFileStream.Close();
+
+                if(filePath.EndsWith("mp4"))
+                {
+                    blobStorageHelperInfo.Uri = GetBlobSasUri(containerName, blobClient);
+                }
+
                 blobStorageHelperInfo.Message = $"File uploaded successfully. Uri : {blobClient.Uri}";
                 blobStorageHelperInfo.Status = true;
                 return blobStorageHelperInfo;
@@ -92,6 +99,33 @@ namespace Calling
             {
                 throw new Exception($"The file upload was not successful. Exception: {ex.Message}");
             }
+        }
+
+        
+        /// <summary>
+        /// Returns a URI containing a SAS for the blob.
+        /// </summary>
+        /// <param name="containerName">A string containing the name of a container</param>
+        /// <param name="blobClient">A reference to the blobclient object.</param>
+        /// <returns>A string containing the URI for the blob, with the SAS token appended.</returns>
+        static string GetBlobSasUri(string containerName, BlobClient blobClient)
+        {
+            // Create a SAS token that's valid for a given time.
+            BlobSasBuilder sasBuilder = new BlobSasBuilder()
+            {
+                BlobContainerName = containerName,
+                BlobName = blobClient.Name,
+                Resource = "b"
+            };
+
+            if (sasBuilder != null)
+            {
+                sasBuilder.ExpiresOn = DateTimeOffset.UtcNow.AddMinutes(60);
+                sasBuilder.SetPermissions(BlobSasPermissions.All);
+            }
+
+            Uri sasUri = blobClient.GenerateSasUri(sasBuilder);
+            return sasUri.ToString();
         }
     }
 }

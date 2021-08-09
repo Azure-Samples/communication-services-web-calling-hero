@@ -18,7 +18,7 @@ import {
 import { AzureCommunicationTokenCredential, CommunicationUserKind } from '@azure/communication-common';
 import { CommunicationUserToken } from '@azure/communication-identity';
 import { Dispatch } from 'redux';
-import { utils, RecordingApiResponse, RecordingActionResponse } from '../Utils/Utils';
+import { utils, RecordingApiResponse, RecordingActionResponse, RecordingLinkResponse } from '../Utils/Utils';
 import {
   callAdded,
   callRemoved,
@@ -30,7 +30,8 @@ import {
   setServerCallId,
   startRecording,
   stopRecording,
-  recordingError
+  recordingError,
+  recordingLink
 } from './actions/calls';
 import { setMic, setShareScreen } from './actions/controls';
 import {
@@ -268,6 +269,28 @@ export const stopRecord = () => {
         console.error(response.message);
       }
     } else return;
+  };
+};
+
+export const getRecordLink = () => {
+  return async (dispatch: Dispatch, getState: () => State): Promise<string> => {
+    const state = getState();
+    if (state.calls !== undefined && state.calls.serverCallId) {
+      const response: RecordingLinkResponse = await utils.getRecordingLink(state.calls.serverCallId);
+
+      if (response.uri !== null && response.uri !== '') {
+        dispatch(recordingLink(response.uri));
+        return response.uri;
+      } else {
+        dispatch(recordingError(response.message));
+        console.error(response.message);
+        dispatch(recordingLink(''));
+        return '';
+      }
+    } else {
+      dispatch(recordingLink(''));
+      return '';
+    }
   };
 };
 

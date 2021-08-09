@@ -11,6 +11,10 @@ export declare interface RecordingApiResponse {
 export declare interface RecordingActionResponse {
   message: string;
 }
+export declare interface RecordingLinkResponse {
+  uri: string;
+  message: string;
+}
 
 export const utils = {
   getAppServiceUrl: (): string => {
@@ -76,6 +80,22 @@ export const utils = {
     } catch (e) {
       return { message: 'Recording could not be stopped' };
     }
+  },
+  getRecordingLink: async (id: string): Promise<RecordingLinkResponse> => {
+    const recLinkResponse: RecordingLinkResponse = { uri: '', message: '' };
+    try {
+      const response = await fetch('/recording/getRecordingLink?serverCallId=' + id);
+      const content = await response.json();
+      if (response.ok) {
+        recLinkResponse.uri = content.uri;
+      } else {
+        recLinkResponse.message = content.message;
+      }
+    } catch (e) {
+      console.error(e.message);
+      recLinkResponse.message = e.message;
+    }
+    return recLinkResponse;
   },
   isSelectedAudioDeviceInList(selected: AudioDeviceInfo, list: AudioDeviceInfo[]): boolean {
     return list.filter((item) => item.name === selected.name).length > 0;

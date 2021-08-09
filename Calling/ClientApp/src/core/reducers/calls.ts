@@ -15,7 +15,8 @@ import {
   STOP_RECORDING,
   SET_SERVER_CALL_ID,
   DIALOGBOX_VISIBLE,
-  RECORDING_ERROR
+  RECORDING_ERROR,
+  SET_RECORDING_LINK
 } from '../actions/calls';
 
 export interface CallsState {
@@ -33,6 +34,7 @@ export interface CallsState {
   recordingStatus: 'STARTED' | 'STOPPED';
   recordingError: string;
   dialogBoxVisible: boolean;
+  recordingLink: string;
 }
 
 const initialState: CallsState = {
@@ -49,7 +51,8 @@ const initialState: CallsState = {
   serverCallId: '',
   recordingStatus: 'STOPPED',
   dialogBoxVisible: false,
-  recordingError: ''
+  recordingError: '',
+  recordingLink: ''
 };
 
 export const callsReducer: Reducer<CallsState, CallTypes> = (state = initialState, action: CallTypes): CallsState => {
@@ -88,6 +91,8 @@ export const callsReducer: Reducer<CallsState, CallTypes> = (state = initialStat
       return { ...state, dialogBoxVisible: action.dialogBoxVisible };
     case RECORDING_ERROR:
       return { ...state, recordingError: action.recordingError, dialogBoxVisible: true };
+    case SET_RECORDING_LINK:
+      return { ...state, recordingLink: action.recordingLink };
     default:
       return state;
   }

@@ -1,5 +1,6 @@
 import { Link, MessageBar } from '@fluentui/react';
 import React, { useEffect, useState } from 'react';
+import { Constants } from 'core/constants';
 
 export interface ComplianceBannerProps {
   callTranscribeState: boolean;
@@ -12,20 +13,9 @@ export const ComplianceBanner = (props: ComplianceBannerProps): JSX.Element => {
   const [previousCallTranscribeState, setPreviousCallTranscribeState] = useState(false);
   const [previousCallRecordState, setPreviousCallRecordState] = useState(false);
   const [variant, setVariant] = useState(0);
-
-  const TRANSCRIPTION_STOPPED_STILL_RECORDING = 1;
-  const RECORDING_STOPPED_STILL_TRANSCRIBING = 2;
-  const RECORDING_AND_TRANSCRIPTION_STOPPED = 3;
-  const RECORDING_AND_TRANSCRIPTION_STARTED = 4;
-  const TRANSCRIPTION_STARTED = 5;
-  const RECORDING_STOPPED = 6;
-  const RECORDING_STARTED = 7;
-  const RECORDING_STOPPED_AND_SAVED = 8;
-  const NO_STATE = 0;
-
   const { callTranscribeState, callRecordState } = props;
 
-  const onDownloadClick = () => {
+  const onDownloadClick = (): void => {
     if (props.recordingLink && props.recordingLink.trim()) {
       window.open(props.recordingLink, '_blank', 'noreferrer');
     } else {
@@ -40,43 +30,43 @@ export const ComplianceBanner = (props: ComplianceBannerProps): JSX.Element => {
   useEffect(() => {
     if (previousCallRecordState && previousCallTranscribeState) {
       if (callRecordState && !callTranscribeState) {
-        setVariant(TRANSCRIPTION_STOPPED_STILL_RECORDING);
+        setVariant(Constants.TRANSCRIPTION_STOPPED_STILL_RECORDING);
       } else if (!callRecordState && callTranscribeState) {
-        setVariant(RECORDING_STOPPED_STILL_TRANSCRIBING);
+        setVariant(Constants.RECORDING_STOPPED_STILL_TRANSCRIBING);
       } else if (!callRecordState && !callTranscribeState) {
-        setVariant(RECORDING_AND_TRANSCRIPTION_STOPPED);
+        setVariant(Constants.RECORDING_AND_TRANSCRIPTION_STOPPED);
       } else {
-        setVariant(NO_STATE);
+        setVariant(Constants.NO_STATE);
       }
     } else if (previousCallRecordState && !previousCallTranscribeState) {
       if (callRecordState && callTranscribeState) {
-        setVariant(RECORDING_AND_TRANSCRIPTION_STARTED);
+        setVariant(Constants.RECORDING_AND_TRANSCRIPTION_STARTED);
       } else if (!callRecordState && callTranscribeState) {
-        setVariant(TRANSCRIPTION_STARTED);
+        setVariant(Constants.TRANSCRIPTION_STARTED);
       } else if (!callRecordState && !callTranscribeState) {
-        setVariant(RECORDING_STOPPED);
+        setVariant(Constants.RECORDING_STOPPED);
       } else {
-        setVariant(NO_STATE);
+        setVariant(Constants.NO_STATE);
       }
     } else if (!previousCallRecordState && previousCallTranscribeState) {
       if (callRecordState && callTranscribeState) {
-        setVariant(RECORDING_AND_TRANSCRIPTION_STARTED);
+        setVariant(Constants.RECORDING_AND_TRANSCRIPTION_STARTED);
       } else if (!callRecordState && callTranscribeState) {
-        setVariant(RECORDING_STARTED);
+        setVariant(Constants.RECORDING_STARTED);
       } else if (!callRecordState && !callTranscribeState) {
-        setVariant(RECORDING_STOPPED_AND_SAVED);
+        setVariant(Constants.RECORDING_STOPPED_AND_SAVED);
       } else {
-        setVariant(NO_STATE);
+        setVariant(Constants.NO_STATE);
       }
     } else if (!previousCallRecordState && !previousCallTranscribeState) {
       if (callRecordState && callTranscribeState) {
-        setVariant(RECORDING_AND_TRANSCRIPTION_STARTED);
+        setVariant(Constants.RECORDING_AND_TRANSCRIPTION_STARTED);
       } else if (callRecordState && !callTranscribeState) {
-        setVariant(RECORDING_STARTED);
+        setVariant(Constants.RECORDING_STARTED);
       } else if (!callRecordState && callTranscribeState) {
-        setVariant(TRANSCRIPTION_STARTED);
+        setVariant(Constants.TRANSCRIPTION_STARTED);
       } else {
-        setVariant(NO_STATE);
+        setVariant(Constants.NO_STATE);
       }
     }
 
@@ -120,28 +110,28 @@ export const ComplianceBanner = (props: ComplianceBannerProps): JSX.Element => {
 
   function getBannerMessage(variant: number): JSX.Element {
     switch (variant) {
-      case TRANSCRIPTION_STOPPED_STILL_RECORDING:
+      case Constants.TRANSCRIPTION_STOPPED_STILL_RECORDING:
         return (
           <>
             <b>Transcription has stopped.</b> You are now only recording this meeting.
             <PrivacyPolicy />
           </>
         );
-      case RECORDING_STOPPED_STILL_TRANSCRIBING:
+      case Constants.RECORDING_STOPPED_STILL_TRANSCRIBING:
         return (
           <>
             <b>Recording has stopped.</b> You are now only transcribing this meeting.
             <PrivacyPolicy />
           </>
         );
-      case RECORDING_AND_TRANSCRIPTION_STOPPED:
+      case Constants.RECORDING_AND_TRANSCRIPTION_STOPPED:
         return (
           <>
             <b>Recording and transcription are being saved. </b> Recording and transcription have stopped.
             <LearnMore />
           </>
         );
-      case RECORDING_AND_TRANSCRIPTION_STARTED:
+      case Constants.RECORDING_AND_TRANSCRIPTION_STARTED:
         return (
           <>
             <b>Recording and transcription have started.</b> By joining, you are giving consent for this meeting to be
@@ -149,28 +139,28 @@ export const ComplianceBanner = (props: ComplianceBannerProps): JSX.Element => {
             <PrivacyPolicy />
           </>
         );
-      case TRANSCRIPTION_STARTED:
+      case Constants.TRANSCRIPTION_STARTED:
         return (
           <>
             <b>Transcription has started.</b> By joining, you are giving consent for this meeting to be transcribed.
             <PrivacyPolicy />
           </>
         );
-      case RECORDING_STOPPED:
+      case Constants.RECORDING_STOPPED:
         return (
           <>
             <b>Recording is being saved.</b> Recording has stopped. You can download the recording from
             <DownloadRecording />.
           </>
         );
-      case RECORDING_STARTED:
+      case Constants.RECORDING_STARTED:
         return (
           <>
             <b>Recording has started.</b> By joining, you are giving consent for this meeting to be transcribed.
             <PrivacyPolicy />
           </>
         );
-      case RECORDING_STOPPED_AND_SAVED:
+      case Constants.RECORDING_STOPPED_AND_SAVED:
         return (
           <>
             <b>Transcription is being saved.</b> Transcription has stopped.
@@ -181,12 +171,12 @@ export const ComplianceBanner = (props: ComplianceBannerProps): JSX.Element => {
     return <></>;
   }
 
-  return variant === NO_STATE ? (
+  return variant === Constants.NO_STATE ? (
     <></>
   ) : (
     <MessageBar
-      onDismiss={() => {
-        setVariant(NO_STATE);
+      onDismiss={(): void => {
+        setVariant(Constants.NO_STATE);
       }}
       dismissButtonAriaLabel="Close"
     >

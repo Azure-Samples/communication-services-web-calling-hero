@@ -18,7 +18,7 @@ import {
 import { AzureCommunicationTokenCredential, CommunicationUserKind } from '@azure/communication-common';
 import { CommunicationUserToken } from '@azure/communication-identity';
 import { Dispatch } from 'redux';
-import { utils, RecordingApiResponse, RecordingActionResponse } from '../Utils/Utils';
+import { utils, RecordingApiResponse, RecordingActionResponse, RecordingLinkResponse } from '../Utils/Utils';
 import {
   callAdded,
   callRemoved,
@@ -276,14 +276,14 @@ export const getRecordLink = () => {
   return async (dispatch: Dispatch, getState: () => State): Promise<string> => {
     const state = getState();
     if (state.calls !== undefined && state.calls.serverCallId) {
-      const uri = await utils.getRecordingLink(state.calls.serverCallId);
+      const response: RecordingLinkResponse = await utils.getRecordingLink(state.calls.serverCallId);
 
-      if (uri !== null && uri !== '') {
-        dispatch(recordingLink(uri));
-        return uri;
+      if (response.uri !== null && response.uri !== '') {
+        dispatch(recordingLink(response.uri));
+        return response.uri;
       } else {
-        dispatch(recordingError(Constants.CALL_RECORDING_DOWNLOAD_ERROR));
-        console.error(Constants.CALL_RECORDING_DOWNLOAD_ERROR);
+        dispatch(recordingError(response.message));
+        console.error(response.message);
         dispatch(recordingLink(''));
         return '';
       }

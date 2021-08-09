@@ -13,6 +13,15 @@ export class Constants {
   static DOMINANT_PARTICIPANTS_COUNT_SAFARI = 1;
   // For non-safari browsers we want to set the default to 4 remote participant that can show their video based on quality constraints
   static DOMINANT_PARTICIPANTS_COUNT = 4;
-  static CALL_RECORDING_DOWNLOAD_ERROR =
-    'Recording is not available for download at this moment. Please try again later.';
+
+  //Recording states
+  static NO_STATE = 0;
+  static TRANSCRIPTION_STOPPED_STILL_RECORDING = 1;
+  static RECORDING_STOPPED_STILL_TRANSCRIBING = 2;
+  static RECORDING_AND_TRANSCRIPTION_STOPPED = 3;
+  static RECORDING_AND_TRANSCRIPTION_STARTED = 4;
+  static TRANSCRIPTION_STARTED = 5;
+  static RECORDING_STOPPED = 6;
+  static RECORDING_STARTED = 7;
+  static RECORDING_STOPPED_AND_SAVED = 8;
 }

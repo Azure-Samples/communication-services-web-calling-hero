@@ -223,32 +223,34 @@ namespace Calling.Controllers
         {
             try
             {
-                if (!string.IsNullOrEmpty(serverCallId))
+                if (!string.IsNullOrWhiteSpace(serverCallId) && recordingData.ContainsKey(serverCallId))
                 {
-                    string downloadRecordingURL = null;
+                    string downloadRecordingURL = recordingData[serverCallId].recordingUri;
 
-                    if (recordingData.ContainsKey(serverCallId))
+                    if(!string.IsNullOrWhiteSpace(downloadRecordingURL))
                     {
-                        downloadRecordingURL = recordingData[serverCallId].recordingUri;
+                        Logger.LogInformation($"Recording download link -- > {downloadRecordingURL}");
+
+                        var response = new
+                        {
+                            uri = downloadRecordingURL,
+                        };
+
+                        return Ok(response);
                     }
-
-                    Logger.LogInformation($"Recording download link -- > {downloadRecordingURL}");
-
-                    var response = new
+                    else
                     {
-                        uri = downloadRecordingURL,
-                    };
-
-                    return Ok(response);
+                        return NotFound(new { Message = "Recording SAS link is unavailable for download at this moment. Please try again later." });
+                    }
                 }
                 else
                 {
-                    return BadRequest(new { Message = "serverCallId is invalid" });
+                    return BadRequest(new { Message = "Invalid server call id." });
                 }
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Exception = ex.Message });
+                return BadRequest(new { Message = ex.Message });
             }
         }
 

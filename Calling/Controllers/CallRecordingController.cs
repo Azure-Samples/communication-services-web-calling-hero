@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace Calling.Controllers
 {
@@ -343,11 +344,12 @@ namespace Calling.Controllers
 
                     if(!string.IsNullOrWhiteSpace(cloudEvent.Subject))
                     {
-                        string[] subjectPaths = cloudEvent.Subject.Split("/");
+                        var recIdMatch = Regex.Match(cloudEvent.Subject, @"(recordingId/[^/]*)");
 
-                        if (subjectPaths.Length >= 6)
+                        if (recIdMatch.Success && recIdMatch.Groups.Count > 1)
                         {
-                            recordingId = subjectPaths[5];
+                            recordingId = recIdMatch.Groups[1].Value.Split('/')[1]; //Accessing 1st index won't fail because of regex match
+                            Logger.LogInformation("Extracted recording Id -- >" + recordingId);
                         }
                     }
 

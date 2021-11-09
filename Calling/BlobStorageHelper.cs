@@ -90,6 +90,14 @@ namespace Calling
                 {
                     blobStorageHelperInfo.Uri = GetBlobSasUri(containerName, blobClient);
                 }
+                else if (filePath.EndsWith("mp3"))
+                {
+                    blobStorageHelperInfo.Uri = GetBlobSasUri(containerName, blobClient);
+                }
+                else if (filePath.EndsWith("wav"))
+                {
+                    blobStorageHelperInfo.Uri = GetBlobSasUri(containerName, blobClient);
+                }
 
                 blobStorageHelperInfo.Message = $"File uploaded successfully. Uri : {blobClient.Uri}";
                 blobStorageHelperInfo.Status = true;

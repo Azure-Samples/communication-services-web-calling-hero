@@ -258,6 +258,24 @@ export const startRecord = () => {
   };
 };
 
+export const startAudioRecord = (recordingContent: string, recordingChannel: string, recordingFormat: string) => {
+    return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
+        const state = getState();
+        if (state.calls !== undefined && state.calls.serverCallId) {
+            const response: RecordingApiResponse = await utils.startAudioRecording(state.calls.serverCallId, recordingContent, recordingChannel, recordingFormat);
+            if (response && !response.message) {
+                dispatch(startRecording());
+            } else {
+                dispatch(recordingError(response.message));
+                console.error(response.message);
+            }
+        } else {
+            console.error('serverCallId not available');
+            return;
+        }
+    };
+};
+
 export const stopRecord = () => {
   return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
     const state = getState();

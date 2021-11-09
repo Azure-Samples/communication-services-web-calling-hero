@@ -70,6 +70,19 @@ export const utils = {
       return { message: 'Recording could not be started' };
     }
   },
+  startAudioRecording: async (id: string, recordingContent: string, recordingChannel: string, recordingFormat: string): Promise<RecordingApiResponse> => {
+    try {
+      const response = await fetch('/recording/startRecording?serverCallId=' + id + '&recordingContent=' + recordingContent + '&recordingChannel=' + recordingChannel + '&recordingFormat=' + recordingFormat);
+      if (response.ok) {
+        return { message: '' };
+      }
+      const output = await response.json();
+      const errorMessage = output.message || 'Recording could not be started';
+      return { message: errorMessage };
+    } catch (e) {
+      return { message: 'Recording could not be started' };
+    }
+  },
   stopRecording: async (serverCallId: string): Promise<RecordingActionResponse> => {
     try {
       const response = await fetch('/recording/stopRecording?serverCallId=' + serverCallId);

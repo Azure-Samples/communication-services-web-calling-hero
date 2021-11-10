@@ -5,10 +5,11 @@ import { MoreIcon } from '@fluentui/react-icons-northstar';
 import { ContextualMenu, IContextualMenuItem } from '@fluentui/react/lib/ContextualMenu';
 import { fullWidth } from './styles/MediaControls.styles';
 import { IconColor, recordingItemStyle } from './styles/CallRecording.styles';
+import { Constants } from '../core/constants';
 
 export interface CallRecordingProps {
   startRecording(): void;
-  startAudioRecording(recordingContent: string, recordingChannel: string, recordingFormat: string): void;
+  startAudioRecording(recordingFormat: string): void;
   stopRecording(): void;
   recordingStatus: 'STARTED' | 'STOPPED';
 }
@@ -23,10 +24,9 @@ export const CallRecording = (props: CallRecordingProps): JSX.Element => {
 
   const onHideContextualMenu = React.useCallback(() => setShowContextualMenu(false), []);
 
-  const keys: string[] = ['startRecording', 'startAudioRecording', 'mixed', 'recordingFormat', 'mp3', 'wav', 'stopRecording', 'ok', 'audio'];
   const recordingStatus = { props };
 
-  const [selectedFormat, setSelectedFormat] = React.useState("mp3");
+  const [selectedFormat, setSelectedFormat] = React.useState(Constants.RECORDING_OPTIONS[1].toLowerCase());
 
   const onFormatSelect = React.useCallback(
     (ev?: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>, item?: IContextualMenuItem): void => {
@@ -42,15 +42,13 @@ export const CallRecording = (props: CallRecordingProps): JSX.Element => {
   const onContextMenuItemClick = React.useCallback(
     (ev?: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>, item?: IContextualMenuItem): void => {
 
-      if (item?.key === 'startRecording') {
+      if (item?.key === Constants.RECORDING_KEYS[0].toLowerCase()) {
         props.startRecording();
       }
-      else if (item?.key === 'ok') {
-          if (selectedFormat) {
-              props.startAudioRecording(keys[8], keys[2], selectedFormat);
-          }
+      else if (item?.key === Constants.RECORDING_KEYS[1].toLowerCase()) {
+        props.startAudioRecording(selectedFormat);
       }
-      else if (item?.key === 'stopRecording') {
+      else if (item?.key === Constants.RECORDING_KEYS[2].toLowerCase()) {
         props.stopRecording();
       }
     },
@@ -60,45 +58,47 @@ export const CallRecording = (props: CallRecordingProps): JSX.Element => {
     () => ({
       items: [
         {
-          key: keys[0],
+          key: Constants.RECORDING_KEYS[0].toLowerCase(),
           iconProps: {
             iconName: 'CircleFill',
             style: { color: 'crimson' }
           },
-          text: 'Start recording',
-          disabled: props.recordingStatus === 'STARTED',
+          text: Constants.START_RECORDING,
+          disabled: props.recordingStatus === Constants.STARTED.toUpperCase(),
           onClick: onContextMenuItemClick
         },
         {
-          key: keys[1],
+          key: Constants.RECORDING_KEYS[1].toLowerCase(),
           subMenuProps: {
             items: [
               {
-                key: keys[3],
+                key: Constants.RECORDING_OPTIONS[0].toLowerCase(),
                 itemType: ContextualMenuItemType.Section,
                 sectionProps: {
                   topDivider: true,
                   bottomDivider: true,
-                  title: 'Select Recording Format',
+                  title: Constants.SELECT_RECORDING_FORMAT,
                   items: [
-                    { key: keys[4],
-                      text: 'Mp3', 
+                    {
+                      key: Constants.RECORDING_OPTIONS[1].toLowerCase(),
+                      text: Constants.RECORDING_OPTIONS[1], 
                       canCheck: true,
-                      isChecked: selectedFormat === 'mp3',
+                      isChecked: selectedFormat === Constants.RECORDING_OPTIONS[1].toLowerCase(),
                       onClick: onFormatSelect,
                     },
-                    { key: keys[5],
-                      text: 'Wav',
+                    {
+                      key: Constants.RECORDING_OPTIONS[2].toLowerCase(),
+                      text: Constants.RECORDING_OPTIONS[2],
                       canCheck: true,
-                      isChecked: selectedFormat === 'wav',
+                      isChecked: selectedFormat === Constants.RECORDING_OPTIONS[2].toLowerCase(),
                       onClick: onFormatSelect,
                     },
                   ],
                 },
               },
               {
-                 key: keys[7],
-                 text: 'Ok',
+                 key: Constants.RECORDING_KEYS[1].toLowerCase(),
+                 text: Constants.OK,
                  style: { textAlign: 'center' },
                  onClick: onContextMenuItemClick,
               },
@@ -108,22 +108,22 @@ export const CallRecording = (props: CallRecordingProps): JSX.Element => {
             iconName: 'CircleFill',
             style: { color: 'crimson' }
           },
-          text: 'Start audio-only recording',
-          disabled: props.recordingStatus === 'STARTED',
+          text: Constants.START_AUDIO_RECORDING,
+          disabled: props.recordingStatus === Constants.STARTED.toUpperCase(),
         },
         {
-          key: keys[6],
+          key: Constants.RECORDING_KEYS[2].toLowerCase(),
           iconProps: {
             iconName: 'CircleStopSolid',
             style: { color: 'indianred' }
           },
-          text: 'Stop recording',
-          disabled: props.recordingStatus === 'STOPPED',
+          text: Constants.STOP_RECORDING,
+          disabled: props.recordingStatus === Constants.STOPPED.toUpperCase(),
           onClick: onContextMenuItemClick
         }
       ]
     }),
-    [props.recordingStatus, onFormatSelect, onContextMenuItemClick, keys]
+    [props.recordingStatus, onFormatSelect, onContextMenuItemClick]
   );
 
   const calloutProps = { gapSpace: 0 };

@@ -24,4 +24,14 @@ export class Constants {
   static RECORDING_STOPPED = 6;
   static RECORDING_STARTED = 7;
   static RECORDING_STOPPED_AND_SAVED = 8;
+
+  static RECORDING_KEYS = ['StartRecording', 'StartAudioRecording', 'StopRecording'];
+  static RECORDING_OPTIONS = ['RecordingFormat', 'Mp3', 'Wav'];
+  static START_RECORDING = 'Start recording';
+  static START_AUDIO_RECORDING = 'Start audio-only recording';
+  static STOP_RECORDING = 'Stop recording';
+  static SELECT_RECORDING_FORMAT = 'Select Recording Format';
+  static OK = 'Ok';
+  static STARTED = 'Started';
+  static STOPPED = 'Stopped';
 }

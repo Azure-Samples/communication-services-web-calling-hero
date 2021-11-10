@@ -10,7 +10,7 @@ const mapStateToProps = (state: State) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
   startRecording: (): void => dispatch(startRecord()),
-  startAudioRecording: (recordingContent: string, recordingChannel: string, recordingFormat: string): void => dispatch(startAudioRecord(recordingContent, recordingChannel, recordingFormat)),
+  startAudioRecording: (recordingFormat: string): void => dispatch(startAudioRecord(recordingFormat)),
   stopRecording: (): void => dispatch(stopRecord())
 });
 

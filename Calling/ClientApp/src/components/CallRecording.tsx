@@ -5,7 +5,7 @@ import { MoreIcon } from '@fluentui/react-icons-northstar';
 import { ContextualMenu, IContextualMenuItem } from '@fluentui/react/lib/ContextualMenu';
 import { fullWidth } from './styles/MediaControls.styles';
 import { IconColor, recordingItemStyle } from './styles/CallRecording.styles';
-import { Constants } from '../core/constants';
+import { Constants, RecordingKeys, RecordingOptions } from '../core/constants';
 
 export interface CallRecordingProps {
   startRecording(): void;
@@ -26,7 +26,7 @@ export const CallRecording = (props: CallRecordingProps): JSX.Element => {
 
   const recordingStatus = { props };
 
-  const [selectedFormat, setSelectedFormat] = React.useState(Constants.RECORDING_OPTIONS[1].toLowerCase());
+  const [selectedFormat, setSelectedFormat] = React.useState(RecordingOptions.Mp3.toLowerCase());
 
   const onFormatSelect = React.useCallback(
     (ev?: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>, item?: IContextualMenuItem): void => {
@@ -42,13 +42,13 @@ export const CallRecording = (props: CallRecordingProps): JSX.Element => {
   const onContextMenuItemClick = React.useCallback(
     (ev?: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>, item?: IContextualMenuItem): void => {
 
-      if (item?.key === Constants.RECORDING_KEYS[0].toLowerCase()) {
+      if (item?.key === RecordingKeys.StartRecording.toLowerCase()) {
         props.startRecording();
       }
-      else if (item?.key === Constants.RECORDING_KEYS[1].toLowerCase()) {
+      else if (item?.key === RecordingKeys.StartAudioRecording.toLowerCase()) {
         props.startAudioRecording(selectedFormat);
       }
-      else if (item?.key === Constants.RECORDING_KEYS[2].toLowerCase()) {
+      else if (item?.key === RecordingKeys.StopRecording.toLowerCase()) {
         props.stopRecording();
       }
     },
@@ -58,7 +58,7 @@ export const CallRecording = (props: CallRecordingProps): JSX.Element => {
     () => ({
       items: [
         {
-          key: Constants.RECORDING_KEYS[0].toLowerCase(),
+          key: RecordingKeys.StartRecording.toLowerCase(),
           iconProps: {
             iconName: 'CircleFill',
             style: { color: 'crimson' }
@@ -68,11 +68,11 @@ export const CallRecording = (props: CallRecordingProps): JSX.Element => {
           onClick: onContextMenuItemClick
         },
         {
-          key: Constants.RECORDING_KEYS[1].toLowerCase(),
+          key: RecordingKeys.StartAudioRecording.toLowerCase(),
           subMenuProps: {
             items: [
               {
-                key: Constants.RECORDING_OPTIONS[0].toLowerCase(),
+                key: RecordingKeys.RecordingFormat.toLowerCase(),
                 itemType: ContextualMenuItemType.Section,
                 sectionProps: {
                   topDivider: true,
@@ -80,24 +80,24 @@ export const CallRecording = (props: CallRecordingProps): JSX.Element => {
                   title: Constants.SELECT_RECORDING_FORMAT,
                   items: [
                     {
-                      key: Constants.RECORDING_OPTIONS[1].toLowerCase(),
-                      text: Constants.RECORDING_OPTIONS[1], 
+                      key: RecordingOptions.Mp3.toLowerCase(),
+                      text: RecordingOptions.Mp3, 
                       canCheck: true,
-                      isChecked: selectedFormat === Constants.RECORDING_OPTIONS[1].toLowerCase(),
+                      isChecked: selectedFormat === RecordingOptions.Mp3.toLowerCase(),
                       onClick: onFormatSelect,
                     },
                     {
-                      key: Constants.RECORDING_OPTIONS[2].toLowerCase(),
-                      text: Constants.RECORDING_OPTIONS[2],
+                      key: RecordingOptions.Wav.toLowerCase(),
+                      text: RecordingOptions.Wav,
                       canCheck: true,
-                      isChecked: selectedFormat === Constants.RECORDING_OPTIONS[2].toLowerCase(),
+                      isChecked: selectedFormat === RecordingOptions.Wav.toLowerCase(),
                       onClick: onFormatSelect,
                     },
                   ],
                 },
               },
               {
-                 key: Constants.RECORDING_KEYS[1].toLowerCase(),
+                 key: RecordingKeys.StartAudioRecording.toLowerCase(),
                  text: Constants.OK,
                  style: { textAlign: 'center' },
                  onClick: onContextMenuItemClick,
@@ -112,7 +112,7 @@ export const CallRecording = (props: CallRecordingProps): JSX.Element => {
           disabled: props.recordingStatus === Constants.STARTED.toUpperCase(),
         },
         {
-          key: Constants.RECORDING_KEYS[2].toLowerCase(),
+          key: RecordingKeys.StopRecording.toLowerCase(),
           iconProps: {
             iconName: 'CircleStopSolid',
             style: { color: 'indianred' }

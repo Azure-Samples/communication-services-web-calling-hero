@@ -86,15 +86,7 @@ namespace Calling
                 BlobContentInfo status = await blobClient.UploadAsync(uploadFileStream, true);
                 uploadFileStream.Close();
 
-                if(filePath.EndsWith("mp4"))
-                {
-                    blobStorageHelperInfo.Uri = GetBlobSasUri(containerName, blobClient);
-                }
-                else if (filePath.EndsWith("mp3"))
-                {
-                    blobStorageHelperInfo.Uri = GetBlobSasUri(containerName, blobClient);
-                }
-                else if (filePath.EndsWith("wav"))
+                if(!filePath.EndsWith("json"))
                 {
                     blobStorageHelperInfo.Uri = GetBlobSasUri(containerName, blobClient);
                 }

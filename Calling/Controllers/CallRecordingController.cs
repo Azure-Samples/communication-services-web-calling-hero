@@ -74,9 +74,9 @@ namespace Calling.Controllers
                         .InitializeServerCall(serverCallId)
                         .StartRecordingAsync(
                             new Uri(callbackUri),
-                            Mapper.RecordingContentMap.TryGetValue(recordingContent, out recContentVal) ? recContentVal : RecordingContent.AudioVideo,
-                            Mapper.RecordingChannelMap.TryGetValue(recordingChannel, out recChannelVal) ? recChannelVal : RecordingChannel.Mixed,
-                            Mapper.RecordingFormatMap.TryGetValue(recordingFormat, out recFormatVal) ? recFormatVal : RecordingFormat.Mp4
+                            Mapper.RecordingContentMap.TryGetValue(recordingContent.ToLower(), out recContentVal) ? recContentVal : RecordingContent.AudioVideo,
+                            Mapper.RecordingChannelMap.TryGetValue(recordingChannel.ToLower(), out recChannelVal) ? recChannelVal : RecordingChannel.Mixed,
+                            Mapper.RecordingFormatMap.TryGetValue(recordingFormat.ToLower(), out recFormatVal) ? recFormatVal : RecordingFormat.Mp4
                         ).ConfigureAwait(false);
 
                     Logger.LogInformation($"StartRecordingAsync response -- >  {startRecordingResponse.GetRawResponse()}, Recording Id: {startRecordingResponse.Value.RecordingId}");

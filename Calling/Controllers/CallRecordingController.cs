@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 
 namespace Calling.Controllers
 {
@@ -23,8 +24,9 @@ namespace Calling.Controllers
         private const string CallRecodingActiveErrorCode = "8553";
         private const string CallRecodingActiveError = "Recording is already in progress, one recording can be active at one time.";
         public ILogger<CallRecordingController> Logger { get; }
-        static Dictionary<string, RecordingInfo> recordingData = new Dictionary<string, RecordingInfo>();
+        static Dictionary<string, RecInfo> recordingData = new Dictionary<string, RecInfo>();
         private readonly string isRecordingEnabled;
+        public static string recFileFormat;
 
         public CallRecordingController(IConfiguration configuration, ILogger<CallRecordingController> logger)
         {
@@ -54,14 +56,28 @@ namespace Calling.Controllers
         /// <param name="serverCallId">Conversation id of the call</param>
         [HttpGet]
         [Route("startRecording")]
-        public async Task<IActionResult> StartRecordingAsync(string serverCallId)
+        public async Task<IActionResult> StartRecordingAsync(string serverCallId, string recordingContent = "", string recordingChannel = "", string recordingFormat = "")
         {
             try
             {
                 if (!string.IsNullOrEmpty(serverCallId))
                 {
-                    var uri = new Uri(callbackUri);
-                    var startRecordingResponse = await callingServerClient.InitializeServerCall(serverCallId).StartRecordingAsync(uri).ConfigureAwait(false);
+                    RecordingContent recContentVal;
+                    RecordingChannel recChannelVal;
+                    RecordingFormat recFormatVal;
+
+                    //Passing RecordingContent initiates recording in specific format. audio/audiovideo
+                    //RecordingChannel is used to pass the channel type. mixed/unmixed
+                    //RecordingFormat is used to pass the format of the recording. mp4/mp3/wav
+
+                    var startRecordingResponse = await callingServerClient
+                        .InitializeServerCall(serverCallId)
+                        .StartRecordingAsync(
+                            new Uri(callbackUri),
+                            Mapper.RecordingContentMap.TryGetValue(recordingContent, out recContentVal) ? recContentVal : RecordingContent.AudioVideo,
+                            Mapper.RecordingChannelMap.TryGetValue(recordingChannel, out recChannelVal) ? recChannelVal : RecordingChannel.Mixed,
+                            Mapper.RecordingFormatMap.TryGetValue(recordingFormat, out recFormatVal) ? recFormatVal : RecordingFormat.Mp4
+                        ).ConfigureAwait(false);
 
                     Logger.LogInformation($"StartRecordingAsync response -- >  {startRecordingResponse.GetRawResponse()}, Recording Id: {startRecordingResponse.Value.RecordingId}");
 
@@ -71,7 +87,7 @@ namespace Calling.Controllers
                     }
 
                     var recordingId = startRecordingResponse.Value.RecordingId;
-                    recordingData.Add(serverCallId, new RecordingInfo(recordingId, string.Empty));
+                    recordingData.Add(serverCallId, new RecInfo(recordingId, string.Empty));
 
                     return Json(recordingId);
                 }
@@ -111,7 +127,7 @@ namespace Calling.Controllers
                     {
                         if (!recordingData.ContainsKey(serverCallId))
                         {
-                            recordingData[serverCallId] = new RecordingInfo(recordingId, string.Empty);
+                            recordingData[serverCallId] = new RecInfo(recordingId, string.Empty);
                         }
                     }
                     var pauseRecording = await callingServerClient.InitializeServerCall(serverCallId).PauseRecordingAsync(recordingId);
@@ -151,7 +167,7 @@ namespace Calling.Controllers
                     {
                         if (!recordingData.ContainsKey(serverCallId))
                         {
-                            recordingData[serverCallId] = new RecordingInfo(recordingId, string.Empty);
+                            recordingData[serverCallId] = new RecInfo(recordingId, string.Empty);
                         }
                     }
                     var resumeRecording = await callingServerClient.InitializeServerCall(serverCallId).ResumeRecordingAsync(recordingId);
@@ -192,7 +208,7 @@ namespace Calling.Controllers
                     {
                         if (!recordingData.ContainsKey(serverCallId))
                         {
-                            recordingData[serverCallId] = new RecordingInfo(recordingId, string.Empty);
+                            recordingData[serverCallId] = new RecInfo(recordingId, string.Empty);
                         }
                     }
 
@@ -282,7 +298,7 @@ namespace Calling.Controllers
                     {
                         if (!recordingData.ContainsKey(serverCallId))
                         {
-                            recordingData[serverCallId] = new RecordingInfo(recordingId, string.Empty);
+                            recordingData[serverCallId] = new RecInfo(recordingId, string.Empty);
                         }
                     }
 
@@ -355,19 +371,20 @@ namespace Calling.Controllers
 
                     var eventData = cloudEvent.Data.ToObjectFromJson<AcsRecordingFileStatusUpdatedEventData>();
 
-                    Logger.LogInformation("Start processing recorded media -- >");
-
-                    await ProcessFile(eventData.RecordingStorageInfo.RecordingChunks[0].ContentLocation,
-                        eventData.RecordingStorageInfo.RecordingChunks[0].DocumentId,
-                        "mp4",
-                        "recording", recordingId);
-
                     Logger.LogInformation("Start processing metadata -- >");
 
                     await ProcessFile(eventData.RecordingStorageInfo.RecordingChunks[0].MetadataLocation,
                         eventData.RecordingStorageInfo.RecordingChunks[0].DocumentId,
-                        "json",
-                        "metadata");
+                        FileFormat.Json,
+                        FileDownloadType.Metadata);
+
+                    Logger.LogInformation("Start processing recorded media -- >");
+
+                    await ProcessFile(eventData.RecordingStorageInfo.RecordingChunks[0].ContentLocation,
+                        eventData.RecordingStorageInfo.RecordingChunks[0].DocumentId,
+                        string.IsNullOrWhiteSpace(recFileFormat) ? FileFormat.Mp4 : recFileFormat,
+                        FileDownloadType.Recording,
+                        recordingId);
                 }
             }
             catch (Exception ex)
@@ -397,6 +414,14 @@ namespace Calling.Controllers
                 }
             }
 
+            if (string.Equals(downloadType, FileDownloadType.Metadata, StringComparison.InvariantCultureIgnoreCase) && System.IO.File.Exists(filePath))
+            {
+                Root deserializedFilePath = JsonConvert.DeserializeObject<Root>(System.IO.File.ReadAllText(filePath));
+                recFileFormat = deserializedFilePath.recordingInfo.format;
+
+                Logger.LogInformation($"Recording File Format is -- > {recFileFormat}");
+            }
+
             Logger.LogInformation($"Starting to upload {downloadType} to BlobStorage into container -- > {recordingContainerName}");
 
             var blobStorageHelperInfo = await BlobStorageHelper.UploadFileAsync(recordingBlobStorageConnectionString, recordingContainerName, filePath, filePath);
@@ -404,12 +429,12 @@ namespace Calling.Controllers
             {
                 if (!string.IsNullOrEmpty(recordingId))
                 {
-                    foreach (KeyValuePair<string, RecordingInfo> data in recordingData)
+                    foreach (KeyValuePair<string, RecInfo> data in recordingData)
                     {
                         if (string.Equals(data.Value.recordingId, recordingId))
                         {
                             Logger.LogInformation("Download uri for recording file -- > {0}", blobStorageHelperInfo.Uri);
-                            recordingData[data.Key] = new RecordingInfo(recordingId, blobStorageHelperInfo.Uri);
+                            recordingData[data.Key] = new RecInfo(recordingId, blobStorageHelperInfo.Uri);
                             break;
                         }
                     }

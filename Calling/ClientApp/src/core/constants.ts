@@ -29,7 +29,7 @@ export class Constants {
   static START_AUDIO_RECORDING = 'Start audio-only recording';
   static STOP_RECORDING = 'Stop recording';
   static SELECT_RECORDING_FORMAT = 'Select Recording Format';
-  static OK = 'Ok';
+  static START = 'Start';
   static STARTED = 'Started';
   static STOPPED = 'Stopped';
 }

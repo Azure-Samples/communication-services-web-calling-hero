@@ -38,10 +38,10 @@ export enum RecordingKeys {
   StartRecording = 'StartRecording',
   StartAudioRecording = 'StartAudioRecording',
   RecordingFormat = 'RecordingFormat',
-  StopRecording = 'StopRecording',
+  StopRecording = 'StopRecording'
 }
 
 export enum RecordingOptions {
   Mp3 = 'Mp3',
-  Wav = 'Wav',
+  Wav = 'Wav'
 }

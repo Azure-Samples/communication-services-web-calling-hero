@@ -72,7 +72,9 @@ export const utils = {
   },
   startAudioRecording: async (id: string, recordingFormat: string): Promise<RecordingApiResponse> => {
     try {
-      const response = await fetch(`/recording/startRecording?serverCallId=${id}&recordingContent=audio&recordingChannel=mixed&recordingFormat=${recordingFormat}`);
+      const response = await fetch(
+        `/recording/startRecording?serverCallId=${id}&recordingContent=audio&recordingChannel=mixed&recordingFormat=${recordingFormat}`
+      );
       if (response.ok) {
         return { message: '' };
       }

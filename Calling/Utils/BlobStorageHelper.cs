@@ -86,7 +86,7 @@ namespace Calling
                 BlobContentInfo status = await blobClient.UploadAsync(uploadFileStream, true);
                 uploadFileStream.Close();
 
-                if(!filePath.EndsWith("json"))
+                if(!filePath.EndsWith(RecordingFileFormat.Json))
                 {
                     blobStorageHelperInfo.Uri = GetBlobSasUri(containerName, blobClient);
                 }

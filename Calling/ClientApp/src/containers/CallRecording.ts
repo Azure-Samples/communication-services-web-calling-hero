@@ -5,7 +5,7 @@ import { startAudioRecord, startRecord, stopRecord } from '../core/sideEffects';
 
 const mapStateToProps = (state: State) => ({
   conversationId: state.calls.serverCallId,
-  recordingStatus: state.calls.recordingStatus,
+  recordingStatus: state.calls.recordingStatus
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

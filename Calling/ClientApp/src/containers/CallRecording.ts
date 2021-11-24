@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { CallRecording } from '../components/CallRecording';
 import { State } from '../core/reducers';
-import { startRecord, stopRecord } from '../core/sideEffects';
+import { startAudioRecord, startRecord, stopRecord } from '../core/sideEffects';
 
 const mapStateToProps = (state: State) => ({
   conversationId: state.calls.serverCallId,
@@ -10,6 +10,7 @@ const mapStateToProps = (state: State) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
   startRecording: (): void => dispatch(startRecord()),
+  startAudioRecording: (recordingFormat: string): void => dispatch(startAudioRecord(recordingFormat)),
   stopRecording: (): void => dispatch(stopRecord())
 });
 

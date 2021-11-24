@@ -24,4 +24,24 @@ export class Constants {
   static RECORDING_STOPPED = 6;
   static RECORDING_STARTED = 7;
   static RECORDING_STOPPED_AND_SAVED = 8;
+
+  static START_RECORDING = 'Start recording';
+  static START_AUDIO_RECORDING = 'Start audio-only recording';
+  static STOP_RECORDING = 'Stop recording';
+  static SELECT_RECORDING_FORMAT = 'Select Recording Format';
+  static START = 'Start';
+  static STARTED = 'Started';
+  static STOPPED = 'Stopped';
+}
+
+export enum RecordingKeys {
+  StartRecording = 'StartRecording',
+  StartAudioRecording = 'StartAudioRecording',
+  RecordingFormat = 'RecordingFormat',
+  StopRecording = 'StopRecording'
+}
+
+export enum RecordingOptions {
+  Mp3 = 'Mp3',
+  Wav = 'Wav'
 }

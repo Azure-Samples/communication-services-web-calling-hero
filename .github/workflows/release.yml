@@ -24,9 +24,10 @@ jobs:
           release_name=Group-Calling
           unset CI
           # Build everything
-          dotnet publish ./Calling -c Release -o "$release_name"
+          npm run setup
+          npm run start
 
-          7z a -tzip "group-calling.zip" "./${release_name}/*"
+          7z a -tzip -r "group-calling.zip" ./Calling/dist/*
 
           # Delete output directory
           rm -r "$release_name"

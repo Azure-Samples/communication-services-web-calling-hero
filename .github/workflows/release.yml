@@ -14,10 +14,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
 
-      - name: Setup dotnet
-        uses: actions/setup-dotnet@v1
+      - name: Setup Node 14
+        uses: actions/setup-node@v2
         with:
-          dotnet-version: 3.1.101
+          node-version: '14'
+
       - name: Build
         shell: bash
         run: |
@@ -25,7 +26,8 @@ jobs:
           unset CI
           # Build everything
           npm run setup
-          npm run start
+          npm run build
+          npm run package
 
           7z a -tzip -r "group-calling.zip" ./Calling/dist/*
 

@@ -19,20 +19,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
 
-      - name: Setup dotnet
-        uses: actions/setup-dotnet@v1
+      - name: Setup Node 14
+        uses: actions/setup-node@v2
         with:
-          dotnet-version: 3.1.101
+          node-version: '14'
+
+      - name: Setup Server dependencies
+        working-directory: ./Server
+        run: |
+          npm run install
 
       - name: Build backend
+        working-directory: ./Server
         shell: bash
         run: |
-          dotnet build ./Calling
-
-      - name: Test backend
-        shell: bash
-        run: |
-          dotnet test ./Calling
+          npm run build
 
   clean_frontend:
     name: Run clean code tests on frontend
@@ -47,15 +48,15 @@ jobs:
           node-version: '14'
 
       - name: Install (dev) dependencies
-        working-directory: ./
-        run: npm run setup
+        working-directory: ./Calling
+        run: npm install
 
       - name: Lint
-        working-directory: ./Calling/ClientApp
+        working-directory: ./Calling
         run: npm run lint
 
       - name: Check all is pretty
-        working-directory: ./Calling/ClientApp
+        working-directory: ./Calling
         run: npm run prettier:check
 
       - name: Build

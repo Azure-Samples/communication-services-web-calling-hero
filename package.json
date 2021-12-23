@@ -1,0 +1,22 @@
+{
+  "name": "communication-services-web-calling-hero",
+  "version": "1.0.0",
+  "description": "--- page_type: sample languages: - javascript - nodejs - products: - azure - azure-communication-services ---",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "setup": "cd Server && npm install && cd ../Calling && npm install && cd ..",
+    "start": "cd Calling && npm run start && cd ..",
+    "build": "cd Server && npm run build && cd ../Calling && npm run build && cd ..",
+    "package": "cd Calling && npm run package && cd .."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Azure-Samples/communication-services-web-calling-hero.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Azure-Samples/communication-services-web-calling-hero/issues"
+  },
+  "homepage": "https://github.com/Azure-Samples/communication-services-web-calling-hero#readme"
+}

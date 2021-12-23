@@ -1,11 +1,12 @@
 {
   "name": "communication-services-web-calling-hero",
   "version": "1.0.0",
-  "description": "--- page_type: sample languages: - javascript - nodejs - csharp products: - azure - azure-communication-services ---",
+  "description": "--- page_type: sample languages: - javascript - nodejs - products: - azure - azure-communication-services ---",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "setup": "cd Server && npm install && cd ../Calling && npm install && cd ..",
-    "start": "cd Calling && npm run start"
+    "start": "cd Calling && npm run start && cd ..",
+    "build": "cd Server && npm run build && cd ../Calling && npm run build && cd .."
   },
   "repository": {
     "type": "git",

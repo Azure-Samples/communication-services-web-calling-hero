@@ -32,7 +32,7 @@ jobs:
           7z a -tzip -r "group-calling.zip" ./Calling/dist/*
 
           # Delete output directory
-          # rm -r "group-calling.zip"
+          # rm -r "./Calling/dist"
 
       - name: Publish
         uses: softprops/action-gh-release@v1

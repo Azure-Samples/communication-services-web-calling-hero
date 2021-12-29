@@ -14,7 +14,7 @@
     },
     "packageUrl": {
       "type": "string",
-      "defaultValue": "http://github.com/azure-samples/communication-services-web-calling-hero/releases/latest/download/group-calling.zip"
+      "defaultValue": "http://github.com/alkwa-msft/communication-services-web-calling-hero/releases/latest/download/group-calling.zip"
     }
   },
   "variables": {

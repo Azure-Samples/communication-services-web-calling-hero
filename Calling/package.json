@@ -13,8 +13,8 @@
     "start:prod": "node dist/server.js",
     "test": "",
     "test:stable": "echo skip",
-    "prettier": "prettier --no-error-on-unmatched-pattern --write --config ../.prettierrc --ignore-path=../.prettierignore \"**/*.js\" \"**/*.jsx\" \"**/*.ts\" \"**/*.tsx\"",
-    "prettier:check": "prettier --no-error-on-unmatched-pattern --check --config ../.prettierrc --ignore-path=../.prettierignore \"**/*.js\" \"**/*.jsx\" \"**/*.ts\" \"**/*.tsx\"",
+    "prettier": "prettier --no-error-on-unmatched-pattern --write --config ./.prettierrc --ignore-path=./.prettierignore \"**/*.js\" \"**/*.jsx\" \"**/*.ts\" \"**/*.tsx\"",
+    "prettier:check": "prettier --no-error-on-unmatched-pattern --check --config ./.prettierrc --ignore-path=./.prettierignore \"**/*.js\" \"**/*.jsx\" \"**/*.ts\" \"**/*.tsx\"",
     "lint": "eslint */**/*.{ts,tsx}",
     "lint:fix": "eslint */**/*.{ts,tsx} --fix",
     "lint:quiet": "eslint */**/*.{ts,tsx} --quiet"

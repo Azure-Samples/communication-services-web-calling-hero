@@ -6,9 +6,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 const babelHelper = require('@babel/helper-plugin-utils');
 const t = require('@babel/types');
 exports.default = babelHelper.declare((_api, opts) => {
-  const {
-    annotations
-  } = opts;
+  const { annotations } = opts;
 
   return {
     name: 'babel-conditional-preprocess',
@@ -58,9 +56,7 @@ function Handle(path, annotations) {
   let removed = false;
 
   for (const annotation of annotations) {
-    const {
-      match
-    } = annotation;
+    const { match } = annotation;
 
     if (node.leadingComments && node.leadingComments.length > 0) {
       for (const comment of node.leadingComments) {
@@ -85,4 +81,3 @@ function Handle(path, annotations) {
     }
   }
 }
-

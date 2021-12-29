@@ -27,7 +27,7 @@ jobs:
       - name: Setup Server dependencies
         working-directory: ./Server
         run: |
-          npm run install
+          npm install
 
       - name: Build backend
         working-directory: ./Server
@@ -49,7 +49,7 @@ jobs:
 
       - name: Install (dev) dependencies
         working-directory: ./Calling
-        run: npm run install
+        run: npm install
 
       - name: Lint
         working-directory: ./Calling

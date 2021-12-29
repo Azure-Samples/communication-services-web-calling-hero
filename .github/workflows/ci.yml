@@ -49,7 +49,7 @@ jobs:
 
       - name: Install (dev) dependencies
         working-directory: ./Calling
-        run: npm install
+        run: npm run install
 
       - name: Lint
         working-directory: ./Calling

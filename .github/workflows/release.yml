@@ -1,4 +1,4 @@
-name: .NET Core
+name: Create Calling Sample Release
 
 on:
   release:
@@ -32,7 +32,7 @@ jobs:
           7z a -tzip -r "group-calling.zip" ./Calling/dist/*
 
           # Delete output directory
-          rm -r "$release_name"
+          rm -r "group-calling.zip"
 
       - name: Publish
         uses: softprops/action-gh-release@v1

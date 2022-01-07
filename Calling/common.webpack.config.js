@@ -13,7 +13,10 @@ const webpackConfig = (sampleAppDir, env, babelConfig) => {
       extensions: ['.ts', '.tsx', '.js'],
       alias: {
         // reference internal packlets src directly for hot reloading when developing
-        '@azure/communication-react': path.resolve(sampleAppDir, './node_modules/@azure/communication-react/dist/dist-esm/communication-react/src')
+        '@azure/communication-react': path.resolve(
+          sampleAppDir,
+          './node_modules/@azure/communication-react/dist/dist-esm/communication-react/src'
+        )
       }
     },
     output: {
@@ -46,10 +49,14 @@ const webpackConfig = (sampleAppDir, env, babelConfig) => {
         'process.env.PRODUCTION': env.production || !env.development,
         'process.env.NAME': JSON.stringify(require(path.resolve(sampleAppDir, 'package.json')).name),
         'process.env.VERSION': JSON.stringify(require(path.resolve(sampleAppDir, 'package.json')).version),
-        __CALLINGVERSION__: JSON.stringify(require(path.resolve(sampleAppDir, 'package.json')).dependencies['@azure/communication-calling']),
-        __CHATVERSION__: JSON.stringify(require(path.resolve(sampleAppDir, 'package.json')).dependencies['@azure/communication-chat']),
+        __CALLINGVERSION__: JSON.stringify(
+          require(path.resolve(sampleAppDir, 'package.json')).dependencies['@azure/communication-calling']
+        ),
+        __CHATVERSION__: JSON.stringify(
+          require(path.resolve(sampleAppDir, 'package.json')).dependencies['@azure/communication-chat']
+        ),
         __BUILDTIME__: JSON.stringify(new Date().toLocaleString())
-      }),
+      })
     ],
     devServer: {
       port: 3000,
@@ -87,19 +94,7 @@ const webpackConfig = (sampleAppDir, env, babelConfig) => {
         }
       ]
     }
-  }
-
-  process.env['FLAVOR'] === 'stable' &&
-    config.module.rules.push({
-      test: /\.tsx?$/,
-      exclude: /node_modules/,
-      use: {
-        loader: 'babel-loader',
-        options: {
-          ...babelConfig
-        }
-      }
-    });
+  };
 
   return config;
 };

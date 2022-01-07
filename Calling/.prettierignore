@@ -1,0 +1,9 @@
+# Project files
+package.json
+package-lock.json
+dist/
+docs/
+node_modules/
+
+# Prettier reformats code blocks inside Markdown, which affects rendered output
+*.md

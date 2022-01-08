@@ -68,7 +68,7 @@
           },
           "properties": {
             "ResourceConnectionString": "[listkeys(variables('commsName'), '2020-08-20-preview' ).primaryConnectionString]",
-            "WEBSITE_NODE_DEFAULT_VERSION": "12.18.4"
+            "WEBSITE_NODE_DEFAULT_VERSION": "~12"
           }
         },
         {

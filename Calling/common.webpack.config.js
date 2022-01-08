@@ -96,18 +96,6 @@ const webpackConfig = (sampleAppDir, env, babelConfig) => {
     }
   };
 
-  process.env['FLAVOR'] === 'stable' &&
-    config.module.rules.push({
-      test: /\.tsx?$/,
-      exclude: /node_modules/,
-      use: {
-        loader: 'babel-loader',
-        options: {
-          ...babelConfig
-        }
-      }
-    });
-
   return config;
 };
 

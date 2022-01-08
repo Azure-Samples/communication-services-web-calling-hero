@@ -13,7 +13,6 @@ products:
 # Group Calling Sample
 
 This is a sample application to show how the Azure Communication Services Calling Web SDK can be used to build a group calling experience.
-The client-side application is a React based user interface which uses Redux for handling complex state while leveraging Microsoft Fluent UI.
 
 A separate branch with features currently in public preview is [available](https://github.com/Azure-Samples/communication-services-web-calling-hero/tree/public-preview). Features include: Teams Interop which in public preview and uses beta SDKs that are not meant for production use. Please use the main branch sample for any production scenarios.
 
@@ -21,7 +20,10 @@ Additional documentation for this sample can be found on [Microsoft Docs](https:
 
 Before contributing to this sample, please read our [contribution guidelines](./CONTRIBUTING.md).
 
-![Homepage](./Media/homepage-sample-calling.png)
+![Homepage](./Calling/Media/homepage-sample-calling.png)
+
+## ❤️ Feedback
+We appreciate your feedback and energy helping us improve our services. [Please let us know if you are satisfied with ACS through this survey](https://microsoft.qualtrics.com/jfe/form/SV_5dtYL81xwHnUVue). 
 
 ## Prerequisites
 
@@ -29,16 +31,27 @@ Before contributing to this sample, please read our [contribution guidelines](./
 - [Node.js (12.18.4 and above)](https://nodejs.org/en/download/)
 - Create an Azure Communication Services resource. For details, see [Create an Azure Communication Resource](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource). You'll need to record your resource **connection string** for this quickstart.
 
+## Code structure
+- ./Calling/src/app: Where the client code lives
+- ./Calling/src/app/App.tsx:  Entry point into the calling sample 
+- ./Calling/src/app/views/HomeScreen.tsx:  
+- ./Calling/src/app/views/CallScreen.tsx:  
+- ./Calling/src/app/views/EndCall.tsx:  
+- ./Calling/src/app/views/UnsupportedBrowserPage.tsx:  
+- ./Server: server code
+- ./Server/appsettings.json: Where to put your azure communication services connection string
+
 ## Before running the sample for the first time
 1. Open an instance of PowerShell, Windows Terminal, Command Prompt or equivalent and navigate to the directory that you'd like to clone the sample to.
 2. `git clone https://github.com/Azure-Samples/communication-services-web-calling-hero.git`
 3. Get the `Connection String` from the Azure portal. For more information on connection strings, see [Create an Azure Communication Resources](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource)
 4. Once you get the `Connection String`, add the connection string to the **Server/appsetting.json** file found under the Calling folder. Input your connection string in the variable: `ResourceConnectionString`.
 
-## Locally deploying the sample app
+## Local run
 
-1. "npm run start" from the root directory
-2. Open at localhost:3000 in your browser when compilation is complete
+1. Set your connection string in `Server/appsettings.json`
+2. `npm run setup` from the root directory
+3. `npm run start` from the root directory
 
 ### Troubleshooting
 
@@ -48,9 +61,12 @@ Before contributing to this sample, please read our [contribution guidelines](./
 
 ## Publish to Azure
 
-1. Run "npm run build" from the root directory. Deploy the "build" folder in the Calling directory to your Azure App Service.
+## Publish to Azure
 
-**Note**: While you may use http://localhost for local testing, the sample when deployed will only work when served over https. The SDK [does not support http](https://docs.microsoft.com/en-us/azure/communication-services/concepts/voice-video-calling/calling-sdk-features#user-webrtc-over-https).
+1. `npm run setup`
+2. `npm run build`
+3. `npm run package`
+4. Use the Azure extension and deploy the Calling/dist directory to your app service
 
 ## Additional Reading
 

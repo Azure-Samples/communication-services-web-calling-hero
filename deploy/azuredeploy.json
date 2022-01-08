@@ -40,7 +40,8 @@
       "location": "[resourceGroup().location]",
       "sku": {
         "name": "[parameters('sku')]"
-      }
+      },
+      "kind": "linux"
     },
     {
       "type": "Microsoft.Web/sites",

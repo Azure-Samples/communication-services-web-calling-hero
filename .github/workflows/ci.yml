@@ -27,7 +27,7 @@ jobs:
       - name: Setup Server dependencies
         working-directory: ./Server
         run: |
-          npm run install
+          npm install
 
       - name: Build backend
         working-directory: ./Server
@@ -60,5 +60,5 @@ jobs:
         run: npm run prettier:check
 
       - name: Build
-        working-directory: ./
+        working-directory: ./Calling
         run: npm run build

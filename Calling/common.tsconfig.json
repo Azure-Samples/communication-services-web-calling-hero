@@ -7,7 +7,7 @@
     "declarationMap": true,
     "sourceMap": true,
     "strict": true,
-    "noImplicitAny": false, // disable for now for storybook
+    "noImplicitAny": false,
     "strictFunctionTypes": true,
     "noUnusedLocals": true,
     "noImplicitReturns": true,

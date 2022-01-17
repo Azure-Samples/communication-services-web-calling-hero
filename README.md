@@ -1,7 +1,7 @@
 ---
 page_type: sample
 languages:
-- javascript
+- typescript
 - nodejs
 products:
 - azure
@@ -70,7 +70,8 @@ We appreciate your feedback and energy helping us improve our services. [Please 
 
 ## Additional Reading
 
+- [Storybook](aka.ms/acsstorybook/) - Component Library documentation
 - [Azure Communication Calling SDK](https://docs.microsoft.com/azure/communication-services/concepts/voice-video-calling/calling-sdk-features) - To learn more about the calling web sdk
 - [FluentUI](https://developer.microsoft.com/en-us/fluentui#/) - Microsoft powered UI library
 - [React](https://reactjs.org/) - Library for building user interfaces
-- [Storybook](aka.ms/acsstorybook/) - Component Library documentation
+

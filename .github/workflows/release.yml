@@ -1,0 +1,42 @@
+name: Create Calling Sample Release
+
+on:
+  release:
+    types: [created]
+    name: Release  
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+    
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Setup Node 14
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Build
+        shell: bash
+        run: |
+          release_name=Group-Calling
+          unset CI
+          # Build everything
+          npm run setup
+          npm run build
+          npm run package
+
+          7z a -tzip -r "group-calling.zip" ./Calling/dist/*
+
+          # Delete output directory
+          # rm -r "./Calling/dist"
+
+      - name: Publish
+        uses: softprops/action-gh-release@v1
+        with:
+          files: "group-calling.zip"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

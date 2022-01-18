@@ -1,0 +1,6 @@
+# Add top level eslintignore file to be picked up by the eslint vscode extension
+docs/
+public/
+dist/
+node_modules/
+scripts/

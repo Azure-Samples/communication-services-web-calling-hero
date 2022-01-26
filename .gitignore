@@ -353,3 +353,7 @@ MigrationBackup/
 .ionide/
 Calling/dist/
 Server/dist/server.js
+Calling/.vscode
+Calling/build/
+Server/.rush/temp/
+Server/.vscode/

@@ -12,9 +12,11 @@ products:
 
 # Group Calling Sample
 
-This is a sample application to show how the Azure Communication Services Calling Web SDK can be used to build a group calling experience.
+## Overview
 
-A separate branch with features currently in public preview is [available](https://github.com/Azure-Samples/communication-services-web-calling-hero/tree/public-preview). Features include: Teams Interop which in public preview and uses beta SDKs that are not meant for production use. Please use the main branch sample for any production scenarios.
+This is a sample application to show how we can use the `@azure/communication-react` package to build a calling experience.
+Learn more about the [Azure Communication Services UI Library](https://azure.github.io/communication-ui-library/). 
+The client-side application is a React based user interface. Alongside this front-end is a NodeJS web application powered by ExpressJS that performs functionality like minting new user tokens for each call participant.
 
 Additional documentation for this sample can be found on [Microsoft Docs](https://docs.microsoft.com/azure/communication-services/samples/calling-hero-sample).
 
@@ -27,8 +29,9 @@ We appreciate your feedback and energy helping us improve our services. [Please 
 
 ## Prerequisites
 
-- Create an Azure account with an active subscription. For details, see [Create an account for free](https://azure.microsoft.com/free/?WT.mc_id=A261C142F)
+- [Visual Studio Code (Stable Build)](https://code.visualstudio.com/Download)
 - [Node.js (12.18.4 and above)](https://nodejs.org/en/download/)
+- Create an Azure account with an active subscription. For details, see [Create an account for free](https://azure.microsoft.com/free/?WT.mc_id=A261C142F).
 - Create an Azure Communication Services resource. For details, see [Create an Azure Communication Resource](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource). You'll need to record your resource **connection string** for this quickstart.
 
 ## Code structure
@@ -42,24 +45,37 @@ We appreciate your feedback and energy helping us improve our services. [Please 
 - ./Server/appsettings.json: Where to put your azure communication services connection string
 
 ## Before running the sample for the first time
-1. Open an instance of PowerShell, Windows Terminal, Command Prompt or equivalent and navigate to the directory that you'd like to clone the sample to.
-2. `git clone https://github.com/Azure-Samples/communication-services-web-calling-hero.git`
-3. Get the `Connection String` from the Azure portal. For more information on connection strings, see [Create an Azure Communication Resources](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource)
-4. Once you get the `Connection String`, add the connection string to the **Server/appsetting.json** file found under the Calling folder. Input your connection string in the variable: `ResourceConnectionString`.
+
+1. Open an instance of PowerShell, Windows Terminal, Command Prompt, or equivalent, and navigate to the directory that you'd like to clone the sample to and clone the repo.
+
+    ```shell
+    git clone https://github.com/Azure/communication-ui-library.git
+    ```
+
+1. Get the `Connection String` from the Azure portal. For more information on connection strings, see [Create an Azure Communication Resources](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource)
+1. Once you get the `Connection String`, add the connection string to the **samples/Server/appsetting.json** file. Input your connection string in the variable: `ResourceConnectionString`.
 
 ## Local run
 
-1. Set your connection string in `Server/appsettings.json`
-2. `npm run setup` from the root directory
-3. `npm run start` from the root directory
+1. Install dependencies
+
+    ```bash
+    npm install
+    ```
+
+1. Start the calling app
+
+    ```bash
+    npm run start
+    ```
+
+    This will open a client server on port 3000 that serves the website files, and an api server on port 8080 that performs functionality like minting tokens for call participants.
 
 ### Troubleshooting
 
 1. The app shows an "Unsupported browser" screen but I am on a [supported browser](https://docs.microsoft.com/en-us/azure/communication-services/concepts/voice-video-calling/calling-sdk-features#calling-client-library-browser-support).
 
 	If your app is being served over a hostname other then localhost, you must serve traffic over https and not http.
-
-## Publish to Azure
 
 ## Publish to Azure
 
@@ -70,8 +86,8 @@ We appreciate your feedback and energy helping us improve our services. [Please 
 
 ## Additional Reading
 
-- [Storybook](aka.ms/acsstorybook/) - Component Library documentation
+- [Azure Communication Services - UI Library](https://azure.github.io/communication-ui-library/) - To learn more about what the `@azure/communication-react` package offers.
 - [Azure Communication Calling SDK](https://docs.microsoft.com/azure/communication-services/concepts/voice-video-calling/calling-sdk-features) - To learn more about the calling web sdk
-- [FluentUI](https://developer.microsoft.com/en-us/fluentui#/) - Microsoft powered UI library
+- [FluentUI](https://developer.microsoft.com/fluentui#/) - Microsoft powered UI library
 - [React](https://reactjs.org/) - Library for building user interfaces
 

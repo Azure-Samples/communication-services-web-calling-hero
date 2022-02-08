@@ -54,13 +54,14 @@ We appreciate your feedback and energy helping us improve our services. [Please 
 
 1. Get the `Connection String` from the Azure portal. For more information on connection strings, see [Create an Azure Communication Resources](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource)
 1. Once you get the `Connection String`, add the connection string to the **samples/Server/appsetting.json** file. Input your connection string in the variable: `ResourceConnectionString`.
-
+1. Get the `Endpoint string` from the Azure portal. For more information on Endpoint strings, see [Create an Azure Communication Resources](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource)
+1. Once you get the `Endpoint String`, add the endpoint string to the **samples/Server/appsetting.json** file. Input your endpoint string in the variable `EndpointUrl`
 ## Local run
 
 1. Install dependencies
 
     ```bash
-    npm install
+    npm run setup
     ```
 
 1. Start the calling app

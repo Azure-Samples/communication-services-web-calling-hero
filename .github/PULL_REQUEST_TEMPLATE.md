@@ -39,7 +39,7 @@ npm install
 
 * Test the code
 
-*Add steps to run the tests suite and/or manually test.*
+<!-- Add steps to run the tests suite and/or manually test. -->
 
 ```
 ```

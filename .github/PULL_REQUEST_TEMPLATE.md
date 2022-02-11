@@ -1,14 +1,13 @@
 ## Purpose
 
-*Describe the intention of the changes being proposed. What problem does it solve or functionality does it add?*
+<!-- Describe the intention of the changes being proposed. What problem does it solve or functionality does it add? -->
 
 * ...
 
 ## Pull Request Type
 
-*What kind of change does this Pull Request introduce?*
-
-*Please check the one that applies to this PR using "x".*
+<!-- What kind of change does this Pull Request introduce? -->
+<!-- Please check the one that applies to this PR using "x". -->
 
 ```
 [ ] Bugfix
@@ -21,9 +20,11 @@
 
 ## Upstream sample reference
 
-*In most cases, a change here synchronizes this sample with the [upstream sample](https://github.com/Azure/communication-ui-library/tree/main/samples/Calling).*
+<!-- In most cases, a change here synchronizes this sample with the upstream sample. -->
 
-*Please link to PR(s) that made the original change in the upstream sample.*
+Links to PR(s) that made the original change in the [upstream sample](https://github.com/Azure/communication-ui-library/tree/main/samples/Calling):
+
+* ...
 
 ## How to Test
 
@@ -51,4 +52,4 @@ Verify that the following are valid
 
 ## Other Information
 
-*Add any other helpful information that may be needed here.*
+<!-- Add any other helpful information that may be needed here. -->

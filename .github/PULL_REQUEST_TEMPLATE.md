@@ -1,18 +1,15 @@
 ## Purpose
-<!-- Describe the intention of the changes being proposed. What problem does it solve or functionality does it add? -->
+
+*Describe the intention of the changes being proposed. What problem does it solve or functionality does it add?*
+
 * ...
 
-## Does this introduce a breaking change?
-<!-- Mark one with an "x". -->
-```
-[ ] Yes
-[ ] No
-```
-
 ## Pull Request Type
-What kind of change does this Pull Request introduce?
 
-<!-- Please check the one that applies to this PR using "x". -->
+*What kind of change does this Pull Request introduce?*
+
+*Please check the one that applies to this PR using "x".*
+
 ```
 [ ] Bugfix
 [ ] Feature
@@ -22,7 +19,14 @@ What kind of change does this Pull Request introduce?
 [ ] Other... Please describe:
 ```
 
+## Upstream sample reference
+
+*In most cases, a change here synchronizes this sample with the [upstream sample](https://github.com/Azure/communication-ui-library/tree/main/samples/Calling).*
+
+*Please link to PR(s) that made the original change in the upstream sample.*
+
 ## How to Test
+
 *  Get the code
 
 ```
@@ -33,13 +37,18 @@ npm install
 ```
 
 * Test the code
-<!-- Add steps to run the tests suite and/or manually test -->
+
+*Add steps to run the tests suite and/or manually test.*
+
 ```
 ```
 
 ## What to Check
+
 Verify that the following are valid
+
 * ...
 
 ## Other Information
-<!-- Add any other helpful information that may be needed here. -->
+
+*Add any other helpful information that may be needed here.*

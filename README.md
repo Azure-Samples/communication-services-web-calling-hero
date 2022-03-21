@@ -45,6 +45,7 @@ We appreciate your feedback and energy helping us improve our services. [Please 
 - ./Server/appsettings.json: Where to put your azure communication services connection string
 
 ## Before running the sample for the first time
+
 1. Open an instance of PowerShell, Windows Terminal, Command Prompt or equivalent and navigate to the directory that you'd like to clone the sample to.
    ```shell
    git clone https://github.com/Azure-Samples/communication-services-web-calling-hero.git`

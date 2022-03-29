@@ -46,21 +46,22 @@ We appreciate your feedback and energy helping us improve our services. [Please 
 
 ## Before running the sample for the first time
 
-1. Open an instance of PowerShell, Windows Terminal, Command Prompt, or equivalent, and navigate to the directory that you'd like to clone the sample to and clone the repo.
+1. Open an instance of PowerShell, Windows Terminal, Command Prompt or equivalent and navigate to the directory that you'd like to clone the sample to.
 
-    ```shell
-    git clone https://github.com/Azure/communication-ui-library.git
-    ```
-
+   ```shell
+   git clone https://github.com/Azure-Samples/communication-services-web-calling-hero.git`
+   ```
+   
 1. Get the `Connection String` from the Azure portal. For more information on connection strings, see [Create an Azure Communication Resources](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource)
 1. Once you get the `Connection String`, add the connection string to the **samples/Server/appsetting.json** file. Input your connection string in the variable: `ResourceConnectionString`.
-
+1. Get the `Endpoint string` from the Azure portal. For more information on Endpoint strings, see [Create an Azure Communication Resources](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource)
+1. Once you get the `Endpoint String`, add the endpoint string to the **samples/Server/appsetting.json** file. Input your endpoint string in the variable `EndpointUrl`
 ## Local run
 
 1. Install dependencies
 
     ```bash
-    npm install
+    npm run setup
     ```
 
 1. Start the calling app

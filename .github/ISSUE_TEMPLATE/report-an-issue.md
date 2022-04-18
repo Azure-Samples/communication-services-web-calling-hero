@@ -1,3 +1,11 @@
+---
+name: Report an issue
+about: Report an issue to help us improve.
+title: "[what is the issue?] in [where is the issue?]"
+labels: "status:triage"
+assignees: ""
+---
+
 <!--
 IF SUFFICIENT INFORMATION IS NOT PROVIDED VIA THE FOLLOWING TEMPLATE THE ISSUE MIGHT BE CLOSED WITHOUT FURTHER CONSIDERATION OR INVESTIGATION
 -->

@@ -11,16 +11,13 @@
       "metadata": {
         "description": "The SKU of App Service Plan."
       }
-    },
-    "packageUrl": {
-      "type": "string",
-      "defaultValue": "http://github.com/azure-samples/communication-services-web-calling-hero/releases/latest/download/group-calling.zip"
     }
   },
   "variables": {
+    "communicationServicesResourceId": "<Enter your Azure Communication Services Resource Id>",
     "location": "[resourceGroup().location]",
     "appServicePlanPortalName": "[concat('AppServicePlan-', parameters('appName'))]",
-    "communicationServicesResourceId": "<Enter your Azure Communication Services Resource Id>"
+    "packageUrl": "http://github.com/azure-samples/communication-services-web-calling-hero/releases/latest/download/group-calling.zip"
   },
   "resources": [
     {
@@ -70,7 +67,7 @@
               "[resourceId('Microsoft.Web/sites/config', parameters('appName'), 'appsettings')]"
             ],
             "properties": {
-              "packageUri": "[parameters('packageUrl')]"
+              "packageUri": "[variables('packageUrl')]"
             }
           }
       ]

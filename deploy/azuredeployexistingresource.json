@@ -1,0 +1,76 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appName": {
+      "type": "string"
+    },
+    "sku": {
+      "type": "string",
+      "defaultValue": "F1",
+      "metadata": {
+        "description": "The SKU of App Service Plan."
+      }
+    }
+  },
+  "variables": {
+    "communicationServicesResourceId": "<Enter your Azure Communication Services Resource Id>",
+    "location": "[resourceGroup().location]",
+    "appServicePlanPortalName": "[concat('AppServicePlan-', parameters('appName'))]",
+    "packageUrl": "http://github.com/azure-samples/communication-services-web-calling-hero/releases/latest/download/group-calling.zip"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2020-06-01",
+      "name": "[variables('appServicePlanPortalName')]",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "[parameters('sku')]"
+      },
+      "kind": "linux"
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2020-06-01",
+      "name": "[parameters('appName')]",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanPortalName'))]"
+      ],
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanPortalName'))]"
+      },
+      "resources": [
+        {
+          "name": "appsettings",
+          "type": "config",
+          "apiVersion": "2021-03-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('appName'))]"
+          ],
+          "tags": {
+            "displayName": "appsettings"
+          },
+          "properties": {
+            "ResourceConnectionString": "[listkeys(variables('communicationServicesResourceId'), '2020-08-20' ).primaryConnectionString]",
+            "WEBSITE_NODE_DEFAULT_VERSION": "~12"
+          }
+        },
+        {
+            "name": "MSDeploy",
+            "type": "extensions",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2021-03-01",
+            "dependsOn": [
+              "[resourceId('Microsoft.Web/sites', parameters('appName'))]",
+              "[resourceId('Microsoft.Web/sites/config', parameters('appName'), 'appsettings')]"
+            ],
+            "properties": {
+              "packageUri": "[variables('packageUrl')]"
+            }
+          }
+      ]
+    }
+  ]
+}

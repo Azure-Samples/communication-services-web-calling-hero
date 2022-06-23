@@ -19,10 +19,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
 
-      - name: Setup Node 18
+      - name: Setup Node 16
         uses: actions/setup-node@v2
         with:
-          node-version: '18'
+          node-version: '16'
 
       - name: Setup Server dependencies
         working-directory: ./Server
@@ -45,7 +45,7 @@ jobs:
 
       - uses: actions/setup-node@v2
         with:
-          node-version: '18'
+          node-version: '16'
 
       - name: Install (dev) dependencies
         working-directory: ./Calling

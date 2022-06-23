@@ -14,10 +14,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
 
-      - name: Setup Node 14
+      - name: Setup Node 18
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '18'
 
       - name: Build
         shell: bash

@@ -9,6 +9,12 @@ products:
 - azure-communication-services
 ---
 
+# 🚧 THIS IS NOT AN ACTIVELY MAINTAINED BRANCH 🚧
+
+Please refer to the up-to-date sample on [`main`](https://github.com/Azure-Samples/communication-services-web-calling-hero)
+
+<hr/>
+
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fcommunication-services-web-calling-hero%2Fmain%2Fdeploy%2Fazuredeploy.json)
 
 # Group Calling Sample

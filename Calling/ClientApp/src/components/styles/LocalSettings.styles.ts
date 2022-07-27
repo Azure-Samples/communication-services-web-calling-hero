@@ -33,5 +33,5 @@ export const localSettingsContainer = mergeStyles({
   maxWidth: '18.75rem',
   minWidth: '12.5rem',
   maxHeight: '14.125rem',
-  marginTop: '2.125rem'
+  marginTop: '1.125rem'
 });

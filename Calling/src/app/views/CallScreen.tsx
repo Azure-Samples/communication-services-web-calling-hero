@@ -22,7 +22,6 @@ export interface CallScreenProps {
   userId: CommunicationUserIdentifier;
   callLocator: CallAdapterLocator;
   displayName: string;
-  alternateCallerId?: string;
   onCallEnded: () => void;
 }
 

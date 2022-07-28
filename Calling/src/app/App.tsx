@@ -89,11 +89,7 @@ const App = (): JSX.Element => {
             setDisplayName(callDetails.displayName);
 
             const isTeamsCall = !!callDetails.teamsLink;
-            const makeLocator = (
-              teamsLink?: TeamsMeetingLinkLocator | undefined,
-
-              outboundParticipants?: string[]
-            ): CallAdapterLocator => {
+            const makeLocator = (teamsLink?: TeamsMeetingLinkLocator | undefined): CallAdapterLocator => {
               return teamsLink || getTeamsLinkFromUrl() || getGroupIdFromUrl() || createGroupId();
             };
             const locator = makeLocator(callDetails.teamsLink);

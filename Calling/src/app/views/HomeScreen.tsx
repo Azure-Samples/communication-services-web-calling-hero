@@ -51,10 +51,6 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
 
   const buttonEnabled = displayName && (startGroupCall || teamsLink || (teamsCallChosen && teamsLink));
 
-  /**
-   * when do we not want the button to be activated
-   * - when start PSTN is selected AND dialpadParticipant AND
-   */
   return (
     <Stack
       horizontal
@@ -90,10 +86,6 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 onChange={(_, newValue) => newValue && setTeamsLink({ meetingLink: newValue })}
               />
             )}
-
-            {}
-
-            {}
           </Stack>
           <DisplayNameField defaultName={displayName} setName={setDisplayName} />
           <PrimaryButton

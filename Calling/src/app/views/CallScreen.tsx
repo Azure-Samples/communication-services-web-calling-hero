@@ -1,62 +1,38 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { GroupCallLocator, TeamsMeetingLinkLocator } from '@azure/communication-calling';
 import { CommunicationUserIdentifier } from '@azure/communication-common';
 import {
+  CallAdapterLocator,
   CallAdapter,
   CallAdapterState,
   CallComposite,
-  createAzureCommunicationCallAdapter,
-  toFlatCommunicationIdentifier
+  toFlatCommunicationIdentifier,
+  useAzureCommunicationCallAdapter
 } from '@azure/communication-react';
 import { Spinner } from '@fluentui/react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useSwitchableFluentTheme } from '../theming/SwitchableFluentThemeProvider';
 import { createAutoRefreshingCredential } from '../utils/credential';
-import MobileDetect from 'mobile-detect';
-
-const detectMobileSession = (): boolean => !!new MobileDetect(window.navigator.userAgent).mobile();
+import { WEB_APP_TITLE } from '../utils/AppUtils';
+import { useIsMobile } from '../utils/useIsMobile';
 
 export interface CallScreenProps {
   token: string;
   userId: CommunicationUserIdentifier;
-  callLocator: GroupCallLocator | TeamsMeetingLinkLocator;
+  callLocator: CallAdapterLocator;
   displayName: string;
-  webAppTitle: string;
+  alternateCallerId?: string;
   onCallEnded: () => void;
 }
 
 export const CallScreen = (props: CallScreenProps): JSX.Element => {
-  const { token, userId, callLocator, displayName, webAppTitle, onCallEnded } = props;
-  const [adapter, setAdapter] = useState<CallAdapter>();
+  const { token, userId, callLocator, displayName, onCallEnded } = props;
   const callIdRef = useRef<string>();
-  const adapterRef = useRef<CallAdapter>();
   const { currentTheme, currentRtl } = useSwitchableFluentTheme();
-  const [isMobileSession, setIsMobileSession] = useState<boolean>(detectMobileSession());
-
-  useEffect(() => {
-    if (!callIdRef.current) {
-      return;
-    }
-    console.log(`Call Id: ${callIdRef.current}`);
-  }, [callIdRef.current]);
-
-  // Whenever the sample is changed from desktop -> mobile using the emulator, make sure we update the formFactor.
-  useEffect(() => {
-    const updateIsMobile = (): void => setIsMobileSession(detectMobileSession());
-    window.addEventListener('resize', updateIsMobile);
-    return () => window.removeEventListener('resize', updateIsMobile);
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      const adapter = await createAzureCommunicationCallAdapter({
-        userId,
-        displayName,
-        credential: createAutoRefreshingCredential(toFlatCommunicationIdentifier(userId), token),
-        locator: callLocator
-      });
+  const isMobileSession = useIsMobile();
+  const afterCreate = useCallback(
+    async (adapter: CallAdapter): Promise<CallAdapter> => {
       adapter.on('callEnded', () => {
         onCallEnded();
       });
@@ -67,18 +43,42 @@ export const CallScreen = (props: CallScreenProps): JSX.Element => {
       });
       adapter.onStateChange((state: CallAdapterState) => {
         const pageTitle = convertPageStateToString(state);
-        document.title = `${pageTitle} - ${webAppTitle}`;
+        document.title = `${pageTitle} - ${WEB_APP_TITLE}`;
 
-        callIdRef.current = state?.call?.id;
+        if (state?.call?.id && callIdRef.current !== state?.call?.id) {
+          callIdRef.current = state?.call?.id;
+          console.log(`Call Id: ${callIdRef.current}`);
+        }
       });
-      setAdapter(adapter);
-      adapterRef.current = adapter;
-    })();
+      return adapter;
+    },
+    [callIdRef, onCallEnded]
+  );
 
-    return () => {
-      adapterRef?.current?.dispose();
-    };
-  }, [callLocator, displayName, token, userId, onCallEnded]);
+  const credential = useMemo(
+    () => createAutoRefreshingCredential(toFlatCommunicationIdentifier(userId), token),
+    [token, userId]
+  );
+
+  const adapter = useAzureCommunicationCallAdapter(
+    {
+      userId,
+      displayName,
+      credential,
+      locator: callLocator
+    },
+
+    afterCreate
+  );
+
+  // Dispose of the adapter in the window's before unload event.
+  // This ensures the service knows the user intentionally left the call if the user
+  // closed the browser tab during an active call.
+  useEffect(() => {
+    const disposeAdapter = (): void => adapter?.dispose();
+    window.addEventListener('beforeunload', disposeAdapter);
+    return () => window.removeEventListener('beforeunload', disposeAdapter);
+  }, [adapter]);
 
   if (!adapter) {
     return <Spinner label={'Creating adapter'} ariaLive="assertive" labelPosition="top" />;

@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 import React, { useState, useMemo, createContext, useContext } from 'react';
-import { FluentThemeProvider, lightTheme, darkTheme } from '@azure/communication-react';
+import { FluentThemeProvider, lightTheme, darkTheme } from '@internal/react-components';
 import { Theme, PartialTheme } from '@fluentui/react';
 import { getThemeFromLocalStorage, saveThemeToLocalStorage } from '../utils/localStorage';
 
@@ -26,6 +26,7 @@ const defaultThemes: ThemeCollection = {
     name: 'Light',
     theme: lightTheme
   },
+
   Dark: {
     name: 'Dark',
     theme: darkTheme
@@ -130,6 +131,7 @@ export const SwitchableFluentThemeProvider = (props: SwitchableFluentThemeProvid
       },
       themeStore
     }),
+
     [currentTheme, currentRtl, scopeId, themeStore]
   );
 

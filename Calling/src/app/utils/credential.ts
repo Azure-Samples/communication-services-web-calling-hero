@@ -17,6 +17,7 @@ export const createAutoRefreshingCredential = (userId: string, token: string): A
     tokenRefresher: refreshTokenAsync(userId),
     refreshProactively: true
   };
+
   return new AzureCommunicationTokenCredential(options);
 };
 

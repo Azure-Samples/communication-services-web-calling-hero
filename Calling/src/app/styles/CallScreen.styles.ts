@@ -8,6 +8,7 @@ export const headerStyles: IStackItemStyles = {
     width: '100%'
   }
 };
+
 export const containerStyles: IStackStyles = {
   root: {
     height: '100%',
@@ -15,6 +16,7 @@ export const containerStyles: IStackStyles = {
     overflow: 'hidden'
   }
 };
+
 export const subContainerStyles: IStackStyles = {
   root: {
     overflow: 'hidden',
@@ -22,11 +24,13 @@ export const subContainerStyles: IStackStyles = {
     flexBasis: '0'
   }
 };
+
 export const paneStyles: IStackItemStyles = {
   root: {
     width: '17.875rem'
   }
 };
+
 export const activeContainerClassName: IStackItemStyles = {
   root: {
     display: 'flex',

@@ -1,37 +1,36 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { GroupCallLocator, GroupLocator, TeamsMeetingLinkLocator } from '@azure/communication-calling';
+import { GroupCallLocator, TeamsMeetingLinkLocator } from '@azure/communication-calling';
 import { CommunicationUserIdentifier } from '@azure/communication-common';
+import { setLogLevel } from '@azure/logger';
 import { initializeIcons, Spinner } from '@fluentui/react';
+import { CallAdapterLocator } from '@azure/communication-react';
 import React, { useEffect, useState } from 'react';
 import {
-  buildTime,
-  callingSDKVersion,
   createGroupId,
   fetchTokenResponse,
   getGroupIdFromUrl,
   getTeamsLinkFromUrl,
-  isMobileSession,
+  isLandscape,
   isOnIphoneAndNotSafari,
-  isSmallScreen,
-  navigateToHomePage
+  navigateToHomePage,
+  WEB_APP_TITLE
 } from './utils/AppUtils';
+import { useIsMobile } from './utils/useIsMobile';
+import { useSecondaryInstanceCheck } from './utils/useSecondaryInstanceCheck';
 import { CallError } from './views/CallError';
 import { CallScreen } from './views/CallScreen';
 import { EndCall } from './views/EndCall';
 import { HomeScreen } from './views/HomeScreen';
+import { PageOpenInAnotherTab } from './views/PageOpenInAnotherTab';
 import { UnsupportedBrowserPage } from './views/UnsupportedBrowserPage';
 
-console.log(
-  `ACS sample calling app. Last Updated ${buildTime} Using @azure/communication-calling:${callingSDKVersion}`
-);
+setLogLevel('warning');
 
 initializeIcons();
 
 type AppPages = 'home' | 'call' | 'endCall';
-
-const webAppTitle = document.title;
 
 const App = (): JSX.Element => {
   const [page, setPage] = useState<AppPages>('home');
@@ -42,7 +41,7 @@ const App = (): JSX.Element => {
   const [userCredentialFetchError, setUserCredentialFetchError] = useState<boolean>(false);
 
   // Call details to join a call - these are collected from the user on the home screen
-  const [callLocator, setCallLocator] = useState<GroupLocator | TeamsMeetingLinkLocator>(createGroupId());
+  const [callLocator, setCallLocator] = useState<CallAdapterLocator>(createGroupId());
   const [displayName, setDisplayName] = useState<string>('');
 
   // Get Azure Communications Service token from the server
@@ -59,18 +58,28 @@ const App = (): JSX.Element => {
     })();
   }, []);
 
+  const isMobileSession = useIsMobile();
+  const isLandscapeSession = isLandscape();
+  const isAppAlreadyRunningInAnotherTab = useSecondaryInstanceCheck();
+
+  useEffect(() => {
+    if (isMobileSession && isLandscapeSession) {
+      console.log('ACS Calling sample: Mobile landscape view is experimental behavior');
+    }
+  }, [isMobileSession, isLandscapeSession]);
+
+  if (isMobileSession && isAppAlreadyRunningInAnotherTab) {
+    return <PageOpenInAnotherTab />;
+  }
+
   const supportedBrowser = !isOnIphoneAndNotSafari();
   if (!supportedBrowser) {
     return <UnsupportedBrowserPage />;
   }
 
-  if (isMobileSession() || isSmallScreen()) {
-    console.log('ACS Calling sample: This is experimental behaviour');
-  }
-
   switch (page) {
     case 'home': {
-      document.title = `home - ${webAppTitle}`;
+      document.title = `home - ${WEB_APP_TITLE}`;
       // Show a simplified join home screen if joining an existing call
       const joiningExistingCall: boolean = !!getGroupIdFromUrl() || !!getTeamsLinkFromUrl();
       return (
@@ -78,16 +87,20 @@ const App = (): JSX.Element => {
           joiningExistingCall={joiningExistingCall}
           startCallHandler={(callDetails) => {
             setDisplayName(callDetails.displayName);
+
             const isTeamsCall = !!callDetails.teamsLink;
-            const callLocator =
-              callDetails.teamsLink || getTeamsLinkFromUrl() || getGroupIdFromUrl() || createGroupId();
-            setCallLocator(callLocator);
+            const makeLocator = (teamsLink?: TeamsMeetingLinkLocator | undefined): CallAdapterLocator => {
+              return teamsLink || getTeamsLinkFromUrl() || getGroupIdFromUrl() || createGroupId();
+            };
+            const locator = makeLocator(callDetails.teamsLink);
+
+            setCallLocator(locator);
 
             // Update window URL to have a joinable link
             if (!joiningExistingCall) {
               const joinParam = isTeamsCall
-                ? '?teamsLink=' + encodeURIComponent((callLocator as TeamsMeetingLinkLocator).meetingLink)
-                : '?groupId=' + (callLocator as GroupCallLocator).groupId;
+                ? '?teamsLink=' + encodeURIComponent((locator as TeamsMeetingLinkLocator).meetingLink)
+                : '?groupId=' + (locator as GroupCallLocator).groupId;
               window.history.pushState({}, document.title, window.location.origin + joinParam);
             }
 
@@ -97,12 +110,12 @@ const App = (): JSX.Element => {
       );
     }
     case 'endCall': {
-      document.title = `end call - ${webAppTitle}`;
+      document.title = `end call - ${WEB_APP_TITLE}`;
       return <EndCall rejoinHandler={() => setPage('call')} homeHandler={navigateToHomePage} />;
     }
     case 'call': {
       if (userCredentialFetchError) {
-        document.title = `error - ${webAppTitle}`;
+        document.title = `error - ${WEB_APP_TITLE}`;
         return (
           <CallError
             title="Error getting user credentials from server"
@@ -114,7 +127,7 @@ const App = (): JSX.Element => {
       }
 
       if (!token || !userId || !displayName || !callLocator) {
-        document.title = `credentials - ${webAppTitle}`;
+        document.title = `credentials - ${WEB_APP_TITLE}`;
         return <Spinner label={'Getting user credentials from server'} ariaLive="assertive" labelPosition="top" />;
       }
       return (
@@ -124,12 +137,11 @@ const App = (): JSX.Element => {
           displayName={displayName}
           callLocator={callLocator}
           onCallEnded={() => setPage('endCall')}
-          webAppTitle={webAppTitle}
         />
       );
     }
     default:
-      document.title = `error - ${webAppTitle}`;
+      document.title = `error - ${WEB_APP_TITLE}`;
       return <>Invalid page</>;
   }
 };

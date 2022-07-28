@@ -26,6 +26,7 @@ const defaultThemes: ThemeCollection = {
     name: 'Light',
     theme: lightTheme
   },
+
   Dark: {
     name: 'Dark',
     theme: darkTheme
@@ -130,6 +131,7 @@ export const SwitchableFluentThemeProvider = (props: SwitchableFluentThemeProvid
       },
       themeStore
     }),
+
     [currentTheme, currentRtl, scopeId, themeStore]
   );
 

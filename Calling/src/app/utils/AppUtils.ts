@@ -57,17 +57,10 @@ export const isOnIphoneAndNotSafari = (): boolean => {
   return userAgent.includes('iPhone') && (userAgent.includes('FxiOS') || userAgent.includes('CriOS'));
 };
 
-export const isMobileSession = (): boolean =>
-  !!window.navigator.userAgent.match(/(iPad|iPhone|iPod|Android|webOS|BlackBerry|Windows Phone)/g);
-
-export const isSmallScreen = (): boolean => window.innerWidth < 700 || window.innerHeight < 400;
+export const isLandscape = (): boolean => window.innerWidth < window.innerHeight;
 
 export const navigateToHomePage = (): void => {
   window.location.href = window.location.href.split('?')[0];
 };
 
-declare let __BUILDTIME__: string; // Injected by webpack
-export const buildTime = __BUILDTIME__;
-
-declare let __CALLINGVERSION__: string; // Injected by webpack
-export const callingSDKVersion = __CALLINGVERSION__;
+export const WEB_APP_TITLE = document.title;

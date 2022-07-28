@@ -50,6 +50,7 @@ export const EndCall = (props: EndCallProps): JSX.Element => {
             onClick={props.rejoinHandler}
             onRenderIcon={() => <Video20Filled className={videoCameraIconStyle} />}
           />
+
           <DefaultButton
             className={buttonStyle}
             styles={buttonWithIconStyles}

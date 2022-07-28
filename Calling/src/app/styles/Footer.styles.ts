@@ -17,10 +17,12 @@ export const textFieldStyles: Partial<ITextFieldStyles> = {
   field: {
     padding: 0
   },
+
   root: {
     marginLeft: '1rem',
     marginRight: '1rem'
   },
+
   fieldGroup: {
     border: 'none'
   }

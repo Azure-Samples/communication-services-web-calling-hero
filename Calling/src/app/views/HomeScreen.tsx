@@ -17,6 +17,7 @@ import {
   teamsItemStyle,
   buttonStyle
 } from '../styles/HomeScreen.styles';
+
 import { ThemeSelector } from '../theming/ThemeSelector';
 import { localStorageAvailable } from '../utils/localStorage';
 import { getDisplayNameFromLocalStorage, saveDisplayNameToLocalStorage } from '../utils/localStorage';
@@ -45,8 +46,10 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
   const [chosenCallOption, setChosenCallOption] = useState<IChoiceGroupOption>(callOptions[0]);
   const [teamsLink, setTeamsLink] = useState<TeamsMeetingLinkLocator>();
 
+  const startGroupCall: boolean = chosenCallOption.key === 'ACSCall';
   const teamsCallChosen: boolean = chosenCallOption.key === 'TeamsMeeting';
-  const buttonEnabled = displayName && (!teamsCallChosen || teamsLink);
+
+  const buttonEnabled = displayName && (startGroupCall || teamsLink || (teamsCallChosen && teamsLink));
 
   return (
     <Stack
@@ -74,6 +77,7 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 onChange={(_, option) => option && setChosenCallOption(option)}
               />
             )}
+
             {teamsCallChosen && (
               <TextField
                 className={teamsItemStyle}
@@ -91,10 +95,15 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
             onClick={() => {
               if (displayName) {
                 saveDisplayNameToLocalStorage(displayName);
-                props.startCallHandler({ displayName, teamsLink });
+
+                props.startCallHandler({
+                  displayName,
+                  teamsLink
+                });
               }
             }}
           />
+
           <div>
             <ThemeSelector label="Theme" horizontal={true} />
           </div>

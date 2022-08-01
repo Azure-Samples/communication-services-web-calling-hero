@@ -26,7 +26,14 @@ export const utils = {
       return response.json();
     }
     throw new Error('Invalid token response');
-  },
+    },
+   getTokenForCall: async (): Promise<string> => {
+        const response = await fetch('/calltoken');
+        if (response.ok) {
+            return response.json();
+        }
+        throw new Error('Invalid call token response');
+    },
   getFeedbackSettings: async (): Promise<FeedbackSettings> => {
     const response = await fetch('/feedbackSettings');
     if (!response.ok) {

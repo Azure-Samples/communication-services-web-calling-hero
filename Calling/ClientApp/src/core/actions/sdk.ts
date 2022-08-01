@@ -1,12 +1,18 @@
 import { CallClient } from '@azure/communication-calling';
 
 const SET_USERID = 'SET_USERID';
+const SET_CALL_TOKEN = 'SET_CALL_TOKEN';
 const SET_CALL_CLIENT = 'SET_CALL_CLIENT';
 const SET_DISPLAY_NAME = 'SET_DISPLAY_NAME';
 
 interface SetUserIdAction {
   type: typeof SET_USERID;
   userId: string;
+}
+
+interface SetCallTokenAction {
+    type: typeof SET_CALL_TOKEN;
+    callToken: string;
 }
 
 interface SetCallClient {
@@ -26,6 +32,13 @@ export const setUserId = (userId: string): SetUserIdAction => {
   };
 };
 
+export const setCallToken = (callToken: string): SetCallTokenAction => {
+    return {
+        type: SET_CALL_TOKEN,
+        callToken
+    };
+};
+
 export const setCallClient = (callClient: CallClient): SetCallClient => {
   return {
     type: SET_CALL_CLIENT,
@@ -40,6 +53,6 @@ export const setDisplayName = (displayName: string): SetDisplayNameAction => {
   };
 };
 
-export { SET_USERID, SET_CALL_CLIENT, SET_DISPLAY_NAME };
+export { SET_USERID, SET_CALL_CLIENT, SET_DISPLAY_NAME, SET_CALL_TOKEN };
 
-export type SdkTypes = SetUserIdAction | SetCallClient | SetDisplayNameAction;
+export type SdkTypes = SetUserIdAction | SetCallClient | SetDisplayNameAction | SetCallTokenAction;

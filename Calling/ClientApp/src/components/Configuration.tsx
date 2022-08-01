@@ -24,16 +24,17 @@ import {
     fullScreenStyle,
     verticalStackStyle
 } from './styles/Configuration.styles';
-import tokenData from '../token.json'
 
 export interface ConfigurationScreenProps {
     userId: string;
+    callToken: string;
     groupId: string;
     callClient: CallClient;
     callAgent: CallAgent;
     deviceManager: DeviceManager;
     setupCallClient(unsupportedStateHandler: () => void): void;
     setupCallAgent(callClient: CallClient, displayName: string): void;
+    setupCallToken(): void;
     startCallHandler(): void;
     unsupportedStateHandler: () => void;
     callEndedHandler: (reason: CallEndReason) => void;
@@ -68,6 +69,7 @@ export const Configuration = (props: ConfigurationScreenProps): JSX.Element => {
 
     useEffect(() => {
         memoizedSetupCallClient();
+        props.setupCallToken();
     }, [memoizedSetupCallClient]);
 
     return (
@@ -111,7 +113,8 @@ export const Configuration = (props: ConfigurationScreenProps): JSX.Element => {
                                     if (!name) {
                                         setEmptyWarning(true);
                                     }
-                                    if (configToken.trim() != tokenData.tokenValue) {
+
+                                    if (configToken.trim() != props.callToken) {
                                         setEmptyWarningToken(true)
                                     }
                                     else {

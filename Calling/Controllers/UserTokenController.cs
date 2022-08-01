@@ -15,10 +15,12 @@ namespace Calling
     public class UserTokenController : Controller
     {
         private readonly CommunicationIdentityClient _client;
+        private readonly string _callToken;
 
         public UserTokenController(IConfiguration configuration)
         {
             _client = new CommunicationIdentityClient(configuration["ResourceConnectionString"]);
+            _callToken = configuration["CallToken"];
         }
 
         /// <summary>
@@ -81,6 +83,25 @@ namespace Calling
             catch (RequestFailedException ex)
             {
                 Console.WriteLine($"Error occured while Generating Token: {ex}");
+                return this.Ok(this.Json(ex));
+            }
+        }
+
+        /// <summary>
+        /// Gets a token to be used to authorise user before making a call
+        /// </summary>
+        /// <returns></returns>
+        [Route("/callToken")]
+        [HttpGet]
+        public IActionResult CallToken()
+        {
+            try
+            {
+                return Ok(_callToken);
+            }
+            catch (RequestFailedException ex)
+            {
+                Console.WriteLine($"Error occured while getting call-token");
                 return this.Ok(this.Json(ex));
             }
         }

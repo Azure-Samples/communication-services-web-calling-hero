@@ -43,7 +43,7 @@ import {
   setVideoDeviceList,
   setDeviceManager
 } from './actions/devices';
-import { setCallClient, setUserId } from './actions/sdk';
+import { setCallClient, setUserId, setCallToken } from './actions/sdk';
 import { addScreenShareStream, removeScreenShareStream } from './actions/streams';
 import { State } from './reducers';
 import { setLogLevel } from '@azure/logger';
@@ -310,6 +310,13 @@ export const getRecordLink = () => {
       return '';
     }
   };
+};
+
+export const setUpCallToken = () => {
+    return async (dispatch: Dispatch): Promise<void> => {
+        const callTokenResponse: string = await utils.getTokenForCall();
+        dispatch(setCallToken(callTokenResponse));
+    };
 };
 
 export const initCallAgent = (

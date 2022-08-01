@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { Configuration as ConfigurationScreen, ConfigurationScreenProps } from '../components/Configuration';
 import { setVideoDeviceInfo, setAudioDeviceInfo } from '../core/actions/devices';
-import { initCallAgent, initCallClient, updateDevices } from '../core/sideEffects';
+import { initCallAgent, initCallClient, updateDevices, setUpCallToken } from '../core/sideEffects';
 import { setMic } from '../core/actions/controls';
 import { State } from '../core/reducers';
 import { AudioDeviceInfo, VideoDeviceInfo, LocalVideoStream, CallClient } from '@azure/communication-calling';
@@ -10,6 +10,7 @@ import { setLocalVideoStream } from '../core/actions/streams';
 const mapStateToProps = (state: State, props: ConfigurationScreenProps) => ({
   deviceManager: state.devices.deviceManager,
   callClient: state.sdk.callClient,
+  callToken: state.sdk.callToken,
   callAgent: state.calls.callAgent,
   mic: state.controls.mic,
   screenWidth: props.screenWidth,
@@ -29,7 +30,10 @@ const mapDispatchToProps = (dispatch: any, props: ConfigurationScreenProps) => (
   setVideoDeviceInfo: (deviceInfo: VideoDeviceInfo) => dispatch(setVideoDeviceInfo(deviceInfo)),
   setupCallClient: (unsupportedStateHandler: () => void) => dispatch(initCallClient(unsupportedStateHandler)),
   setupCallAgent: (callClient: CallClient, displayName: string) =>
-    dispatch(initCallAgent(callClient, displayName, props.callEndedHandler)),
+        dispatch(initCallAgent(callClient, displayName, props.callEndedHandler)),
+  setupCallToken: () => {
+        dispatch(setUpCallToken())
+    },
   updateDevices: () => dispatch(updateDevices())
 });
 

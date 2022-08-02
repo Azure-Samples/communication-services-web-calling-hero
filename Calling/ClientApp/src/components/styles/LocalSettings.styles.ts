@@ -9,12 +9,14 @@ export const micStackTokens: IStackTokens = {
 export const dropDownStyles: Partial<IDropdownStyles> = {
   caretDownWrapper: {
     height: '2.5rem',
-    lineHeight: '2.5rem'
+    lineHeight: '2.5rem',
+    color:'red'
   },
   dropdownItem: {
     fontWeight: 600,
     fontSize: '0.875rem',
-    height: '2.5rem'
+    height: '2.5rem',
+    color: '#e7e7e7'
   },
   dropdown: { height: '2.5rem' },
   title: {

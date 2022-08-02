@@ -11,11 +11,13 @@
   <title>Azure Communication Services: Calling Sample app</title>
 </head>
 
-<body>
+<body onload="window.resizeTo(240,window.innerHeight)">
   <div id="root" class="Root"></div>
-  <script type="text/javascript">
+  <script defer type="text/javascript">
     window.FabricConfig = {
-    };
+      };
+      window.open(window.location.href, "_blank", "width=240px");
+      console.log('width set......')
   </script>
 </body>
 

@@ -41,7 +41,8 @@
       "sku": {
         "name": "[parameters('sku')]"
       },
-      "kind": "linux"
+      "kind": "linux",
+      "properties": {}
     },
     {
       "type": "Microsoft.Web/sites",

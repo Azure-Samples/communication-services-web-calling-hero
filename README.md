@@ -83,7 +83,7 @@ We appreciate your feedback and energy helping us improve our services. [Please 
 1. `npm run setup`
 2. `npm run build`
 3. `npm run package`
-4. Use the Azure extension and deploy the Calling/dist directory to your app service
+4. Use the [Azure extension](https://code.visualstudio.com/docs/azure/extensions) and deploy the `Calling/dist` directory to your app service
 
 ## Additional Reading
 

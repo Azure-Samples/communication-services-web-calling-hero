@@ -41,7 +41,6 @@
       "sku": {
         "name": "[parameters('sku')]"
       },
-      "kind": "linux",
       "properties": {}
     },
     {
@@ -69,7 +68,7 @@
           },
           "properties": {
             "ResourceConnectionString": "[listkeys(variables('commsName'), '2020-08-20-preview' ).primaryConnectionString]",
-            "WEBSITE_NODE_DEFAULT_VERSION": "~12"
+            "WEBSITE_NODE_DEFAULT_VERSION": "~14"
           }
         },
         {

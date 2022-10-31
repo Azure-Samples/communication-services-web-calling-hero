@@ -29,7 +29,6 @@ import { UnsupportedBrowserPage } from './views/UnsupportedBrowserPage';
 
 setLogLevel('warning');
 
-
 initializeIcons();
 
 type AppPages = 'home' | 'call' | 'endCall';

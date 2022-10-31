@@ -3,6 +3,7 @@
 
 import React, { useState } from 'react';
 import { Stack, PrimaryButton, Image, ChoiceGroup, IChoiceGroupOption, Text, TextField } from '@fluentui/react';
+
 import heroSVG from '../../assets/hero.svg';
 import {
   imgStyle,
@@ -25,7 +26,7 @@ import { DisplayNameField } from './DisplayNameField';
 import { TeamsMeetingLinkLocator } from '@azure/communication-calling';
 
 export interface HomeScreenProps {
-  startCallHandler(callDetails: { displayName: string; teamsLink?: TeamsMeetingLinkLocator }): void;
+  startCallHandler(callDetails: { displayName: string }): void;
   joiningExistingCall: boolean;
 }
 
@@ -36,6 +37,7 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
   const buttonText = 'Next';
   const callOptions: IChoiceGroupOption[] = [
     { key: 'ACSCall', text: 'Start a call' },
+
     { key: 'TeamsMeeting', text: 'Join a Teams meeting' }
   ];
 
@@ -44,12 +46,12 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
   const [displayName, setDisplayName] = useState<string | undefined>(defaultDisplayName ?? undefined);
 
   const [chosenCallOption, setChosenCallOption] = useState<IChoiceGroupOption>(callOptions[0]);
-  const [teamsLink, setTeamsLink] = useState<TeamsMeetingLinkLocator>();
+  const [callLocator, setCallLocator] = useState<TeamsMeetingLinkLocator>();
 
   const startGroupCall: boolean = chosenCallOption.key === 'ACSCall';
   const teamsCallChosen: boolean = chosenCallOption.key === 'TeamsMeeting';
 
-  const buttonEnabled = displayName && (startGroupCall || teamsLink || (teamsCallChosen && teamsLink));
+  const buttonEnabled = displayName && (startGroupCall || (teamsCallChosen && callLocator));
 
   return (
     <Stack
@@ -83,9 +85,17 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 className={teamsItemStyle}
                 iconProps={{ iconName: 'Link' }}
                 placeholder={'Enter a Teams meeting link'}
-                onChange={(_, newValue) => newValue && setTeamsLink({ meetingLink: newValue })}
+                onChange={(_, newValue) => newValue && setCallLocator({ meetingLink: newValue })}
               />
             )}
+
+            {}
+
+            {}
+
+            {}
+
+            {}
           </Stack>
           <DisplayNameField defaultName={displayName} setName={setDisplayName} />
           <PrimaryButton
@@ -98,7 +108,7 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
 
                 props.startCallHandler({
                   displayName,
-                  teamsLink
+                  callLocator: callLocator
                 });
               }
             }}

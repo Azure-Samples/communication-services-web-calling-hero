@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { GroupLocator, RoomLocator, TeamsMeetingLinkLocator } from '@azure/communication-calling';
+import { GroupLocator, TeamsMeetingLinkLocator } from '@azure/communication-calling';
 
 import { v1 as generateGUID } from 'uuid';
 
@@ -65,12 +65,3 @@ export const navigateToHomePage = (): void => {
 };
 
 export const WEB_APP_TITLE = document.title;
-
-declare let __BUILDTIME__: string; // Injected by webpack
-export const buildTime = __BUILDTIME__;
-
-declare let __CALLINGVERSION__: string; // Injected by webpack
-export const callingSDKVersion = __CALLINGVERSION__;
-
-declare let __COMMUNICATIONREACTVERSION__: string; //Injected by webpack
-export const communicationReactSDKVersion = __COMMUNICATIONREACTVERSION__;

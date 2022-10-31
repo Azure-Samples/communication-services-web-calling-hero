@@ -8,13 +8,9 @@ import { initializeIcons, Spinner } from '@fluentui/react';
 import { CallAdapterLocator } from '@azure/communication-react';
 import React, { useEffect, useState } from 'react';
 import {
-  buildTime,
-  callingSDKVersion,
-  communicationReactSDKVersion,
   createGroupId,
   fetchTokenResponse,
   getGroupIdFromUrl,
-  getOutboundParticipants,
   getTeamsLinkFromUrl,
   isLandscape,
   isOnIphoneAndNotSafari,
@@ -33,9 +29,6 @@ import { UnsupportedBrowserPage } from './views/UnsupportedBrowserPage';
 
 setLogLevel('warning');
 
-console.log(
-  `ACS sample calling app. Last Updated ${buildTime} Using @azure/communication-calling:${callingSDKVersion} and @azure/communication-react:${communicationReactSDKVersion}`
-);
 
 initializeIcons();
 
@@ -98,8 +91,7 @@ const App = (): JSX.Element => {
           startCallHandler={async (callDetails) => {
             setDisplayName(callDetails.displayName);
 
-            let callLocator: CallAdapterLocator | undefined =
-              callDetails.callLocator || getTeamsLinkFromUrl() || getGroupIdFromUrl();
+            let callLocator: CallAdapterLocator | undefined = getTeamsLinkFromUrl() || getGroupIdFromUrl();
 
             callLocator = callLocator || createGroupId();
 

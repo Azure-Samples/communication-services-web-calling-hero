@@ -88,14 +88,6 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 onChange={(_, newValue) => newValue && setCallLocator({ meetingLink: newValue })}
               />
             )}
-
-            {}
-
-            {}
-
-            {}
-
-            {}
           </Stack>
           <DisplayNameField defaultName={displayName} setName={setDisplayName} />
           <PrimaryButton
@@ -107,8 +99,7 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 saveDisplayNameToLocalStorage(displayName);
 
                 props.startCallHandler({
-                  displayName,
-                  callLocator: callLocator
+                  displayName
                 });
               }
             }}

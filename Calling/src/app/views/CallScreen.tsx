@@ -10,6 +10,7 @@ import {
   toFlatCommunicationIdentifier,
   useAzureCommunicationCallAdapter
 } from '@azure/communication-react';
+
 import { Spinner } from '@fluentui/react';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useSwitchableFluentTheme } from '../theming/SwitchableFluentThemeProvider';
@@ -22,6 +23,7 @@ export interface CallScreenProps {
   userId: CommunicationUserIdentifier;
   callLocator: CallAdapterLocator;
   displayName: string;
+
   onCallEnded: () => void;
 }
 
@@ -83,12 +85,14 @@ export const CallScreen = (props: CallScreenProps): JSX.Element => {
     return <Spinner label={'Creating adapter'} ariaLive="assertive" labelPosition="top" />;
   }
 
+  const callInvitationUrl: string | undefined = window.location.href;
+
   return (
     <CallComposite
       adapter={adapter}
       fluentTheme={currentTheme.theme}
       rtl={currentRtl}
-      callInvitationUrl={window.location.href}
+      callInvitationUrl={callInvitationUrl}
       formFactor={isMobileSession ? 'mobile' : 'desktop'}
     />
   );

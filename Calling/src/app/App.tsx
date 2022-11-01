@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { GroupCallLocator, TeamsMeetingLinkLocator } from '@azure/communication-calling';
 import { CommunicationUserIdentifier } from '@azure/communication-common';
+
 import { setLogLevel } from '@azure/logger';
 import { initializeIcons, Spinner } from '@fluentui/react';
 import { CallAdapterLocator } from '@azure/communication-react';
@@ -17,6 +17,7 @@ import {
   navigateToHomePage,
   WEB_APP_TITLE
 } from './utils/AppUtils';
+
 import { useIsMobile } from './utils/useIsMobile';
 import { useSecondaryInstanceCheck } from './utils/useSecondaryInstanceCheck';
 import { CallError } from './views/CallError';
@@ -82,26 +83,22 @@ const App = (): JSX.Element => {
       document.title = `home - ${WEB_APP_TITLE}`;
       // Show a simplified join home screen if joining an existing call
       const joiningExistingCall: boolean = !!getGroupIdFromUrl() || !!getTeamsLinkFromUrl();
+
       return (
         <HomeScreen
           joiningExistingCall={joiningExistingCall}
-          startCallHandler={(callDetails) => {
+          startCallHandler={async (callDetails) => {
             setDisplayName(callDetails.displayName);
 
-            const isTeamsCall = !!callDetails.teamsLink;
-            const makeLocator = (teamsLink?: TeamsMeetingLinkLocator | undefined): CallAdapterLocator => {
-              return teamsLink || getTeamsLinkFromUrl() || getGroupIdFromUrl() || createGroupId();
-            };
-            const locator = makeLocator(callDetails.teamsLink);
+            let callLocator: CallAdapterLocator | undefined = getTeamsLinkFromUrl() || getGroupIdFromUrl();
 
-            setCallLocator(locator);
+            callLocator = callLocator || createGroupId();
+
+            setCallLocator(callLocator);
 
             // Update window URL to have a joinable link
             if (!joiningExistingCall) {
-              const joinParam = isTeamsCall
-                ? '?teamsLink=' + encodeURIComponent((locator as TeamsMeetingLinkLocator).meetingLink)
-                : '?groupId=' + (locator as GroupCallLocator).groupId;
-              window.history.pushState({}, document.title, window.location.origin + joinParam);
+              window.history.pushState({}, document.title, window.location.origin + getJoinParams(callLocator));
             }
 
             setPage('call');
@@ -144,6 +141,14 @@ const App = (): JSX.Element => {
       document.title = `error - ${WEB_APP_TITLE}`;
       return <>Invalid page</>;
   }
+};
+
+const getJoinParams = (locator: CallAdapterLocator): string => {
+  if ('meetingLink' in locator) {
+    return '?teamsLink=' + encodeURIComponent(locator.meetingLink);
+  }
+
+  return '?groupId=' + encodeURIComponent(locator.groupId);
 };
 
 export default App;

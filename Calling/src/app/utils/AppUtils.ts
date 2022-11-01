@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 import { GroupLocator, TeamsMeetingLinkLocator } from '@azure/communication-calling';
+
 import { v1 as generateGUID } from 'uuid';
 
 /**
@@ -17,7 +18,7 @@ export const fetchTokenResponse = async (): Promise<any> => {
       return responseAsJson;
     }
   }
-  throw 'Invalid token response';
+  throw new Error('Invalid token response');
 };
 
 /**

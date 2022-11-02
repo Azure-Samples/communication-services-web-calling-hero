@@ -26,7 +26,7 @@ import { DisplayNameField } from './DisplayNameField';
 import { TeamsMeetingLinkLocator } from '@azure/communication-calling';
 
 export interface HomeScreenProps {
-  startCallHandler(callDetails: { displayName: string }): void;
+  startCallHandler(callDetails: { displayName: string; callLocator?: TeamsMeetingLinkLocator }): void;
   joiningExistingCall: boolean;
 }
 
@@ -99,7 +99,8 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 saveDisplayNameToLocalStorage(displayName);
 
                 props.startCallHandler({
-                  displayName
+                  displayName,
+                  callLocator
                 });
               }
             }}

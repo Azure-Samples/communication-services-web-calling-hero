@@ -100,7 +100,7 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
 
                 props.startCallHandler({
                   displayName,
-                  callLocator,
+                  callLocator
                 });
               }
             }}

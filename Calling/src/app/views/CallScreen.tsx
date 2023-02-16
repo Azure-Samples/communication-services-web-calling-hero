@@ -12,7 +12,7 @@ import {
 } from '@azure/communication-react';
 
 import { Spinner } from '@fluentui/react';
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSwitchableFluentTheme } from '../theming/SwitchableFluentThemeProvider';
 import { createAutoRefreshingCredential } from '../utils/credential';
 import { WEB_APP_TITLE } from '../utils/AppUtils';
@@ -29,6 +29,7 @@ export interface CallScreenProps {
 
 export const CallScreen = (props: CallScreenProps): JSX.Element => {
   const { token, userId, callLocator, displayName, onCallEnded } = props;
+  const [inCall, setInCall] = useState<Boolean>(false);
   const callIdRef = useRef<string>();
   const { currentTheme, currentRtl } = useSwitchableFluentTheme();
   const isMobileSession = useIsMobile();
@@ -49,6 +50,10 @@ export const CallScreen = (props: CallScreenProps): JSX.Element => {
         if (state?.call?.id && callIdRef.current !== state?.call?.id) {
           callIdRef.current = state?.call?.id;
           console.log(`Call Id: ${callIdRef.current}`);
+        }
+
+        if (state?.page && inCall === false && state.page != "configuration"){
+          setInCall(true);
         }
       });
       return adapter;
@@ -76,6 +81,7 @@ export const CallScreen = (props: CallScreenProps): JSX.Element => {
   // This ensures the service knows the user intentionally left the call if the user
   // closed the browser tab during an active call.
   useEffect(() => {
+    adapter?.joinCall();
     const disposeAdapter = (): void => adapter?.dispose();
     window.addEventListener('beforeunload', disposeAdapter);
     return () => window.removeEventListener('beforeunload', disposeAdapter);
@@ -88,7 +94,7 @@ export const CallScreen = (props: CallScreenProps): JSX.Element => {
   const callInvitationUrl: string | undefined = window.location.href;
 
   return (
-    <CallComposite
+    {inCall} && <CallComposite
       adapter={adapter}
       fluentTheme={currentTheme.theme}
       rtl={currentRtl}

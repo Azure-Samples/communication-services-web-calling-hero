@@ -8,6 +8,9 @@ import { initializeIcons, Spinner } from '@fluentui/react';
 import { CallAdapterLocator } from '@azure/communication-react';
 import React, { useEffect, useState } from 'react';
 import {
+  buildTime,
+  callingSDKVersion,
+  communicationReactSDKVersion,
   createGroupId,
   fetchTokenResponse,
   getGroupIdFromUrl,
@@ -22,16 +25,19 @@ import { useIsMobile } from './utils/useIsMobile';
 import { useSecondaryInstanceCheck } from './utils/useSecondaryInstanceCheck';
 import { CallError } from './views/CallError';
 import { CallScreen } from './views/CallScreen';
-import { EndCall } from './views/EndCall';
 import { HomeScreen } from './views/HomeScreen';
 import { PageOpenInAnotherTab } from './views/PageOpenInAnotherTab';
 import { UnsupportedBrowserPage } from './views/UnsupportedBrowserPage';
 
 setLogLevel('warning');
 
+console.log(
+  `ACS sample calling app. Last Updated ${buildTime} Using @azure/communication-calling:${callingSDKVersion} and @azure/communication-react:${communicationReactSDKVersion}`
+);
+
 initializeIcons();
 
-type AppPages = 'home' | 'call' | 'endCall';
+type AppPages = 'home' | 'call';
 
 const App = (): JSX.Element => {
   const [page, setPage] = useState<AppPages>('home');
@@ -90,8 +96,7 @@ const App = (): JSX.Element => {
           startCallHandler={async (callDetails) => {
             setDisplayName(callDetails.displayName);
 
-            let callLocator: CallAdapterLocator | undefined =
-              callDetails.callLocator || getTeamsLinkFromUrl() || getGroupIdFromUrl();
+            let callLocator: CallAdapterLocator | undefined = getTeamsLinkFromUrl() || getGroupIdFromUrl();
 
             callLocator = callLocator || createGroupId();
 
@@ -107,10 +112,7 @@ const App = (): JSX.Element => {
         />
       );
     }
-    case 'endCall': {
-      document.title = `end call - ${WEB_APP_TITLE}`;
-      return <EndCall rejoinHandler={() => setPage('call')} homeHandler={navigateToHomePage} />;
-    }
+
     case 'call': {
       if (userCredentialFetchError) {
         document.title = `error - ${WEB_APP_TITLE}`;
@@ -129,13 +131,9 @@ const App = (): JSX.Element => {
         return <Spinner label={'Getting user credentials from server'} ariaLive="assertive" labelPosition="top" />;
       }
       return (
-        <CallScreen
-          token={token}
-          userId={userId}
-          displayName={displayName}
-          callLocator={callLocator}
-          onCallEnded={() => setPage('endCall')}
-        />
+        <React.StrictMode>
+          <CallScreen token={token} userId={userId} displayName={displayName} callLocator={callLocator} />
+        </React.StrictMode>
       );
     }
     default:

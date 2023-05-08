@@ -1,101 +1,88 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { CommunicationUserIdentifier } from '@azure/communication-common';
+import { AzureCommunicationTokenCredential, CommunicationUserIdentifier } from '@azure/communication-common';
+
 import {
   CallAdapterLocator,
-  CallAdapter,
   CallAdapterState,
-  CallComposite,
-  toFlatCommunicationIdentifier,
-  useAzureCommunicationCallAdapter
+  useAzureCommunicationCallAdapter,
+  CommonCallAdapter,
+  CallAdapter,
+  toFlatCommunicationIdentifier
 } from '@azure/communication-react';
 
-import { Spinner } from '@fluentui/react';
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import { useSwitchableFluentTheme } from '../theming/SwitchableFluentThemeProvider';
+import React, { useCallback, useMemo, useRef } from 'react';
 import { createAutoRefreshingCredential } from '../utils/credential';
 import { WEB_APP_TITLE } from '../utils/AppUtils';
-import { useIsMobile } from '../utils/useIsMobile';
+import { CallCompositeContainer } from './CallCompositeContainer';
 
 export interface CallScreenProps {
   token: string;
   userId: CommunicationUserIdentifier;
+
   callLocator: CallAdapterLocator;
   displayName: string;
-
-  onCallEnded: () => void;
 }
 
 export const CallScreen = (props: CallScreenProps): JSX.Element => {
-  const { token, userId, callLocator, displayName, onCallEnded } = props;
+  const { token, userId } = props;
   const callIdRef = useRef<string>();
-  const { currentTheme, currentRtl } = useSwitchableFluentTheme();
-  const isMobileSession = useIsMobile();
-  const afterCreate = useCallback(
-    async (adapter: CallAdapter): Promise<CallAdapter> => {
-      adapter.on('callEnded', () => {
-        onCallEnded();
-      });
-      adapter.on('error', (e) => {
-        // Error is already acted upon by the Call composite, but the surrounding application could
-        // add top-level error handling logic here (e.g. reporting telemetry).
-        console.log('Adapter error event:', e);
-      });
-      adapter.onStateChange((state: CallAdapterState) => {
-        const pageTitle = convertPageStateToString(state);
-        document.title = `${pageTitle} - ${WEB_APP_TITLE}`;
 
-        if (state?.call?.id && callIdRef.current !== state?.call?.id) {
-          callIdRef.current = state?.call?.id;
-          console.log(`Call Id: ${callIdRef.current}`);
-        }
-      });
+  const subscribeAdapterEvents = useCallback((adapter: CommonCallAdapter) => {
+    adapter.on('error', (e) => {
+      // Error is already acted upon by the Call composite, but the surrounding application could
+      // add top-level error handling logic here (e.g. reporting telemetry).
+      console.log('Adapter error event:', e);
+    });
+    adapter.onStateChange((state: CallAdapterState) => {
+      const pageTitle = convertPageStateToString(state);
+      document.title = `${pageTitle} - ${WEB_APP_TITLE}`;
+
+      if (state?.call?.id && callIdRef.current !== state?.call?.id) {
+        callIdRef.current = state?.call?.id;
+        console.log(`Call Id: ${callIdRef.current}`);
+      }
+    });
+  }, []);
+
+  const afterCallAdapterCreate = useCallback(
+    async (adapter: CallAdapter): Promise<CallAdapter> => {
+      subscribeAdapterEvents(adapter);
       return adapter;
     },
-    [callIdRef, onCallEnded]
+    [subscribeAdapterEvents]
   );
 
-  const credential = useMemo(
-    () => createAutoRefreshingCredential(toFlatCommunicationIdentifier(userId), token),
-    [token, userId]
-  );
+  const credential = useMemo(() => {
+    return createAutoRefreshingCredential(toFlatCommunicationIdentifier(userId), token);
+  }, [token, userId]);
+
+  return <AzureCommunicationCallScreen afterCreate={afterCallAdapterCreate} credential={credential} {...props} />;
+};
+
+type AzureCommunicationCallScreenProps = CallScreenProps & {
+  afterCreate?: (adapter: CallAdapter) => Promise<CallAdapter>;
+  credential: AzureCommunicationTokenCredential;
+};
+
+const AzureCommunicationCallScreen = (props: AzureCommunicationCallScreenProps): JSX.Element => {
+  const { afterCreate, callLocator: locator, userId, ...adapterArgs } = props;
+
+  if (!('communicationUserId' in userId)) {
+    throw new Error('A MicrosoftTeamsUserIdentifier must be provided for Teams Identity Call.');
+  }
 
   const adapter = useAzureCommunicationCallAdapter(
     {
+      ...adapterArgs,
       userId,
-      displayName,
-      credential,
-      locator: callLocator
+      locator
     },
-
     afterCreate
   );
 
-  // Dispose of the adapter in the window's before unload event.
-  // This ensures the service knows the user intentionally left the call if the user
-  // closed the browser tab during an active call.
-  useEffect(() => {
-    const disposeAdapter = (): void => adapter?.dispose();
-    window.addEventListener('beforeunload', disposeAdapter);
-    return () => window.removeEventListener('beforeunload', disposeAdapter);
-  }, [adapter]);
-
-  if (!adapter) {
-    return <Spinner label={'Creating adapter'} ariaLive="assertive" labelPosition="top" />;
-  }
-
-  const callInvitationUrl: string | undefined = window.location.href;
-
-  return (
-    <CallComposite
-      adapter={adapter}
-      fluentTheme={currentTheme.theme}
-      rtl={currentRtl}
-      callInvitationUrl={callInvitationUrl}
-      formFactor={isMobileSession ? 'mobile' : 'desktop'}
-    />
-  );
+  return <CallCompositeContainer {...props} adapter={adapter} />;
 };
 
 const convertPageStateToString = (state: CallAdapterState): string => {

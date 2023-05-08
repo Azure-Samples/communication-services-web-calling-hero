@@ -88,20 +88,6 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 onChange={(_, newValue) => newValue && setCallLocator({ meetingLink: newValue })}
               />
             )}
-
-            {}
-
-            {}
-
-            {}
-
-            {}
-
-            {}
-
-            {}
-
-            {}
           </Stack>
           {chosenCallOption.key !== 'TeamsIdentity' && (
             <DisplayNameField defaultName={displayName} setName={setDisplayName} />
@@ -117,8 +103,7 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
 
                 props.startCallHandler({
                   //TODO: This needs to be updated after we change arg types of TeamsCall
-                  displayName: !displayName ? 'Teams UserName PlaceHolder' : displayName,
-                  callLocator: callLocator
+                  displayName: !displayName ? 'Teams UserName PlaceHolder' : displayName
                 });
               }
             }}

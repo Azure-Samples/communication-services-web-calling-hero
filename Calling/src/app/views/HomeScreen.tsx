@@ -26,7 +26,7 @@ import { DisplayNameField } from './DisplayNameField';
 import { TeamsMeetingLinkLocator } from '@azure/communication-calling';
 
 export interface HomeScreenProps {
-  startCallHandler(callDetails: { displayName: string; callLocator?: TeamsMeetingLinkLocator }): void;
+  startCallHandler(callDetails: { displayName: string }): void;
   joiningExistingCall: boolean;
 }
 
@@ -38,7 +38,7 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
   const callOptions: IChoiceGroupOption[] = [
     { key: 'ACSCall', text: 'Start a call' },
 
-    { key: 'TeamsMeeting', text: 'Join a Teams meeting' }
+    { key: 'TeamsMeeting', text: 'Join a Teams meeting using ACS identity' }
   ];
 
   // Get display name from local storage if available
@@ -88,19 +88,37 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 onChange={(_, newValue) => newValue && setCallLocator({ meetingLink: newValue })}
               />
             )}
+
+            {}
+
+            {}
+
+            {}
+
+            {}
+
+            {}
+
+            {}
+
+            {}
           </Stack>
-          <DisplayNameField defaultName={displayName} setName={setDisplayName} />
+          {chosenCallOption.key !== 'TeamsIdentity' && (
+            <DisplayNameField defaultName={displayName} setName={setDisplayName} />
+          )}
+
           <PrimaryButton
             disabled={!buttonEnabled}
             className={buttonStyle}
             text={buttonText}
             onClick={() => {
               if (displayName) {
-                saveDisplayNameToLocalStorage(displayName);
+                displayName && saveDisplayNameToLocalStorage(displayName);
 
                 props.startCallHandler({
-                  displayName,
-                  callLocator
+                  //TODO: This needs to be updated after we change arg types of TeamsCall
+                  displayName: !displayName ? 'Teams UserName PlaceHolder' : displayName,
+                  callLocator: callLocator
                 });
               }
             }}

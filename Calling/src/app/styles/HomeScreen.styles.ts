@@ -10,16 +10,13 @@ export const imgStyle = mergeStyles({
     display: 'none'
   }
 });
-
 export const containerTokens: IStackTokens = {
   childrenGap: '4rem'
 };
-
 export const infoContainerStyle = mergeStyles({
   padding: '0.5rem',
   width: '20rem'
 });
-
 export const containerStyle = mergeStyles({
   height: '100%',
   width: '100% ',
@@ -27,25 +24,20 @@ export const containerStyle = mergeStyles({
   minWidth: '24rem', // max of min-width from stack items + padding * 2 = 20 + 2 * 2
   minHeight: 'auto'
 });
-
 export const configContainerStyle = mergeStyles({
   minWidth: '10rem',
   width: 'auto',
   height: 'auto'
 });
-
 export const configContainerStackTokens: IStackTokens = {
   childrenGap: '1.25rem'
 };
-
 export const callContainerStackTokens: IStackTokens = {
   childrenGap: '0.75rem'
 };
-
 export const callOptionsGroupStyles = {
   label: { padding: 0 }
 };
-
 export const headerStyle = mergeStyles({
   fontWeight: 600,
   fontSize: '1.25rem', // 20px
@@ -53,15 +45,12 @@ export const headerStyle = mergeStyles({
   width: '20rem',
   marginBottom: '1.5rem'
 });
-
 export const bodyItemStyle = mergeStyles({
   marginTop: '1.25rem'
 });
-
 export const teamsItemStyle = mergeStyles({
   marginTop: '0.75rem'
 });
-
 export const buttonStyle = mergeStyles({
   fontWeight: 600,
   fontSize: '0.875rem', // 14px

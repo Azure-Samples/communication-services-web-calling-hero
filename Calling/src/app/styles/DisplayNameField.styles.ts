@@ -22,12 +22,10 @@ export const inputBoxTextStyle = mergeStyles({
     fontSize: '0.875rem',
     fontWeight: 600
   },
-
   '::-moz-placeholder': {
     fontSize: '0.875rem',
     fontWeight: 600
   },
-
   ':-moz-placeholder': {
     fontSize: '0.875rem',
     fontWeight: 600

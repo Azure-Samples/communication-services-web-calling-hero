@@ -26,7 +26,7 @@
       {
         "name": "[variables('commsName')]",
         "type": "Microsoft.Communication/communicationServices",
-        "apiVersion": "2020-08-20-preview",
+        "apiVersion": "2020-08-20",
         "location": "global",
         "tags": {},
         "properties": {
@@ -67,7 +67,7 @@
             "displayName": "appsettings"
           },
           "properties": {
-            "ResourceConnectionString": "[listkeys(variables('commsName'), '2020-08-20-preview' ).primaryConnectionString]",
+            "ResourceConnectionString": "[listkeys(variables('commsName'), '2020-08-20' ).primaryConnectionString]",
             "WEBSITE_NODE_DEFAULT_VERSION": "~14"
           }
         },

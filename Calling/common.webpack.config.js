@@ -52,9 +52,6 @@ const webpackConfig = (sampleAppDir, env, babelConfig) => {
         __CALLINGVERSION__: JSON.stringify(
           require(path.resolve(sampleAppDir, 'package.json')).dependencies['@azure/communication-calling']
         ),
-        __CHATVERSION__: JSON.stringify(
-          require(path.resolve(sampleAppDir, 'package.json')).dependencies['@azure/communication-chat']
-        ),
         __COMMUNICATIONREACTVERSION__: JSON.stringify(
           require(path.resolve(sampleAppDir, 'package.json')).dependencies['@azure/communication-react']
         ),

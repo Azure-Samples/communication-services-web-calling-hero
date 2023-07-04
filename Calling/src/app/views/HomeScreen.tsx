@@ -27,7 +27,7 @@ import { TeamsMeetingLinkLocator } from '@azure/communication-calling';
 import { CallAdapterLocator } from '@azure/communication-react';
 
 export interface HomeScreenProps {
-  startCallHandler(callDetails: { displayName: string, callLocator?: CallAdapterLocator }): void;
+  startCallHandler(callDetails: { displayName: string; callLocator?: CallAdapterLocator }): void;
   joiningExistingCall: boolean;
 }
 
@@ -87,8 +87,8 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 iconProps={{ iconName: 'Link' }}
                 placeholder={'Enter a Teams meeting link'}
                 onChange={(_, newValue) => {
-                  newValue && setCallLocator({ meetingLink: newValue })}
-                }
+                  newValue && setCallLocator({ meetingLink: newValue });
+                }}
               />
             )}
           </Stack>

@@ -24,9 +24,10 @@ import { localStorageAvailable } from '../utils/localStorage';
 import { getDisplayNameFromLocalStorage, saveDisplayNameToLocalStorage } from '../utils/localStorage';
 import { DisplayNameField } from './DisplayNameField';
 import { TeamsMeetingLinkLocator } from '@azure/communication-calling';
+import { CallAdapterLocator } from '@azure/communication-react';
 
 export interface HomeScreenProps {
-  startCallHandler(callDetails: { displayName: string }): void;
+  startCallHandler(callDetails: { displayName: string; callLocator?: CallAdapterLocator }): void;
   joiningExistingCall: boolean;
 }
 
@@ -85,7 +86,9 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 className={teamsItemStyle}
                 iconProps={{ iconName: 'Link' }}
                 placeholder={'Enter a Teams meeting link'}
-                onChange={(_, newValue) => newValue && setCallLocator({ meetingLink: newValue })}
+                onChange={(_, newValue) => {
+                  newValue && setCallLocator({ meetingLink: newValue });
+                }}
               />
             )}
           </Stack>
@@ -103,7 +106,8 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
 
                 props.startCallHandler({
                   //TODO: This needs to be updated after we change arg types of TeamsCall
-                  displayName: !displayName ? 'Teams UserName PlaceHolder' : displayName
+                  displayName: !displayName ? 'Teams UserName PlaceHolder' : displayName,
+                  callLocator: callLocator ? callLocator : undefined
                 });
               }
             }}

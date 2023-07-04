@@ -96,15 +96,13 @@ const App = (): JSX.Element => {
           startCallHandler={async (callDetails) => {
             setDisplayName(callDetails.displayName);
 
-            let callLocator: CallAdapterLocator | undefined = getTeamsLinkFromUrl() || getGroupIdFromUrl();
+            let callLocatorUrl: CallAdapterLocator | undefined = callDetails.callLocator || getTeamsLinkFromUrl() || getGroupIdFromUrl() || createGroupId();
 
-            callLocator = callLocator || createGroupId();
-
-            setCallLocator(callLocator);
+            setCallLocator(callLocatorUrl);
 
             // Update window URL to have a joinable link
             if (!joiningExistingCall) {
-              window.history.pushState({}, document.title, window.location.origin + getJoinParams(callLocator));
+              window.history.pushState({}, document.title, window.location.origin + getJoinParams(callLocatorUrl));
             }
 
             setPage('call');

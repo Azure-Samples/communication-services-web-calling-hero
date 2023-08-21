@@ -47,6 +47,14 @@ export const getTeamsLinkFromUrl = (): TeamsMeetingLinkLocator | undefined => {
   return teamsLink ? { meetingLink: teamsLink } : undefined;
 };
 
+/**
+ * Get teams meeting link from the url's query params.
+ */
+export const getIsCTE = (): boolean | undefined => {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get('isCTE') === 'true';
+};
+
 /*
  * TODO:
  *  Remove this method once the SDK improves error handling for unsupported browser.

@@ -29,7 +29,7 @@ import { HomeScreen } from './views/HomeScreen';
 import { PageOpenInAnotherTab } from './views/PageOpenInAnotherTab';
 import { UnsupportedBrowserPage } from './views/UnsupportedBrowserPage';
 
-setLogLevel('warning');
+setLogLevel('verbose');
 
 console.log(
   `ACS sample calling app. Last Updated ${buildTime} Using @azure/communication-calling:${callingSDKVersion} and @azure/communication-react:${communicationReactSDKVersion}`
@@ -96,14 +96,20 @@ const App = (): JSX.Element => {
           startCallHandler={async (callDetails) => {
             setDisplayName(callDetails.displayName);
 
-            const callLocatorUrl: CallAdapterLocator | undefined =
-              callDetails.callLocator || getTeamsLinkFromUrl() || getGroupIdFromUrl() || createGroupId();
+            let callLocator: CallAdapterLocator | undefined =
+              callDetails.callLocator || getTeamsLinkFromUrl() || getGroupIdFromUrl();
 
-            setCallLocator(callLocatorUrl);
+            callLocator = callLocator || createGroupId();
+
+            setCallLocator(callLocator);
 
             // Update window URL to have a joinable link
             if (!joiningExistingCall) {
-              window.history.pushState({}, document.title, window.location.origin + getJoinParams(callLocatorUrl));
+              window.history.pushState(
+                {},
+                document.title,
+                window.location.origin + getJoinParams(callLocator) + getIsCTEParam()
+              );
             }
 
             setPage('call');
@@ -139,6 +145,10 @@ const App = (): JSX.Element => {
       document.title = `error - ${WEB_APP_TITLE}`;
       return <>Invalid page</>;
   }
+};
+
+const getIsCTEParam = (isCTE?: boolean): string => {
+  return isCTE ? '&isCTE=true' : '';
 };
 
 const getJoinParams = (locator: CallAdapterLocator): string => {

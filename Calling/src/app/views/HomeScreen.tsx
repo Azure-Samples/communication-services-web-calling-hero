@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import React, { useState } from 'react';
+import React, { /* useEffect, */ useState } from 'react';
 import { Stack, PrimaryButton, Image, ChoiceGroup, IChoiceGroupOption, Text, TextField } from '@fluentui/react';
 
 import heroSVG from '../../assets/hero.svg';
@@ -24,10 +24,14 @@ import { localStorageAvailable } from '../utils/localStorage';
 import { getDisplayNameFromLocalStorage, saveDisplayNameToLocalStorage } from '../utils/localStorage';
 import { DisplayNameField } from './DisplayNameField';
 import { TeamsMeetingLinkLocator } from '@azure/communication-calling';
+
 import { CallAdapterLocator } from '@azure/communication-react';
 
 export interface HomeScreenProps {
-  startCallHandler(callDetails: { displayName: string; callLocator?: CallAdapterLocator }): void;
+  startCallHandler(callDetails: {
+    displayName: string;
+    callLocator?: CallAdapterLocator | TeamsMeetingLinkLocator;
+  }): void;
   joiningExistingCall: boolean;
 }
 
@@ -53,6 +57,8 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
   const teamsCallChosen: boolean = chosenCallOption.key === 'TeamsMeeting';
 
   const buttonEnabled = displayName && (startGroupCall || (teamsCallChosen && callLocator));
+
+  let showDisplayNameField = true;
 
   return (
     <Stack
@@ -86,16 +92,11 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 className={teamsItemStyle}
                 iconProps={{ iconName: 'Link' }}
                 placeholder={'Enter a Teams meeting link'}
-                onChange={(_, newValue) => {
-                  newValue && setCallLocator({ meetingLink: newValue });
-                }}
+                onChange={(_, newValue) => newValue && setCallLocator({ meetingLink: newValue })}
               />
             )}
           </Stack>
-          {chosenCallOption.key !== 'TeamsIdentity' && (
-            <DisplayNameField defaultName={displayName} setName={setDisplayName} />
-          )}
-
+          {showDisplayNameField && <DisplayNameField defaultName={displayName} setName={setDisplayName} />}
           <PrimaryButton
             disabled={!buttonEnabled}
             className={buttonStyle}
@@ -107,7 +108,7 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 props.startCallHandler({
                   //TODO: This needs to be updated after we change arg types of TeamsCall
                   displayName: !displayName ? 'Teams UserName PlaceHolder' : displayName,
-                  callLocator: callLocator ? callLocator : undefined
+                  callLocator: callLocator
                 });
               }
             }}

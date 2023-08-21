@@ -30,7 +30,7 @@ export const CallCompositeContainer = (props: CallCompositeContainerProps): JSX.
     return <Spinner label={'Creating adapter'} ariaLive="assertive" labelPosition="top" />;
   }
 
-  const callInvitationUrl: string | undefined = window.location.href;
+  let callInvitationUrl: string | undefined = window.location.href;
 
   return (
     <CallComposite

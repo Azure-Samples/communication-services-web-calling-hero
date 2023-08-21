@@ -58,7 +58,7 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
 
   const buttonEnabled = displayName && (startGroupCall || (teamsCallChosen && callLocator));
 
-  let showDisplayNameField = true;
+  const showDisplayNameField = true;
 
   return (
     <Stack

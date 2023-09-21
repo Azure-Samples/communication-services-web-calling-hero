@@ -8,9 +8,6 @@ import { initializeIcons, Spinner } from '@fluentui/react';
 import { CallAdapterLocator } from '@azure/communication-react';
 import React, { useEffect, useState } from 'react';
 import {
-  buildTime,
-  callingSDKVersion,
-  communicationReactSDKVersion,
   createGroupId,
   fetchTokenResponse,
   getGroupIdFromUrl,
@@ -29,11 +26,7 @@ import { HomeScreen } from './views/HomeScreen';
 import { PageOpenInAnotherTab } from './views/PageOpenInAnotherTab';
 import { UnsupportedBrowserPage } from './views/UnsupportedBrowserPage';
 
-setLogLevel('warning');
-
-console.log(
-  `ACS sample calling app. Last Updated ${buildTime} Using @azure/communication-calling:${callingSDKVersion} and @azure/communication-react:${communicationReactSDKVersion}`
-);
+setLogLevel('verbose');
 
 initializeIcons();
 
@@ -96,14 +89,16 @@ const App = (): JSX.Element => {
           startCallHandler={async (callDetails) => {
             setDisplayName(callDetails.displayName);
 
-            const callLocatorUrl: CallAdapterLocator | undefined =
-              callDetails.callLocator || getTeamsLinkFromUrl() || getGroupIdFromUrl() || createGroupId();
+            let callLocator: CallAdapterLocator | undefined =
+              callDetails.callLocator || getTeamsLinkFromUrl() || getGroupIdFromUrl();
 
-            setCallLocator(callLocatorUrl);
+            callLocator = callLocator || createGroupId();
+
+            setCallLocator(callLocator);
 
             // Update window URL to have a joinable link
             if (!joiningExistingCall) {
-              window.history.pushState({}, document.title, window.location.origin + getJoinParams(callLocatorUrl));
+              window.history.pushState({}, document.title, window.location.origin + getJoinParams(callLocator));
             }
 
             setPage('call');

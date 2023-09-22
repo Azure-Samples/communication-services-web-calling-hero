@@ -12,6 +12,11 @@ import {
   toFlatCommunicationIdentifier
 } from '@azure/communication-react';
 
+/* @conditional-compile-remove(rooms) */ /* @conditional-compile-remove(video-background-effects) */
+import { AzureCommunicationCallAdapterOptions } from '@azure/communication-react';
+/* @conditional-compile-remove(video-background-effects) */
+import { onResolveVideoEffectDependencyLazy } from '@azure/communication-react';
+
 import React, { useCallback, useMemo, useRef } from 'react';
 import { createAutoRefreshingCredential } from '../utils/credential';
 import { WEB_APP_TITLE } from '../utils/AppUtils';
@@ -73,11 +78,24 @@ const AzureCommunicationCallScreen = (props: AzureCommunicationCallScreenProps):
     throw new Error('A MicrosoftTeamsUserIdentifier must be provided for Teams Identity Call.');
   }
 
+  /* @conditional-compile-remove(rooms) */ /* @conditional-compile-remove(video-background-effects) */
+  const callAdapterOptions: AzureCommunicationCallAdapterOptions = useMemo(() => {
+    return {
+      /* @conditional-compile-remove(video-background-effects) */
+      videoBackgroundOptions: {
+        videoBackgroundImages,
+        onResolveDependency: onResolveVideoEffectDependencyLazy
+      }
+    };
+  }, []);
+
   const adapter = useAzureCommunicationCallAdapter(
     {
       ...adapterArgs,
       userId,
-      locator
+      locator,
+      /* @conditional-compile-remove(rooms) */ /* @conditional-compile-remove(unsupported-browser) */ /* @conditional-compile-remove(video-background-effects) */
+      options: callAdapterOptions
     },
     afterCreate
   );
@@ -97,3 +115,42 @@ const convertPageStateToString = (state: CallAdapterState): string => {
       return `${state.page}`;
   }
 };
+
+/* @conditional-compile-remove(video-background-effects) */
+const videoBackgroundImages = [
+  {
+    key: 'ab1',
+    url: '/backgrounds/contoso.png',
+    tooltipText: 'Custom Background'
+  },
+  {
+    key: 'ab2',
+    url: '/backgrounds/abstract2.jpg',
+    tooltipText: 'Custom Background'
+  },
+  {
+    key: 'ab3',
+    url: '/backgrounds/abstract3.jpg',
+    tooltipText: 'Custom Background'
+  },
+  {
+    key: 'ab4',
+    url: '/backgrounds/room1.jpg',
+    tooltipText: 'Custom Background'
+  },
+  {
+    key: 'ab5',
+    url: '/backgrounds/room2.jpg',
+    tooltipText: 'Custom Background'
+  },
+  {
+    key: 'ab6',
+    url: '/backgrounds/room3.jpg',
+    tooltipText: 'Custom Background'
+  },
+  {
+    key: 'ab7',
+    url: '/backgrounds/room4.jpg',
+    tooltipText: 'Custom Background'
+  }
+];

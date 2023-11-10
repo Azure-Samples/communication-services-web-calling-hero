@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation.
-// Licensed under the MIT license.
+// Licensed under the MIT License.
 
 import { CommunicationUserIdentifier } from '@azure/communication-common';
 
@@ -8,6 +8,9 @@ import { initializeIcons, Spinner } from '@fluentui/react';
 import { CallAdapterLocator } from '@azure/communication-react';
 import React, { useEffect, useState } from 'react';
 import {
+  buildTime,
+  callingSDKVersion,
+  communicationReactSDKVersion,
   createGroupId,
   fetchTokenResponse,
   getGroupIdFromUrl,
@@ -19,14 +22,16 @@ import {
 } from './utils/AppUtils';
 
 import { useIsMobile } from './utils/useIsMobile';
-import { useSecondaryInstanceCheck } from './utils/useSecondaryInstanceCheck';
 import { CallError } from './views/CallError';
 import { CallScreen } from './views/CallScreen';
 import { HomeScreen } from './views/HomeScreen';
-import { PageOpenInAnotherTab } from './views/PageOpenInAnotherTab';
 import { UnsupportedBrowserPage } from './views/UnsupportedBrowserPage';
 
-setLogLevel('verbose');
+setLogLevel('error');
+
+console.log(
+  `ACS sample calling app. Last Updated ${buildTime} Using @azure/communication-calling:${callingSDKVersion} and @azure/communication-react:${communicationReactSDKVersion}`
+);
 
 initializeIcons();
 
@@ -60,17 +65,12 @@ const App = (): JSX.Element => {
 
   const isMobileSession = useIsMobile();
   const isLandscapeSession = isLandscape();
-  const isAppAlreadyRunningInAnotherTab = useSecondaryInstanceCheck();
 
   useEffect(() => {
     if (isMobileSession && isLandscapeSession) {
       console.log('ACS Calling sample: Mobile landscape view is experimental behavior');
     }
   }, [isMobileSession, isLandscapeSession]);
-
-  if (isMobileSession && isAppAlreadyRunningInAnotherTab) {
-    return <PageOpenInAnotherTab />;
-  }
 
   const supportedBrowser = !isOnIphoneAndNotSafari();
   if (!supportedBrowser) {
@@ -124,11 +124,7 @@ const App = (): JSX.Element => {
         document.title = `credentials - ${WEB_APP_TITLE}`;
         return <Spinner label={'Getting user credentials from server'} ariaLive="assertive" labelPosition="top" />;
       }
-      return (
-        <React.StrictMode>
-          <CallScreen token={token} userId={userId} displayName={displayName} callLocator={callLocator} />
-        </React.StrictMode>
-      );
+      return <CallScreen token={token} userId={userId} displayName={displayName} callLocator={callLocator} />;
     }
     default:
       document.title = `error - ${WEB_APP_TITLE}`;

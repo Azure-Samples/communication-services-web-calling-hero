@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
+// Licensed under the MIT license.
 
 import { CommunicationUserIdentifier } from '@azure/communication-common';
 
@@ -124,7 +124,11 @@ const App = (): JSX.Element => {
         document.title = `credentials - ${WEB_APP_TITLE}`;
         return <Spinner label={'Getting user credentials from server'} ariaLive="assertive" labelPosition="top" />;
       }
-      return <React.StrictMode><CallScreen token={token} userId={userId} displayName={displayName} callLocator={callLocator} /></React.StrictMode>;
+      return (
+        <React.StrictMode>
+          <CallScreen token={token} userId={userId} displayName={displayName} callLocator={callLocator} />
+        </React.StrictMode>
+      );
     }
     default:
       document.title = `error - ${WEB_APP_TITLE}`;

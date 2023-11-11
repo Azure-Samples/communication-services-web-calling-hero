@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
+// Licensed under the MIT license.
 
 import React from 'react';
 import { ChoiceGroup, IChoiceGroupOption, concatStyleSets } from '@fluentui/react';

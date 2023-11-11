@@ -8,9 +8,6 @@ import { initializeIcons, Spinner } from '@fluentui/react';
 import { CallAdapterLocator } from '@azure/communication-react';
 import React, { useEffect, useState } from 'react';
 import {
-  buildTime,
-  callingSDKVersion,
-  communicationReactSDKVersion,
   createGroupId,
   fetchTokenResponse,
   getGroupIdFromUrl,
@@ -27,11 +24,7 @@ import { CallScreen } from './views/CallScreen';
 import { HomeScreen } from './views/HomeScreen';
 import { UnsupportedBrowserPage } from './views/UnsupportedBrowserPage';
 
-setLogLevel('error');
-
-console.log(
-  `ACS sample calling app. Last Updated ${buildTime} Using @azure/communication-calling:${callingSDKVersion} and @azure/communication-react:${communicationReactSDKVersion}`
-);
+setLogLevel('verbose');
 
 initializeIcons();
 
@@ -124,7 +117,7 @@ const App = (): JSX.Element => {
         document.title = `credentials - ${WEB_APP_TITLE}`;
         return <Spinner label={'Getting user credentials from server'} ariaLive="assertive" labelPosition="top" />;
       }
-      return <CallScreen token={token} userId={userId} displayName={displayName} callLocator={callLocator} />;
+      return <React.StrictMode><CallScreen token={token} userId={userId} displayName={displayName} callLocator={callLocator} /></React.StrictMode>;
     }
     default:
       document.title = `error - ${WEB_APP_TITLE}`;

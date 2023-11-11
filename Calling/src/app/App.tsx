@@ -19,9 +19,11 @@ import {
 } from './utils/AppUtils';
 
 import { useIsMobile } from './utils/useIsMobile';
+import { useSecondaryInstanceCheck } from './utils/useSecondaryInstanceCheck';
 import { CallError } from './views/CallError';
 import { CallScreen } from './views/CallScreen';
 import { HomeScreen } from './views/HomeScreen';
+import { PageOpenInAnotherTab } from './views/PageOpenInAnotherTab';
 import { UnsupportedBrowserPage } from './views/UnsupportedBrowserPage';
 
 setLogLevel('verbose');
@@ -58,6 +60,7 @@ const App = (): JSX.Element => {
 
   const isMobileSession = useIsMobile();
   const isLandscapeSession = isLandscape();
+  const isAppAlreadyRunningInAnotherTab = useSecondaryInstanceCheck();
 
   useEffect(() => {
     if (isMobileSession && isLandscapeSession) {
@@ -68,6 +71,10 @@ const App = (): JSX.Element => {
   const supportedBrowser = !isOnIphoneAndNotSafari();
   if (!supportedBrowser) {
     return <UnsupportedBrowserPage />;
+  }
+
+  if (isMobileSession && isAppAlreadyRunningInAnotherTab) {
+    return <PageOpenInAnotherTab />;
   }
 
   switch (page) {

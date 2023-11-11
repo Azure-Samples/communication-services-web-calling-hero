@@ -95,20 +95,6 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 onChange={(_, newValue) => newValue && setCallLocator({ meetingLink: newValue })}
               />
             )}
-
-            {}
-
-            {}
-
-            {}
-
-            {}
-
-            {}
-
-            {}
-
-            {}
           </Stack>
           {showDisplayNameField && <DisplayNameField defaultName={displayName} setName={setDisplayName} />}
           <PrimaryButton

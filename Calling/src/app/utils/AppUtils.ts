@@ -63,3 +63,5 @@ export const isLandscape = (): boolean => window.innerWidth < window.innerHeight
 export const navigateToHomePage = (): void => {
   window.location.href = window.location.href.split('?')[0];
 };
+
+export const WEB_APP_TITLE = document.title;

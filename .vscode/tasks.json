@@ -19,6 +19,12 @@
 			"label": "npm prune (functions)",
 			"command": "npm prune --production",
 			"problemMatcher": []
+		},
+		{
+			"type": "func",
+			"command": "extensions install",
+			"problemMatcher": [],
+			"label": "func: extensions install"
 		}
 	]
 }

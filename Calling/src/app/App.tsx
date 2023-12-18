@@ -8,9 +8,12 @@ import { initializeIcons, Spinner } from '@fluentui/react';
 import { CallAdapterLocator } from '@azure/communication-react';
 import React, { useEffect, useState } from 'react';
 import {
+  addUserToRoom,
   createGroupId,
+  createRoom,
   fetchTokenResponse,
   getGroupIdFromUrl,
+  getRoomIdFromUrl,
   getTeamsLinkFromUrl,
   isLandscape,
   isOnIphoneAndNotSafari,
@@ -81,7 +84,7 @@ const App = (): JSX.Element => {
     case 'home': {
       document.title = `home - ${WEB_APP_TITLE}`;
       // Show a simplified join home screen if joining an existing call
-      const joiningExistingCall: boolean = !!getGroupIdFromUrl() || !!getTeamsLinkFromUrl();
+      const joiningExistingCall: boolean = !!getGroupIdFromUrl() || !!getTeamsLinkFromUrl() || !!getRoomIdFromUrl();
 
       return (
         <HomeScreen
@@ -92,7 +95,28 @@ const App = (): JSX.Element => {
             let callLocator: CallAdapterLocator | undefined =
               callDetails.callLocator || getTeamsLinkFromUrl() || getGroupIdFromUrl();
 
+            callLocator = callLocator || getRoomIdFromUrl();
+
             callLocator = callLocator || createGroupId();
+
+            if (callDetails.option === 'StartRooms') {
+              let roomId = '';
+              try {
+                roomId = await createRoom();
+              } catch (e) {
+                console.log(e);
+              }
+
+              callLocator = { roomId: roomId };
+            }
+
+            if ('roomId' in callLocator) {
+              if (userId && 'communicationUserId' in userId) {
+                await addUserToRoom(userId.communicationUserId, callLocator.roomId, callDetails.role ?? 'Presenter');
+              } else {
+                throw 'Invalid userId!';
+              }
+            }
 
             setCallLocator(callLocator);
 
@@ -140,7 +164,9 @@ const getJoinParams = (locator: CallAdapterLocator): string => {
   if ('meetingLink' in locator) {
     return '?teamsLink=' + encodeURIComponent(locator.meetingLink);
   }
-
+  if ('roomId' in locator) {
+    return '?roomId=' + encodeURIComponent(locator.roomId);
+  }
   return '?groupId=' + encodeURIComponent(locator.groupId);
 };
 

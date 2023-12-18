@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { GroupLocator, TeamsMeetingLinkLocator } from '@azure/communication-calling';
+import { GroupLocator, ParticipantRole, RoomLocator, TeamsMeetingLinkLocator } from '@azure/communication-calling';
 
 import { v1 as generateGUID } from 'uuid';
 
@@ -45,6 +45,48 @@ export const getTeamsLinkFromUrl = (): TeamsMeetingLinkLocator | undefined => {
   const urlParams = new URLSearchParams(window.location.search);
   const teamsLink = urlParams.get('teamsLink');
   return teamsLink ? { meetingLink: teamsLink } : undefined;
+};
+
+/**
+ * Get room id from the url's query params.
+ */
+export const getRoomIdFromUrl = (): RoomLocator | undefined => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const roomId = urlParams.get('roomId');
+  return roomId ? { roomId } : undefined;
+};
+
+/**
+ * Create an ACS room
+ */
+export const createRoom = async (): Promise<string> => {
+  const requestOptions = {
+    method: 'POST'
+  };
+  const response = await fetch(`/createRoom`, requestOptions);
+  if (!response.ok) {
+    throw 'Unable to create room';
+  }
+
+  const body = await response.json();
+  return body['id'];
+};
+
+/**
+ * Add user to an ACS room with a given roomId and role
+ */
+export const addUserToRoom = async (userId: string, roomId: string, role: ParticipantRole): Promise<void> => {
+  const requestOptions = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ userId: userId, roomId: roomId, role: role })
+  };
+  const response = await fetch('/addUserToRoom', requestOptions);
+  if (!response.ok) {
+    throw 'Unable to add user to room';
+  }
 };
 
 /*

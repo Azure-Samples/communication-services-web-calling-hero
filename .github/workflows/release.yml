@@ -13,14 +13,17 @@ jobs:
     steps:
     
       - name: Checkout
+        permissions: read
         uses: actions/checkout@v1
 
       - name: Setup Node 20
+        permissions: read
         uses: actions/setup-node@v2
         with:
           node-version: '20'
 
       - name: Build
+        permissions: read
         shell: bash
         run: |
           release_name=Group-Calling
@@ -36,6 +39,7 @@ jobs:
           # rm -r "./Calling/dist"
 
       - name: Publish
+        permissions: read
         uses: softprops/action-gh-release@v1
         with:
           files: "group-calling.zip"

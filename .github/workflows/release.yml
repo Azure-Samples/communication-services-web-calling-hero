@@ -9,7 +9,8 @@ jobs:
   release:
     name: Release
     permissions: 
-      deployments: write
+      contents: write
+      
     runs-on: ubuntu-latest
     steps:
     

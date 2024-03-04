@@ -8,7 +8,8 @@ on:
 jobs:
   release:
     name: Release
-    permissions: read-all
+    permissions: 
+      deployments: write
     runs-on: ubuntu-latest
     steps:
     

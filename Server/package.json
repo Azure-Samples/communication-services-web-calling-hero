@@ -29,7 +29,7 @@
     "express": "~4.17.3",
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
-    "@azure/core-http": "1.2.4"
+    "@azure/core-http": "3.0.4"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.2",

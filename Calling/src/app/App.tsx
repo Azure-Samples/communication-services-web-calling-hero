@@ -12,7 +12,6 @@ import React, { useEffect, useState } from 'react';
 import {
   buildTime,
   callingSDKVersion,
-  commitID,
   communicationReactSDKVersion,
   createGroupId,
   fetchTokenResponse,

@@ -25,7 +25,8 @@ Before contributing to this sample, please read our [contribution guidelines](./
 ![Homepage](./Calling/Media/homepage-sample-calling.png)
 
 ## ❤️ Feedback
-We appreciate your feedback and energy helping us improve our services. [Please let us know if you are satisfied with ACS through this survey](https://microsoft.qualtrics.com/jfe/form/SV_5dtYL81xwHnUVue). 
+
+We appreciate your feedback and energy helping us improve our services. [If you've tried the service, please give us feedback through this survey](https://microsoft.qualtrics.com/jfe/form/SV_9WTOR2ItSo0oFee).  
 
 ## Prerequisites
 

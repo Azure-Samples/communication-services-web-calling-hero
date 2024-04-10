@@ -29,7 +29,7 @@
     "@fluentui/react": "^8.112.9",
     "@fluentui/react-hooks": "^8.6.33",
     "@fluentui/react-icons": "^2.0.223",
-    "follow-redirects": "1.15.4",
+    "follow-redirects": "1.15.6",
     "merge": "^2.1.1",
     "mobile-detect": "^1.4.5",
     "nanoid": "3.3.6",

@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation.
-// Licensed under the MIT license.
+// Licensed under the MIT License.
 
 import { IStackTokens, mergeStyles } from '@fluentui/react';
 
@@ -58,4 +58,7 @@ export const buttonStyle = mergeStyles({
   height: '2.5rem',
   borderRadius: 3,
   padding: '0.625rem'
+});
+export const outboundTextField = mergeStyles({
+  paddingTop: '0.5rem'
 });

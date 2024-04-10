@@ -1,7 +1,8 @@
 // Copyright (c) Microsoft Corporation.
-// Licensed under the MIT license.
+// Licensed under the MIT License.
 
-import { GroupLocator, ParticipantRole, RoomLocator, TeamsMeetingLinkLocator } from '@azure/communication-calling';
+import { GroupLocator, TeamsMeetingLinkLocator } from '@azure/communication-calling';
+import { ParticipantRole, RoomCallLocator } from '@azure/communication-calling';
 
 import { v1 as generateGUID } from 'uuid';
 
@@ -39,24 +40,6 @@ export const getGroupIdFromUrl = (): GroupLocator | undefined => {
 export const createGroupId = (): GroupLocator => ({ groupId: generateGUID() });
 
 /**
- * Get teams meeting link from the url's query params.
- */
-export const getTeamsLinkFromUrl = (): TeamsMeetingLinkLocator | undefined => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const teamsLink = urlParams.get('teamsLink');
-  return teamsLink ? { meetingLink: teamsLink } : undefined;
-};
-
-/**
- * Get room id from the url's query params.
- */
-export const getRoomIdFromUrl = (): RoomLocator | undefined => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const roomId = urlParams.get('roomId');
-  return roomId ? { roomId } : undefined;
-};
-
-/**
  * Create an ACS room
  */
 export const createRoom = async (): Promise<string> => {
@@ -89,6 +72,24 @@ export const addUserToRoom = async (userId: string, roomId: string, role: Partic
   }
 };
 
+/**
+ * Get teams meeting link from the url's query params.
+ */
+export const getTeamsLinkFromUrl = (): TeamsMeetingLinkLocator | undefined => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const teamsLink = urlParams.get('teamsLink');
+  return teamsLink ? { meetingLink: teamsLink } : undefined;
+};
+
+/**
+ * Get room id from the url's query params.
+ */
+export const getRoomIdFromUrl = (): RoomCallLocator | undefined => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const roomId = urlParams.get('roomId');
+  return roomId ? { roomId } : undefined;
+};
+
 /*
  * TODO:
  *  Remove this method once the SDK improves error handling for unsupported browser.
@@ -107,3 +108,12 @@ export const navigateToHomePage = (): void => {
 };
 
 export const WEB_APP_TITLE = document.title;
+
+declare let __BUILDTIME__: string; // Injected by webpack
+export const buildTime = __BUILDTIME__;
+
+declare let __CALLINGVERSION__: string; // Injected by webpack
+export const callingSDKVersion = __CALLINGVERSION__;
+
+declare let __COMMUNICATIONREACTVERSION__: string; //Injected by webpack
+export const communicationReactSDKVersion = __COMMUNICATIONREACTVERSION__;

@@ -4,6 +4,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyPlugin = require("copy-webpack-plugin");
 
 const webpackConfig = (sampleAppDir, env, babelConfig) => {
   const config = {
@@ -40,6 +41,10 @@ const webpackConfig = (sampleAppDir, env, babelConfig) => {
         {
           test: /\.svg/,
           type: 'asset/inline'
+        },
+        {
+          test: /\.mp3$/,
+          loader: 'file-loader'
         }
       ]
     },
@@ -56,6 +61,12 @@ const webpackConfig = (sampleAppDir, env, babelConfig) => {
           require(path.resolve(sampleAppDir, 'package.json')).dependencies['@azure/communication-react']
         ),
         __BUILDTIME__: JSON.stringify(new Date().toLocaleString())
+      }),
+      new CopyPlugin({
+        patterns: [
+          { from: path.resolve(sampleAppDir, "public/manifest.json"), to: "manifest.json" },
+          { from: path.resolve(sampleAppDir, "public/assets"), to: "assets",  noErrorOnMissing: true },
+        ]
       })
     ],
     devServer: {

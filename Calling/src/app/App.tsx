@@ -184,6 +184,7 @@ const getJoinParams = (locator: CallAdapterLocator): string => {
   if ('meetingLink' in locator) {
     return '?teamsLink=' + encodeURIComponent(locator.meetingLink);
   }
+
   if ('roomId' in locator) {
     return '?roomId=' + encodeURIComponent(locator.roomId);
   }

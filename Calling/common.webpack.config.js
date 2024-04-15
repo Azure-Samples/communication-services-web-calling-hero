@@ -4,7 +4,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CopyPlugin = require("copy-webpack-plugin");
+const CopyPlugin = require('copy-webpack-plugin');
 
 const webpackConfig = (sampleAppDir, env, babelConfig) => {
   const config = {
@@ -64,8 +64,8 @@ const webpackConfig = (sampleAppDir, env, babelConfig) => {
       }),
       new CopyPlugin({
         patterns: [
-          { from: path.resolve(sampleAppDir, "public/manifest.json"), to: "manifest.json" },
-          { from: path.resolve(sampleAppDir, "public/assets"), to: "assets",  noErrorOnMissing: true },
+          { from: path.resolve(sampleAppDir, 'public/manifest.json'), to: 'manifest.json' },
+          { from: path.resolve(sampleAppDir, 'public/assets'), to: 'assets', noErrorOnMissing: true }
         ]
       })
     ],

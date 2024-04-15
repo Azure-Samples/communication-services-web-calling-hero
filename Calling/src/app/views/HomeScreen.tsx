@@ -91,7 +91,7 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
         chosenRoomsRoleOption) ||
       (teamsAdhocChosen && outboundTeamsUsers));
 
-  let showDisplayNameField = true;
+  const showDisplayNameField = true;
 
   const [teamsIdFormatError, setTeamsIdFormatError] = useState<boolean>(false);
 

@@ -18,7 +18,6 @@ import { AzureLogger, setLogLevel } from '@azure/logger';
 import { DefaultButton, Dialog, DialogFooter, DialogType, Link, PrimaryButton, Spinner, Text } from '@fluentui/react';
 import React from 'react';
 import { useEffect } from 'react';
-// @ts-expect-error No types available inside this package that was last updated 9 years ago
 import Shake from 'shake.js';
 import { useIsMobile } from './useIsMobile';
 

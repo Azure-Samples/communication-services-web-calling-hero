@@ -35,11 +35,7 @@ export type CallOption = 'ACSCall' | 'TeamsMeeting' | 'Rooms' | 'StartRooms' | '
 export interface HomeScreenProps {
   startCallHandler(callDetails: {
     displayName: string;
-    callLocator?:
-      | CallAdapterLocator
-      | TeamsMeetingLinkLocator
-      | RoomLocator
-      | TeamsMeetingIdLocator;
+    callLocator?: CallAdapterLocator | TeamsMeetingLinkLocator | RoomLocator | TeamsMeetingIdLocator;
     option?: CallOption;
     role?: string;
 
@@ -78,9 +74,7 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
   const [displayName, setDisplayName] = useState<string | undefined>(defaultDisplayName ?? undefined);
 
   const [chosenCallOption, setChosenCallOption] = useState<ICallChoiceGroupOption>(callOptions[0]);
-  const [callLocator, setCallLocator] = useState<
-    TeamsMeetingLinkLocator | RoomLocator | TeamsMeetingIdLocator
-  >();
+  const [callLocator, setCallLocator] = useState<TeamsMeetingLinkLocator | RoomLocator | TeamsMeetingIdLocator>();
   const [meetingId, setMeetingId] = useState<string>();
   const [passcode, setPasscode] = useState<string>();
   const [chosenRoomsRoleOption, setRoomsRoleOption] = useState<IChoiceGroupOption>(roomRoleOptions[1]);
@@ -146,55 +140,45 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
               />
             )}
 
-            {
-              teamsCallChosen && (
-                <Text className={teamsItemStyle} block variant="medium">
-                  <b>Or</b>
-                </Text>
-              )
-            }
+            {teamsCallChosen && (
+              <Text className={teamsItemStyle} block variant="medium">
+                <b>Or</b>
+              </Text>
+            )}
 
-            {
-              teamsCallChosen && (
-                <TextField
-                  className={teamsItemStyle}
-                  iconProps={{ iconName: 'MeetingId' }}
-                  label={'Meeting Id'}
-                  required
-                  placeholder={'Enter a meeting id'}
-                  onChange={(_, newValue) => {
-                    setMeetingId(newValue);
-                    newValue ? setCallLocator({ meetingId: newValue, passcode: passcode }) : setCallLocator(undefined);
-                  }}
-                />
-              )
-            }
+            {teamsCallChosen && (
+              <TextField
+                className={teamsItemStyle}
+                iconProps={{ iconName: 'MeetingId' }}
+                label={'Meeting Id'}
+                required
+                placeholder={'Enter a meeting id'}
+                onChange={(_, newValue) => {
+                  setMeetingId(newValue);
+                  newValue ? setCallLocator({ meetingId: newValue, passcode: passcode }) : setCallLocator(undefined);
+                }}
+              />
+            )}
 
-            {
-              teamsCallChosen && (
-                <TextField
-                  className={teamsItemStyle}
-                  iconProps={{ iconName: 'passcode' }}
-                  label={'Passcode'}
-                  placeholder={'Enter a meeting passcode'}
-                  onChange={(_, newValue) => {
-                    // meeting id is required, but passcode is not
-                    setPasscode(newValue);
-                    meetingId
-                      ? setCallLocator({ meetingId: meetingId, passcode: newValue })
-                      : setCallLocator(undefined);
-                  }}
-                />
-              )
-            }
+            {teamsCallChosen && (
+              <TextField
+                className={teamsItemStyle}
+                iconProps={{ iconName: 'passcode' }}
+                label={'Passcode'}
+                placeholder={'Enter a meeting passcode'}
+                onChange={(_, newValue) => {
+                  // meeting id is required, but passcode is not
+                  setPasscode(newValue);
+                  meetingId ? setCallLocator({ meetingId: meetingId, passcode: newValue }) : setCallLocator(undefined);
+                }}
+              />
+            )}
 
-            {
-              teamsCallChosen && (
-                <Text className={teamsItemStyle} block variant="medium">
-                  <b>And</b>
-                </Text>
-              )
-            }
+            {teamsCallChosen && (
+              <Text className={teamsItemStyle} block variant="medium">
+                <b>And</b>
+              </Text>
+            )}
 
             {}
 

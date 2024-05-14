@@ -79,10 +79,7 @@ const App = (): JSX.Element => {
       document.title = `home - ${WEB_APP_TITLE}`;
       // Show a simplified join home screen if joining an existing call
       const joiningExistingCall: boolean =
-        !!getGroupIdFromUrl() ||
-        !!getTeamsLinkFromUrl() ||
-        !!getMeetingIdFromUrl() ||
-        !!getRoomIdFromUrl();
+        !!getGroupIdFromUrl() || !!getTeamsLinkFromUrl() || !!getMeetingIdFromUrl() || !!getRoomIdFromUrl();
       return (
         <HomeScreen
           joiningExistingCall={joiningExistingCall}

@@ -25,6 +25,7 @@ import { localStorageAvailable } from '../utils/localStorage';
 import { getDisplayNameFromLocalStorage, saveDisplayNameToLocalStorage } from '../utils/localStorage';
 import { DisplayNameField } from './DisplayNameField';
 import { RoomLocator, TeamsMeetingLinkLocator } from '@azure/communication-calling';
+import { TeamsMeetingIdLocator } from '@azure/communication-calling';
 import { getRoomIdFromUrl } from '../utils/AppUtils';
 
 import { CallAdapterLocator } from '@azure/communication-react';
@@ -34,7 +35,7 @@ export type CallOption = 'ACSCall' | 'TeamsMeeting' | 'Rooms' | 'StartRooms' | '
 export interface HomeScreenProps {
   startCallHandler(callDetails: {
     displayName: string;
-    callLocator?: CallAdapterLocator | TeamsMeetingLinkLocator | RoomLocator;
+    callLocator?: CallAdapterLocator | TeamsMeetingLinkLocator | RoomLocator | TeamsMeetingIdLocator;
     option?: CallOption;
     role?: string;
 
@@ -73,7 +74,9 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
   const [displayName, setDisplayName] = useState<string | undefined>(defaultDisplayName ?? undefined);
 
   const [chosenCallOption, setChosenCallOption] = useState<ICallChoiceGroupOption>(callOptions[0]);
-  const [callLocator, setCallLocator] = useState<TeamsMeetingLinkLocator | RoomLocator>();
+  const [callLocator, setCallLocator] = useState<TeamsMeetingLinkLocator | RoomLocator | TeamsMeetingIdLocator>();
+  const [meetingId, setMeetingId] = useState<string>();
+  const [passcode, setPasscode] = useState<string>();
   const [chosenRoomsRoleOption, setRoomsRoleOption] = useState<IChoiceGroupOption>(roomRoleOptions[1]);
 
   const [outboundTeamsUsers, setOutboundTeamsUsers] = useState<string | undefined>();
@@ -131,8 +134,50 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 label={'Meeting Link'}
                 required
                 placeholder={'Enter a Teams meeting link'}
-                onChange={(_, newValue) => newValue && setCallLocator({ meetingLink: newValue })}
+                onChange={(_, newValue) => {
+                  newValue ? setCallLocator({ meetingLink: newValue }) : setCallLocator(undefined);
+                }}
               />
+            )}
+
+            {teamsCallChosen && (
+              <Text className={teamsItemStyle} block variant="medium">
+                <b>Or</b>
+              </Text>
+            )}
+
+            {teamsCallChosen && (
+              <TextField
+                className={teamsItemStyle}
+                iconProps={{ iconName: 'MeetingId' }}
+                label={'Meeting Id'}
+                required
+                placeholder={'Enter a meeting id'}
+                onChange={(_, newValue) => {
+                  setMeetingId(newValue);
+                  newValue ? setCallLocator({ meetingId: newValue, passcode: passcode }) : setCallLocator(undefined);
+                }}
+              />
+            )}
+
+            {teamsCallChosen && (
+              <TextField
+                className={teamsItemStyle}
+                iconProps={{ iconName: 'passcode' }}
+                label={'Passcode'}
+                placeholder={'Enter a meeting passcode'}
+                onChange={(_, newValue) => {
+                  // meeting id is required, but passcode is not
+                  setPasscode(newValue);
+                  meetingId ? setCallLocator({ meetingId: meetingId, passcode: newValue }) : setCallLocator(undefined);
+                }}
+              />
+            )}
+
+            {teamsCallChosen && (
+              <Text className={teamsItemStyle} block variant="medium">
+                <b>And</b>
+              </Text>
             )}
 
             {}

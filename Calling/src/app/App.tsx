@@ -10,9 +10,6 @@ import { initializeIcons, Spinner } from '@fluentui/react';
 import { CallAdapterLocator } from '@azure/communication-react';
 import React, { useEffect, useState } from 'react';
 import {
-  buildTime,
-  callingSDKVersion,
-  communicationReactSDKVersion,
   createGroupId,
   fetchTokenResponse,
   getGroupIdFromUrl,
@@ -28,12 +25,9 @@ import { CallError } from './views/CallError';
 import { CallScreen } from './views/CallScreen';
 import { HomeScreen } from './views/HomeScreen';
 import { UnsupportedBrowserPage } from './views/UnsupportedBrowserPage';
+import { getMeetingIdFromUrl } from './utils/AppUtils';
 
 setLogLevel('error');
-
-console.log(
-  `ACS sample calling app. Last Updated ${buildTime} using @azure/communication-calling:${callingSDKVersion} and @azure/communication-react:${communicationReactSDKVersion}`
-);
 
 initializeIcons();
 
@@ -84,7 +78,8 @@ const App = (): JSX.Element => {
     case 'home': {
       document.title = `home - ${WEB_APP_TITLE}`;
       // Show a simplified join home screen if joining an existing call
-      const joiningExistingCall: boolean = !!getGroupIdFromUrl() || !!getTeamsLinkFromUrl() || !!getRoomIdFromUrl();
+      const joiningExistingCall: boolean =
+        !!getGroupIdFromUrl() || !!getTeamsLinkFromUrl() || !!getMeetingIdFromUrl() || !!getRoomIdFromUrl();
       return (
         <HomeScreen
           joiningExistingCall={joiningExistingCall}
@@ -95,6 +90,7 @@ const App = (): JSX.Element => {
               callDetails.callLocator ||
               getRoomIdFromUrl() ||
               getTeamsLinkFromUrl() ||
+              getMeetingIdFromUrl() ||
               getGroupIdFromUrl() ||
               createGroupId();
 
@@ -184,7 +180,11 @@ const getJoinParams = (locator: CallAdapterLocator): string => {
   if ('meetingLink' in locator) {
     return '?teamsLink=' + encodeURIComponent(locator.meetingLink);
   }
-
+  if ('meetingId' in locator) {
+    return (
+      '?meetingId=' + encodeURIComponent(locator.meetingId) + (locator.passcode ? '&passcode=' + locator.passcode : '')
+    );
+  }
   if ('roomId' in locator) {
     return '?roomId=' + encodeURIComponent(locator.roomId);
   }

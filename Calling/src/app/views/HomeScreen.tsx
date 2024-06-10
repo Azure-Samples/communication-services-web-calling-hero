@@ -25,19 +25,22 @@ import { localStorageAvailable } from '../utils/localStorage';
 import { getDisplayNameFromLocalStorage, saveDisplayNameToLocalStorage } from '../utils/localStorage';
 import { DisplayNameField } from './DisplayNameField';
 import { RoomLocator, TeamsMeetingLinkLocator } from '@azure/communication-calling';
+import { TeamsMeetingIdLocator } from '@azure/communication-calling';
 import { getRoomIdFromUrl } from '../utils/AppUtils';
+import { getIsCTE } from '../utils/AppUtils';
 
 import { CallAdapterLocator } from '@azure/communication-react';
 
-export type CallOption = 'ACSCall' | 'TeamsMeeting' | 'Rooms' | 'StartRooms' | 'TeamsAdhoc';
+export type CallOption = 'ACSCall' | 'TeamsMeeting' | 'Rooms' | 'StartRooms' | 'TeamsIdentity' | 'TeamsAdhoc';
 
 export interface HomeScreenProps {
   startCallHandler(callDetails: {
     displayName: string;
-    callLocator?: CallAdapterLocator | TeamsMeetingLinkLocator | RoomLocator;
+    callLocator?: CallAdapterLocator | TeamsMeetingLinkLocator | RoomLocator | TeamsMeetingIdLocator;
     option?: CallOption;
     role?: string;
-
+    teamsToken?: string;
+    teamsId?: string;
     outboundTeamsUsers?: string[];
   }): void;
   joiningExistingCall: boolean;
@@ -55,12 +58,13 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
     { key: 'StartRooms', text: 'Start a Rooms call' },
     { key: 'TeamsMeeting', text: 'Join a Teams meeting using ACS identity' },
     { key: 'Rooms', text: 'Join a Rooms Call' },
-
+    { key: 'TeamsIdentity', text: 'Join a Teams call using Teams identity' },
     { key: 'TeamsAdhoc', text: 'Call a Teams User or voice application' }
   ];
 
   const roomIdLabel = 'Room ID';
-
+  const teamsTokenLabel = 'Enter a Teams token';
+  const teamsIdLabel = 'Enter a Teams Id';
   const roomsRoleGroupLabel = 'Rooms Role';
   const roomRoleOptions: IChoiceGroupOption[] = [
     { key: 'Consumer', text: 'Consumer' },
@@ -73,25 +77,32 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
   const [displayName, setDisplayName] = useState<string | undefined>(defaultDisplayName ?? undefined);
 
   const [chosenCallOption, setChosenCallOption] = useState<ICallChoiceGroupOption>(callOptions[0]);
-  const [callLocator, setCallLocator] = useState<TeamsMeetingLinkLocator | RoomLocator>();
+  const [callLocator, setCallLocator] = useState<TeamsMeetingLinkLocator | RoomLocator | TeamsMeetingIdLocator>();
+  const [meetingId, setMeetingId] = useState<string>();
+  const [passcode, setPasscode] = useState<string>();
   const [chosenRoomsRoleOption, setRoomsRoleOption] = useState<IChoiceGroupOption>(roomRoleOptions[1]);
 
+  const [teamsToken, setTeamsToken] = useState<string>();
+  const [teamsId, setTeamsId] = useState<string>();
   const [outboundTeamsUsers, setOutboundTeamsUsers] = useState<string | undefined>();
 
   const startGroupCall: boolean = chosenCallOption.key === 'ACSCall';
   const teamsCallChosen: boolean = chosenCallOption.key === 'TeamsMeeting';
+  const teamsIdentityChosen = chosenCallOption.key === 'TeamsIdentity';
 
   const teamsAdhocChosen: boolean = chosenCallOption.key === 'TeamsAdhoc';
 
   const buttonEnabled =
-    displayName &&
+    (displayName || teamsToken) &&
     (startGroupCall ||
       (teamsCallChosen && callLocator) ||
       (((chosenCallOption.key === 'Rooms' && callLocator) || chosenCallOption.key === 'StartRooms') &&
         chosenRoomsRoleOption) ||
-      (teamsAdhocChosen && outboundTeamsUsers));
+      (teamsAdhocChosen && outboundTeamsUsers) ||
+      (teamsIdentityChosen && callLocator && teamsToken && teamsId));
 
-  const showDisplayNameField = true;
+  let showDisplayNameField = true;
+  showDisplayNameField = !teamsIdentityChosen;
 
   const [teamsIdFormatError, setTeamsIdFormatError] = useState<boolean>(false);
 
@@ -120,24 +131,101 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 required={true}
                 onChange={(_, option) => {
                   option && setChosenCallOption(option as ICallChoiceGroupOption);
+                  setTeamsIdFormatError(false);
                 }}
               />
             )}
 
-            {teamsCallChosen && (
+            {(teamsCallChosen || teamsIdentityChosen) && (
               <TextField
                 className={teamsItemStyle}
                 iconProps={{ iconName: 'Link' }}
                 label={'Meeting Link'}
                 required
                 placeholder={'Enter a Teams meeting link'}
-                onChange={(_, newValue) => newValue && setCallLocator({ meetingLink: newValue })}
+                onChange={(_, newValue) => {
+                  newValue ? setCallLocator({ meetingLink: newValue }) : setCallLocator(undefined);
+                }}
               />
             )}
 
-            {}
+            {(teamsCallChosen || teamsIdentityChosen) && (
+              <Text className={teamsItemStyle} block variant="medium">
+                <b>Or</b>
+              </Text>
+            )}
 
-            {}
+            {(teamsCallChosen || teamsIdentityChosen) && (
+              <TextField
+                className={teamsItemStyle}
+                iconProps={{ iconName: 'MeetingId' }}
+                label={'Meeting Id'}
+                required
+                placeholder={'Enter a meeting id'}
+                onChange={(_, newValue) => {
+                  setMeetingId(newValue);
+                  newValue ? setCallLocator({ meetingId: newValue, passcode: passcode }) : setCallLocator(undefined);
+                }}
+              />
+            )}
+
+            {(teamsCallChosen || teamsIdentityChosen) && (
+              <TextField
+                className={teamsItemStyle}
+                iconProps={{ iconName: 'passcode' }}
+                label={'Passcode'}
+                placeholder={'Enter a meeting passcode'}
+                onChange={(_, newValue) => {
+                  // meeting id is required, but passcode is not
+                  setPasscode(newValue);
+                  meetingId ? setCallLocator({ meetingId: meetingId, passcode: newValue }) : setCallLocator(undefined);
+                }}
+              />
+            )}
+
+            {teamsCallChosen && (
+              <Text className={teamsItemStyle} block variant="medium">
+                <b>And</b>
+              </Text>
+            )}
+
+            {(chosenCallOption.key === 'TeamsIdentity' || getIsCTE()) && (
+              <Stack>
+                <TextField
+                  className={teamsItemStyle}
+                  label={teamsTokenLabel}
+                  required
+                  placeholder={'Enter a Teams Token'}
+                  onChange={(_, newValue) => setTeamsToken(newValue)}
+                />
+              </Stack>
+            )}
+
+            {(chosenCallOption.key === 'TeamsIdentity' || getIsCTE()) && (
+              <Stack>
+                <TextField
+                  className={teamsItemStyle}
+                  label={teamsIdLabel}
+                  required
+                  placeholder={'Enter a Teams user ID (8:orgid:<UUID>)'}
+                  errorMessage={
+                    teamsIdFormatError ? `Teams user ID should be in the format '8:orgid:<UUID>'` : undefined
+                  }
+                  onChange={(_, newValue) => {
+                    if (!newValue) {
+                      setTeamsIdFormatError(false);
+                      setTeamsId(undefined);
+                    } else if (newValue.match(/8:orgid:[a-zA-Z0-9-]+/)) {
+                      setTeamsIdFormatError(false);
+                      setTeamsId(newValue);
+                    } else {
+                      setTeamsIdFormatError(true);
+                      setTeamsId(undefined);
+                    }
+                  }}
+                />
+              </Stack>
+            )}
 
             {chosenCallOption.key === 'Rooms' && (
               <Stack>
@@ -198,7 +286,7 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
             className={buttonStyle}
             text={buttonText}
             onClick={() => {
-              if (displayName) {
+              if (displayName || teamsIdentityChosen) {
                 displayName && saveDisplayNameToLocalStorage(displayName);
 
                 const teamsParticipantsToCall = parseParticipants(outboundTeamsUsers);
@@ -209,7 +297,8 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                   callLocator: callLocator,
                   option: chosenCallOption.key,
                   role: chosenRoomsRoleOption.key,
-
+                  teamsToken,
+                  teamsId,
                   outboundTeamsUsers: teamsParticipantsToCall
                 });
               }

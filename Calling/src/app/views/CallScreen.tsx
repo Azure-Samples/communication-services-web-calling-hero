@@ -3,7 +3,7 @@
 
 import { AzureCommunicationTokenCredential } from '@azure/communication-common';
 import { CommunicationUserIdentifier } from '@azure/communication-common';
-
+import { MicrosoftTeamsUserIdentifier } from '@azure/communication-common';
 import {
   AzureCommunicationCallAdapterOptions,
   CallAdapterLocator,
@@ -13,9 +13,10 @@ import {
   CallAdapter,
   toFlatCommunicationIdentifier
 } from '@azure/communication-react';
+import { useTeamsCallAdapter, TeamsCallAdapter } from '@azure/communication-react';
 
 import { onResolveVideoEffectDependencyLazy } from '@azure/communication-react';
-
+import type { Profile, TeamsAdapterOptions } from '@azure/communication-react';
 import type { StartCallIdentifier } from '@azure/communication-react';
 import React, { useCallback, useMemo, useRef } from 'react';
 import { createAutoRefreshingCredential } from '../utils/credential';
@@ -24,15 +25,15 @@ import { CallCompositeContainer } from './CallCompositeContainer';
 
 export interface CallScreenProps {
   token: string;
-  userId: CommunicationUserIdentifier;
-
+  userId: CommunicationUserIdentifier | MicrosoftTeamsUserIdentifier;
   callLocator?: CallAdapterLocator;
   targetCallees?: StartCallIdentifier[];
   displayName: string;
+  isTeamsIdentityCall?: boolean;
 }
 
 export const CallScreen = (props: CallScreenProps): JSX.Element => {
-  const { token, userId } = props;
+  const { token, userId, isTeamsIdentityCall } = props;
   const callIdRef = useRef<string>();
 
   const subscribeAdapterEvents = useCallback((adapter: CommonCallAdapter) => {
@@ -63,10 +64,24 @@ export const CallScreen = (props: CallScreenProps): JSX.Element => {
     [subscribeAdapterEvents]
   );
 
-  const credential = useMemo(() => {
-    return createAutoRefreshingCredential(toFlatCommunicationIdentifier(userId), token);
-  }, [token, userId]);
+  const afterTeamsCallAdapterCreate = useCallback(
+    async (adapter: TeamsCallAdapter): Promise<TeamsCallAdapter> => {
+      subscribeAdapterEvents(adapter);
+      return adapter;
+    },
+    [subscribeAdapterEvents]
+  );
 
+  const credential = useMemo(() => {
+    if (isTeamsIdentityCall) {
+      return new AzureCommunicationTokenCredential(token);
+    }
+    return createAutoRefreshingCredential(toFlatCommunicationIdentifier(userId), token);
+  }, [token, userId, isTeamsIdentityCall]);
+
+  if (isTeamsIdentityCall) {
+    return <TeamsCallScreen afterCreate={afterTeamsCallAdapterCreate} credential={credential} {...props} />;
+  }
   if (props.callLocator) {
     return <AzureCommunicationCallScreen afterCreate={afterCallAdapterCreate} credential={credential} {...props} />;
   } else {
@@ -74,6 +89,42 @@ export const CallScreen = (props: CallScreenProps): JSX.Element => {
       <AzureCommunicationOutboundCallScreen afterCreate={afterCallAdapterCreate} credential={credential} {...props} />
     );
   }
+};
+
+type TeamsCallScreenProps = CallScreenProps & {
+  afterCreate?: (adapter: TeamsCallAdapter) => Promise<TeamsCallAdapter>;
+  credential: AzureCommunicationTokenCredential;
+};
+
+const TeamsCallScreen = (props: TeamsCallScreenProps): JSX.Element => {
+  const { afterCreate, callLocator: locator, userId, ...adapterArgs } = props;
+  if (!(locator && 'meetingLink' in locator)) {
+    throw new Error('A teams meeting locator must be provided for Teams Identity Call.');
+  }
+
+  if (!('microsoftTeamsUserId' in userId)) {
+    throw new Error('A MicrosoftTeamsUserIdentifier must be provided for Teams Identity Call.');
+  }
+
+  const teamsAdapterOptions: TeamsAdapterOptions = useMemo(
+    () => ({
+      videoBackgroundOptions: {
+        videoBackgroundImages
+      }
+    }),
+    []
+  );
+
+  const adapter = useTeamsCallAdapter(
+    {
+      ...adapterArgs,
+      userId,
+      locator,
+      options: teamsAdapterOptions
+    },
+    afterCreate
+  );
+  return <CallCompositeContainer {...props} adapter={adapter} />;
 };
 
 type AzureCommunicationCallScreenProps = CallScreenProps & {
@@ -146,6 +197,12 @@ const AzureCommunicationOutboundCallScreen = (props: AzureCommunicationCallScree
         laughReaction: { url: '/assets/reactions/laughEmoji.png', frameCount: 102 },
         applauseReaction: { url: '/assets/reactions/clapEmoji.png', frameCount: 102 },
         surprisedReaction: { url: '/assets/reactions/surprisedEmoji.png', frameCount: 102 }
+      },
+      onFetchProfile: async (userId: string, defaultProfile?: Profile): Promise<Profile | undefined> => {
+        if (userId === '<28:orgid:Enter your teams app here>') {
+          return { displayName: 'Teams app display name' };
+        }
+        return defaultProfile;
       }
     };
   }, []);
@@ -167,6 +224,8 @@ const convertPageStateToString = (state: CallAdapterState): string => {
   switch (state.page) {
     case 'accessDeniedTeamsMeeting':
       return 'error';
+    case 'badRequest':
+      return 'error';
     case 'leftCall':
       return 'end call';
     case 'removedFromCall':
@@ -178,38 +237,38 @@ const convertPageStateToString = (state: CallAdapterState): string => {
 
 const videoBackgroundImages = [
   {
-    key: 'ab1',
+    key: 'contoso',
     url: '/assets/backgrounds/contoso.png',
-    tooltipText: 'Custom Background'
+    tooltipText: 'Contoso Background'
   },
   {
-    key: 'ab2',
+    key: 'pastel',
     url: '/assets/backgrounds/abstract2.jpg',
-    tooltipText: 'Custom Background'
+    tooltipText: 'Pastel Background'
   },
   {
-    key: 'ab3',
+    key: 'rainbow',
     url: '/assets/backgrounds/abstract3.jpg',
-    tooltipText: 'Custom Background'
+    tooltipText: 'Rainbow Background'
   },
   {
-    key: 'ab4',
+    key: 'office',
     url: '/assets/backgrounds/room1.jpg',
-    tooltipText: 'Custom Background'
+    tooltipText: 'Office Background'
   },
   {
-    key: 'ab5',
+    key: 'plant',
     url: '/assets/backgrounds/room2.jpg',
-    tooltipText: 'Custom Background'
+    tooltipText: 'Plant Background'
   },
   {
-    key: 'ab6',
+    key: 'bedroom',
     url: '/assets/backgrounds/room3.jpg',
-    tooltipText: 'Custom Background'
+    tooltipText: 'Bedroom Background'
   },
   {
-    key: 'ab7',
+    key: 'livingroom',
     url: '/assets/backgrounds/room4.jpg',
-    tooltipText: 'Custom Background'
+    tooltipText: 'Living Room Background'
   }
 ];

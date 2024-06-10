@@ -21,8 +21,12 @@ export const CallCompositeContainer = (props: CallCompositeContainerProps): JSX.
   const options: CallCompositeOptions = useMemo(
     () => ({
       callControls: {
-        screenShareButton: shouldHideScreenShare ? false : undefined
-      }
+        screenShareButton: shouldHideScreenShare ? false : undefined,
+        endCallButton: {
+          hangUpForEveryone: 'endCallOptions'
+        }
+      },
+      autoShowDtmfDialer: true
     }),
     [shouldHideScreenShare]
   );

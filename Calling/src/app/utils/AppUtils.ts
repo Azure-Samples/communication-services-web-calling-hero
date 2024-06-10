@@ -3,7 +3,7 @@
 
 import { GroupLocator, TeamsMeetingLinkLocator } from '@azure/communication-calling';
 import { ParticipantRole, RoomCallLocator } from '@azure/communication-calling';
-
+import { TeamsMeetingIdLocator } from '@azure/communication-calling';
 import { v1 as generateGUID } from 'uuid';
 
 /**
@@ -79,6 +79,24 @@ export const getTeamsLinkFromUrl = (): TeamsMeetingLinkLocator | undefined => {
   const urlParams = new URLSearchParams(window.location.search);
   const teamsLink = urlParams.get('teamsLink');
   return teamsLink ? { meetingLink: teamsLink } : undefined;
+};
+
+/**
+ * Get teams meeting id and passcode from the url's query params.
+ */
+export const getMeetingIdFromUrl = (): TeamsMeetingIdLocator | undefined => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const meetingId = urlParams.get('meetingId');
+  const passcode = urlParams.get('passcode');
+  return meetingId ? { meetingId: meetingId, passcode: passcode ? passcode : undefined } : undefined;
+};
+
+/**
+ * Get teams meeting link from the url's query params.
+ */
+export const getIsCTE = (): boolean | undefined => {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get('isCTE') === 'true';
 };
 
 /**

@@ -10,9 +10,6 @@ import { initializeIcons, Spinner } from '@fluentui/react';
 import { CallAdapterLocator } from '@azure/communication-react';
 import React, { useEffect, useState } from 'react';
 import {
-  buildTime,
-  callingSDKVersion,
-  communicationReactSDKVersion,
   createGroupId,
   fetchTokenResponse,
   getGroupIdFromUrl,
@@ -31,10 +28,6 @@ import { UnsupportedBrowserPage } from './views/UnsupportedBrowserPage';
 import { getMeetingIdFromUrl } from './utils/AppUtils';
 
 setLogLevel('error');
-
-console.log(
-  `ACS sample calling app. Last Updated ${buildTime} using @azure/communication-calling:${callingSDKVersion} and @azure/communication-react:${communicationReactSDKVersion}`
-);
 
 initializeIcons();
 

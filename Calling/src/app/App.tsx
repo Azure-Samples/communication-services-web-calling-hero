@@ -43,8 +43,9 @@ const App = (): JSX.Element => {
 
   // Call details to join a call - these are collected from the user on the home screen
   const [callLocator, setCallLocator] = useState<CallAdapterLocator>();
-  const [targetCallees, setTargetCallees] = useState<StartCallIdentifier[]>([]);
+  const [targetCallees, setTargetCallees] = useState<StartCallIdentifier[] | undefined>(undefined);
   const [displayName, setDisplayName] = useState<string>('');
+
   const [isTeamsCall, setIsTeamsCall] = useState<boolean>(false);
 
   // Get Azure Communications Service token from the server
@@ -86,7 +87,6 @@ const App = (): JSX.Element => {
           joiningExistingCall={joiningExistingCall}
           startCallHandler={async (callDetails) => {
             setDisplayName(callDetails.displayName);
-
             let callLocator: CallAdapterLocator | undefined =
               callDetails.callLocator ||
               getRoomIdFromUrl() ||
@@ -104,7 +104,7 @@ const App = (): JSX.Element => {
                 return fromFlatCommunicationIdentifier(user) as StartCallIdentifier;
               });
               callLocator = undefined;
-              setTargetCallees(outboundTeamsUsers ?? []);
+              setTargetCallees(outboundTeamsUsers);
             }
 
             // There is an API call involved with creating a room so lets only create one if we know we have to
@@ -201,7 +201,6 @@ const getJoinParams = (locator: CallAdapterLocator): string => {
   if ('roomId' in locator) {
     return '?roomId=' + encodeURIComponent(locator.roomId);
   }
-
   return '?groupId=' + encodeURIComponent(locator.groupId);
 };
 

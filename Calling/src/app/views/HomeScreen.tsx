@@ -3,7 +3,6 @@
 
 import React, { useState } from 'react';
 import { Stack, PrimaryButton, Image, ChoiceGroup, IChoiceGroupOption, Text, TextField } from '@fluentui/react';
-
 import heroSVG from '../../assets/hero.svg';
 import {
   imgStyle,
@@ -19,7 +18,6 @@ import {
   buttonStyle
 } from '../styles/HomeScreen.styles';
 import { outboundTextField } from '../styles/HomeScreen.styles';
-
 import { ThemeSelector } from '../theming/ThemeSelector';
 import { localStorageAvailable } from '../utils/localStorage';
 import { getDisplayNameFromLocalStorage, saveDisplayNameToLocalStorage } from '../utils/localStorage';
@@ -28,7 +26,6 @@ import { RoomLocator, TeamsMeetingLinkLocator } from '@azure/communication-calli
 import { TeamsMeetingIdLocator } from '@azure/communication-calling';
 import { getRoomIdFromUrl } from '../utils/AppUtils';
 import { getIsCTE } from '../utils/AppUtils';
-
 import { CallAdapterLocator } from '@azure/communication-react';
 
 export type CallOption = 'ACSCall' | 'TeamsMeeting' | 'Rooms' | 'StartRooms' | 'TeamsIdentity' | 'TeamsAdhoc';
@@ -61,7 +58,6 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
     { key: 'TeamsIdentity', text: 'Join a Teams call using Teams identity' },
     { key: 'TeamsAdhoc', text: 'Call a Teams User or voice application' }
   ];
-
   const roomIdLabel = 'Room ID';
   const teamsTokenLabel = 'Enter a Teams token';
   const teamsIdLabel = 'Enter a Teams Id';
@@ -81,7 +77,6 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
   const [meetingId, setMeetingId] = useState<string>();
   const [passcode, setPasscode] = useState<string>();
   const [chosenRoomsRoleOption, setRoomsRoleOption] = useState<IChoiceGroupOption>(roomRoleOptions[1]);
-
   const [teamsToken, setTeamsToken] = useState<string>();
   const [teamsId, setTeamsId] = useState<string>();
   const [outboundTeamsUsers, setOutboundTeamsUsers] = useState<string | undefined>();
@@ -89,7 +84,6 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
   const startGroupCall: boolean = chosenCallOption.key === 'ACSCall';
   const teamsCallChosen: boolean = chosenCallOption.key === 'TeamsMeeting';
   const teamsIdentityChosen = chosenCallOption.key === 'TeamsIdentity';
-
   const teamsAdhocChosen: boolean = chosenCallOption.key === 'TeamsAdhoc';
 
   const buttonEnabled =
@@ -101,8 +95,7 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
       (teamsAdhocChosen && outboundTeamsUsers) ||
       (teamsIdentityChosen && callLocator && teamsToken && teamsId));
 
-  let showDisplayNameField = true;
-  showDisplayNameField = !teamsIdentityChosen;
+  const showDisplayNameField = !teamsIdentityChosen;
 
   const [teamsIdFormatError, setTeamsIdFormatError] = useState<boolean>(false);
 
@@ -135,7 +128,6 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 }}
               />
             )}
-
             {(teamsCallChosen || teamsIdentityChosen) && (
               <TextField
                 className={teamsItemStyle}
@@ -148,13 +140,11 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 }}
               />
             )}
-
             {(teamsCallChosen || teamsIdentityChosen) && (
               <Text className={teamsItemStyle} block variant="medium">
                 <b>Or</b>
               </Text>
             )}
-
             {(teamsCallChosen || teamsIdentityChosen) && (
               <TextField
                 className={teamsItemStyle}
@@ -168,7 +158,6 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 }}
               />
             )}
-
             {(teamsCallChosen || teamsIdentityChosen) && (
               <TextField
                 className={teamsItemStyle}
@@ -182,13 +171,11 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 }}
               />
             )}
-
             {teamsCallChosen && (
               <Text className={teamsItemStyle} block variant="medium">
                 <b>And</b>
               </Text>
             )}
-
             {(chosenCallOption.key === 'TeamsIdentity' || getIsCTE()) && (
               <Stack>
                 <TextField
@@ -200,7 +187,6 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 />
               </Stack>
             )}
-
             {(chosenCallOption.key === 'TeamsIdentity' || getIsCTE()) && (
               <Stack>
                 <TextField
@@ -226,7 +212,6 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 />
               </Stack>
             )}
-
             {chosenCallOption.key === 'Rooms' && (
               <Stack>
                 <TextField
@@ -238,7 +223,6 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 />
               </Stack>
             )}
-
             {(chosenCallOption.key === 'Rooms' || chosenCallOption.key === 'StartRooms' || getRoomIdFromUrl()) && (
               <ChoiceGroup
                 styles={callOptionsGroupStyles}
@@ -249,9 +233,6 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 onChange={(_, option) => option && setRoomsRoleOption(option)}
               />
             )}
-
-            {}
-
             {teamsAdhocChosen && (
               <Stack>
                 <TextField
@@ -277,8 +258,6 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 />
               </Stack>
             )}
-
-            {}
           </Stack>
           {showDisplayNameField && <DisplayNameField defaultName={displayName} setName={setDisplayName} />}
           <PrimaryButton
@@ -288,9 +267,7 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
             onClick={() => {
               if (displayName || teamsIdentityChosen) {
                 displayName && saveDisplayNameToLocalStorage(displayName);
-
                 const teamsParticipantsToCall = parseParticipants(outboundTeamsUsers);
-
                 props.startCallHandler({
                   //TODO: This needs to be updated after we change arg types of TeamsCall
                   displayName: !displayName ? 'Teams UserName PlaceHolder' : displayName,
@@ -304,7 +281,6 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
               }
             }}
           />
-
           <div>
             <ThemeSelector label="Theme" horizontal={true} />
           </div>

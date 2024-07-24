@@ -13,7 +13,7 @@ import { v1 as generateGUID } from 'uuid';
 export const fetchTokenResponse = async (): Promise<any> => {
   const response = await fetch('/token?scope=voip');
   if (response.ok) {
-    const responseAsJson = await response.json(); //(await response.json())?.value?.token;
+    const responseAsJson = await response.json();
     const token = responseAsJson.token;
     if (token) {
       return responseAsJson;

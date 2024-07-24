@@ -37,7 +37,6 @@ export const getGroupIdFromUrl = (): GroupLocator | undefined => {
   return gid ? { groupId: gid } : undefined;
 };
 
-
 export const createGroupId = (): GroupLocator => ({ groupId: generateGUID() });
 
 /**

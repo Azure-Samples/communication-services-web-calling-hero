@@ -50,7 +50,7 @@ We appreciate your feedback and energy helping us improve our services. [If you'
 1. Open an instance of PowerShell, Windows Terminal, Command Prompt or equivalent and navigate to the directory that you'd like to clone the sample to.
 
    ```shell
-   git clone https://github.com/Azure-Samples/communication-services-web-calling-hero.git`
+   git clone https://github.com/Azure-Samples/communication-services-web-calling-hero.git
    ```
    
 1. Get the `Connection String` from the Azure portal. For more information on connection strings, see [Create an Azure Communication Resources](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource)

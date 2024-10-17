@@ -15,9 +15,7 @@ if (!domNode) {
 createRoot(domNode).render(
   <React.StrictMode>
     <SwitchableFluentThemeProvider scopeId="SampleCallingApp">
-      <div className="wrapper">
-        <App />
-      </div>
+      <App />
     </SwitchableFluentThemeProvider>
   </React.StrictMode>
 );

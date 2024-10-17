@@ -10,10 +10,6 @@ import { initializeIcons, Spinner, Stack } from '@fluentui/react';
 import { CallAdapterLocator } from '@azure/communication-react';
 import React, { useEffect, useState } from 'react';
 import {
-  buildTime,
-  callingSDKVersion,
-  commitID,
-  communicationReactSDKVersion,
   createGroupId,
   fetchTokenResponse,
   getGroupIdFromUrl,

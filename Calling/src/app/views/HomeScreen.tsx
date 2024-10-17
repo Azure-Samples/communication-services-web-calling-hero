@@ -3,6 +3,8 @@
 
 import React, { useState } from 'react';
 import { Stack, PrimaryButton, Image, ChoiceGroup, IChoiceGroupOption, Text, TextField } from '@fluentui/react';
+import { Label } from '@fluentui/react';
+import { registerIcons, Callout, mergeStyles, Link } from '@fluentui/react';
 import heroSVG from '../../assets/hero.svg';
 import {
   imgStyle,
@@ -18,6 +20,12 @@ import {
   buttonStyle
 } from '../styles/HomeScreen.styles';
 import { outboundTextField } from '../styles/HomeScreen.styles';
+import {
+  dialpadOptionStyles,
+  alternateCallerIdCalloutStyles,
+  alternateCallerIdCalloutTitleStyles,
+  alternateCallerIdCalloutLinkStyles
+} from '../styles/HomeScreen.styles';
 import { ThemeSelector } from '../theming/ThemeSelector';
 import { localStorageAvailable } from '../utils/localStorage';
 import { getDisplayNameFromLocalStorage, saveDisplayNameToLocalStorage } from '../utils/localStorage';
@@ -26,9 +34,20 @@ import { RoomLocator, TeamsMeetingLinkLocator } from '@azure/communication-calli
 import { TeamsMeetingIdLocator } from '@azure/communication-calling';
 import { getRoomIdFromUrl } from '../utils/AppUtils';
 import { getIsCTE } from '../utils/AppUtils';
+import { Dialpad } from '@azure/communication-react';
+import { Backspace20Regular } from '@fluentui/react-icons';
+import { useIsMobile } from '../utils/useIsMobile';
 import { CallAdapterLocator } from '@azure/communication-react';
 
-export type CallOption = 'ACSCall' | 'TeamsMeeting' | 'Rooms' | 'StartRooms' | 'TeamsIdentity' | 'TeamsAdhoc';
+export type CallOption =
+  | 'ACSCall'
+  | 'TeamsMeeting'
+  | 'Rooms'
+  | 'StartRooms'
+  | 'TeamsIdentity'
+  | '1:N'
+  | 'PSTN'
+  | 'TeamsAdhoc';
 
 export interface HomeScreenProps {
   startCallHandler(callDetails: {
@@ -36,6 +55,8 @@ export interface HomeScreenProps {
     callLocator?: CallAdapterLocator | TeamsMeetingLinkLocator | RoomLocator | TeamsMeetingIdLocator;
     option?: CallOption;
     role?: string;
+    outboundParticipants?: string[];
+    alternateCallerId?: string;
     teamsToken?: string;
     teamsId?: string;
     outboundTeamsUsers?: string[];
@@ -47,7 +68,7 @@ type ICallChoiceGroupOption = IChoiceGroupOption & { key: CallOption };
 
 export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
   const imageProps = { src: heroSVG.toString() };
-  const headerTitle = props.joiningExistingCall ? 'Join Call' : 'Start or join a call';
+  const headerTitle = props.joiningExistingCall ? 'Join Call' : 'Start or join a call!';
   const callOptionsGroupLabel = 'Select a call option';
   const buttonText = 'Next';
   const callOptions: ICallChoiceGroupOption[] = [
@@ -56,6 +77,8 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
     { key: 'TeamsMeeting', text: 'Join a Teams meeting using ACS identity' },
     { key: 'Rooms', text: 'Join a Rooms Call' },
     { key: 'TeamsIdentity', text: 'Join a Teams call using Teams identity' },
+    { key: '1:N', text: 'Start a 1:N ACS Call' },
+    { key: 'PSTN', text: 'Start a PSTN Call' },
     { key: 'TeamsAdhoc', text: 'Call a Teams User or voice application' }
   ];
   const roomIdLabel = 'Room ID';
@@ -77,13 +100,20 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
   const [meetingId, setMeetingId] = useState<string>();
   const [passcode, setPasscode] = useState<string>();
   const [chosenRoomsRoleOption, setRoomsRoleOption] = useState<IChoiceGroupOption>(roomRoleOptions[1]);
+  const [alternateCallerId, setAlternateCallerId] = useState<string>();
+  const [outboundParticipants, setOutboundParticipants] = useState<string | undefined>();
+  const [dialPadParticipant, setDialpadParticipant] = useState<string>();
   const [teamsToken, setTeamsToken] = useState<string>();
   const [teamsId, setTeamsId] = useState<string>();
   const [outboundTeamsUsers, setOutboundTeamsUsers] = useState<string | undefined>();
 
+  const [alternateCallerIdCalloutVisible, setAlternateCallerIdCalloutVisible] = useState<boolean>(false);
+
   const startGroupCall: boolean = chosenCallOption.key === 'ACSCall';
   const teamsCallChosen: boolean = chosenCallOption.key === 'TeamsMeeting';
   const teamsIdentityChosen = chosenCallOption.key === 'TeamsIdentity';
+  const pstnCallChosen: boolean = chosenCallOption.key === 'PSTN';
+  const acsCallChosen: boolean = chosenCallOption.key === '1:N';
   const teamsAdhocChosen: boolean = chosenCallOption.key === 'TeamsAdhoc';
 
   const buttonEnabled =
@@ -92,8 +122,14 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
       (teamsCallChosen && callLocator) ||
       (((chosenCallOption.key === 'Rooms' && callLocator) || chosenCallOption.key === 'StartRooms') &&
         chosenRoomsRoleOption) ||
+      (pstnCallChosen && dialPadParticipant && alternateCallerId) ||
       (teamsAdhocChosen && outboundTeamsUsers) ||
+      (outboundParticipants && acsCallChosen) ||
       (teamsIdentityChosen && callLocator && teamsToken && teamsId));
+
+  registerIcons({ icons: { DialpadBackspace: <Backspace20Regular /> } });
+
+  const isMobileSession = useIsMobile();
 
   const showDisplayNameField = !teamsIdentityChosen;
 
@@ -233,6 +269,17 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 onChange={(_, option) => option && setRoomsRoleOption(option)}
               />
             )}
+            {acsCallChosen && (
+              <Stack>
+                <TextField
+                  className={outboundTextField}
+                  label={'Participants'}
+                  required
+                  placeholder={"Comma seperated ACS user ID's"}
+                  onChange={(_, newValue) => setOutboundParticipants(newValue)}
+                />
+              </Stack>
+            )}
             {teamsAdhocChosen && (
               <Stack>
                 <TextField
@@ -258,6 +305,59 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 />
               </Stack>
             )}
+            {pstnCallChosen && (
+              <Stack>
+                <Label required style={{ paddingBottom: '0.5rem' }}>
+                  Please dial the number you wish to call.
+                </Label>
+                <Stack styles={dialpadOptionStyles}>
+                  <Dialpad
+                    longPressTrigger={isMobileSession ? 'touch' : 'mouseAndTouch'}
+                    onChange={(newValue) => {
+                      /**
+                       * We need to pass in the formatting for the phone number string in the onChange handler
+                       * to make sure the phone number is in E.164 format.
+                       */
+                      const phoneNumber = '+' + newValue?.replace(/\D/g, '');
+                      setDialpadParticipant(phoneNumber);
+                    }}
+                  />
+                </Stack>
+                <TextField
+                  required={true}
+                  id={'alternateCallerId-input'}
+                  className={outboundTextField}
+                  label={'Azure Communication Services phone number for caller ID'}
+                  placeholder={'Please enter phone number'}
+                  onChange={(_, newValue) => setAlternateCallerId(newValue)}
+                  onFocus={() => setAlternateCallerIdCalloutVisible(true)}
+                />
+                {alternateCallerIdCalloutVisible && (
+                  <Callout
+                    role="dialog"
+                    gapSpace={0}
+                    target={document.getElementById('alternateCallerId-input')}
+                    className={mergeStyles(alternateCallerIdCalloutStyles)}
+                    onDismiss={() => setAlternateCallerIdCalloutVisible(false)}
+                  >
+                    <Text block className={mergeStyles(alternateCallerIdCalloutTitleStyles)} variant="large">
+                      AlternateCallerId
+                    </Text>
+                    <ul>
+                      <li>This number will act as your caller id when no display name is provided.</li>
+                      <li>Must be from same Azure Communication Services resource as the user making the call.</li>
+                    </ul>
+                    <Link
+                      className={mergeStyles(alternateCallerIdCalloutLinkStyles)}
+                      target="_blank"
+                      href="https://learn.microsoft.com/en-us/azure/communication-services/concepts/telephony/plan-solution"
+                    >
+                      Learn more about phone numbers and Azure Communication Services.
+                    </Link>
+                  </Callout>
+                )}
+              </Stack>
+            )}
           </Stack>
           {showDisplayNameField && <DisplayNameField defaultName={displayName} setName={setDisplayName} />}
           <PrimaryButton
@@ -267,13 +367,18 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
             onClick={() => {
               if (displayName || teamsIdentityChosen) {
                 displayName && saveDisplayNameToLocalStorage(displayName);
+
+                const acsParticipantsToCall = parseParticipants(outboundParticipants);
                 const teamsParticipantsToCall = parseParticipants(outboundTeamsUsers);
+                const dialpadParticipantToCall = parseParticipants(dialPadParticipant);
                 props.startCallHandler({
                   //TODO: This needs to be updated after we change arg types of TeamsCall
                   displayName: !displayName ? 'Teams UserName PlaceHolder' : displayName,
                   callLocator: callLocator,
                   option: chosenCallOption.key,
                   role: chosenRoomsRoleOption.key,
+                  outboundParticipants: acsParticipantsToCall ? acsParticipantsToCall : dialpadParticipantToCall,
+                  alternateCallerId,
                   teamsToken,
                   teamsId,
                   outboundTeamsUsers: teamsParticipantsToCall

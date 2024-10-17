@@ -6,10 +6,14 @@ import { ParticipantRole } from '@azure/communication-calling';
 import { fromFlatCommunicationIdentifier, StartCallIdentifier } from '@azure/communication-react';
 import { MicrosoftTeamsUserIdentifier } from '@azure/communication-common';
 import { setLogLevel } from '@azure/logger';
-import { initializeIcons, Spinner } from '@fluentui/react';
+import { initializeIcons, Spinner, Stack } from '@fluentui/react';
 import { CallAdapterLocator } from '@azure/communication-react';
 import React, { useEffect, useState } from 'react';
 import {
+  buildTime,
+  callingSDKVersion,
+  commitID,
+  communicationReactSDKVersion,
   createGroupId,
   fetchTokenResponse,
   getGroupIdFromUrl,
@@ -47,6 +51,8 @@ const App = (): JSX.Element => {
   const [displayName, setDisplayName] = useState<string>('');
 
   const [isTeamsCall, setIsTeamsCall] = useState<boolean>(false);
+
+  const [alternateCallerId, setAlternateCallerId] = useState<string | undefined>();
 
   // Get Azure Communications Service token from the server
   useEffect(() => {
@@ -87,6 +93,7 @@ const App = (): JSX.Element => {
           joiningExistingCall={joiningExistingCall}
           startCallHandler={async (callDetails) => {
             setDisplayName(callDetails.displayName);
+            setAlternateCallerId(callDetails.alternateCallerId);
             let callLocator: CallAdapterLocator | undefined =
               callDetails.callLocator ||
               getRoomIdFromUrl() ||
@@ -97,6 +104,14 @@ const App = (): JSX.Element => {
 
             if (callDetails.option === 'Rooms') {
               callLocator = getRoomIdFromUrl() || callDetails.callLocator;
+            }
+
+            if (callDetails.option === '1:N' || callDetails.option === 'PSTN') {
+              const outboundUsers = callDetails.outboundParticipants?.map((user) => {
+                return fromFlatCommunicationIdentifier(user);
+              });
+              callLocator = undefined;
+              setTargetCallees(outboundUsers);
             }
 
             if (callDetails.option === 'TeamsAdhoc') {
@@ -138,7 +153,10 @@ const App = (): JSX.Element => {
               window.history.pushState(
                 {},
                 document.title,
-                window.location.origin + getJoinParams(callLocator) + getIsCTEParam(!!callDetails.teamsToken)
+                window.location.origin +
+                  window.location.pathname +
+                  getJoinParams(callLocator) +
+                  getIsCTEParam(!!callDetails.teamsToken)
               );
             }
             setIsTeamsCall(!!callDetails.teamsToken);
@@ -166,7 +184,11 @@ const App = (): JSX.Element => {
 
       if (!token || !userId || (!displayName && !isTeamsCall) || (!targetCallees && !callLocator)) {
         document.title = `credentials - ${WEB_APP_TITLE}`;
-        return <Spinner label={'Getting user credentials from server'} ariaLive="assertive" labelPosition="top" />;
+        return (
+          <Stack horizontalAlign="center" verticalAlign="center" styles={{ root: { height: '100%' } }}>
+            <Spinner label={'Getting user credentials from server'} ariaLive="assertive" labelPosition="top" />
+          </Stack>
+        );
       }
       return (
         <CallScreen
@@ -175,6 +197,7 @@ const App = (): JSX.Element => {
           displayName={displayName}
           callLocator={callLocator}
           targetCallees={targetCallees}
+          alternateCallerId={alternateCallerId}
           isTeamsIdentityCall={isTeamsCall}
         />
       );
@@ -200,6 +223,9 @@ const getJoinParams = (locator: CallAdapterLocator): string => {
   }
   if ('roomId' in locator) {
     return '?roomId=' + encodeURIComponent(locator.roomId);
+  }
+  if ('participantIds' in locator) {
+    return '';
   }
   return '?groupId=' + encodeURIComponent(locator.groupId);
 };

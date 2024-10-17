@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 import { IStackTokens, mergeStyles } from '@fluentui/react';
+import { FontWeights, IStackStyles, IStyle } from '@fluentui/react';
 
 export const imgStyle = mergeStyles({
   width: '16.5rem',
@@ -62,3 +63,27 @@ export const buttonStyle = mergeStyles({
 export const outboundTextField = mergeStyles({
   paddingTop: '0.5rem'
 });
+export const dialpadOptionStyles: IStackStyles = {
+  root: {
+    margin: 'auto',
+    paddingTop: '0.25rem',
+    paddingBottom: '0.25rem'
+  }
+};
+
+export const alternateCallerIdCalloutStyles: IStyle = {
+  width: '25rem',
+  height: '12rem',
+  maxWidth: '90%',
+  padding: '20px 24px'
+};
+
+export const alternateCallerIdCalloutTitleStyles: IStyle = {
+  marginBottom: 12,
+  fontWeight: FontWeights.semilight
+};
+
+export const alternateCallerIdCalloutLinkStyles: IStyle = {
+  display: 'block',
+  marginTop: 20
+};

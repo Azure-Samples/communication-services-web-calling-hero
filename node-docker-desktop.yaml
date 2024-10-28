@@ -1,0 +1,221 @@
+apiVersion: v1
+kind: Node
+metadata:
+  annotations:
+    kubeadm.alpha.kubernetes.io/cri-socket: unix:///var/run/cri-dockerd.sock
+    node.alpha.kubernetes.io/ttl: "0"
+    volumes.kubernetes.io/controller-managed-attach-detach: "true"
+  creationTimestamp: "2024-10-28T10:28:40Z"
+  labels:
+    beta.kubernetes.io/arch: amd64
+    beta.kubernetes.io/os: linux
+    kubernetes.io/arch: amd64
+    kubernetes.io/hostname: docker-desktop
+    kubernetes.io/os: linux
+    node-role.kubernetes.io/control-plane: ""
+    node.kubernetes.io/exclude-from-external-load-balancers: ""
+  name: docker-desktop
+  resourceVersion: "12532"
+  uid: 8ec4b0d6-6e0d-4830-ac26-53b2e66da577
+spec: {}
+status:
+  addresses:
+  - address: 192.168.65.3
+    type: InternalIP
+  - address: docker-desktop
+    type: Hostname
+  allocatable:
+    cpu: "4"
+    ephemeral-storage: "972991057538"
+    hugepages-1Gi: "0"
+    hugepages-2Mi: "0"
+    memory: 7969664Ki
+    pods: "110"
+  capacity:
+    cpu: "4"
+    ephemeral-storage: 1055762868Ki
+    hugepages-1Gi: "0"
+    hugepages-2Mi: "0"
+    memory: 8072064Ki
+    pods: "110"
+  conditions:
+  - lastHeartbeatTime: "2024-10-28T13:10:23Z"
+    lastTransitionTime: "2024-10-28T10:28:31Z"
+    message: kubelet has sufficient memory available
+    reason: KubeletHasSufficientMemory
+    status: "False"
+    type: MemoryPressure
+  - lastHeartbeatTime: "2024-10-28T13:10:23Z"
+    lastTransitionTime: "2024-10-28T10:28:31Z"
+    message: kubelet has no disk pressure
+    reason: KubeletHasNoDiskPressure
+    status: "False"
+    type: DiskPressure
+  - lastHeartbeatTime: "2024-10-28T13:10:23Z"
+    lastTransitionTime: "2024-10-28T10:28:31Z"
+    message: kubelet has sufficient PID available
+    reason: KubeletHasSufficientPID
+    status: "False"
+    type: PIDPressure
+  - lastHeartbeatTime: "2024-10-28T13:10:23Z"
+    lastTransitionTime: "2024-10-28T10:28:42Z"
+    message: kubelet is posting ready status
+    reason: KubeletReady
+    status: "True"
+    type: Ready
+  daemonEndpoints:
+    kubeletEndpoint:
+      Port: 10250
+  images:
+  - names:
+    - vsc-brain_project_p-f82ef68900e72bd79d7ca5c8bbcee3402735d17c30ed21335528bebc21fba204@sha256:af195aa92aec1b2cb5026f6106d656c91cd44c050c82a8d03fb33a31b3f6503f
+    - vsc-brain_project_p-f82ef68900e72bd79d7ca5c8bbcee3402735d17c30ed21335528bebc21fba204:latest
+    sizeBytes: 3149716842
+  - names:
+    - spurin/diveintokubernetes-introduction-lab@sha256:838d2fdd00cdea8c581fee81f3a6524bb030c82d2094f5e6965f6eaa24e3e38b
+    - spurin/diveintokubernetes-introduction-lab:control-plane
+    sizeBytes: 2438258817
+  - names:
+    - mcr.microsoft.com/azure-sql-edge@sha256:902628a8be89e35dfb7895ca31d602974c7bafde4d583a0d0873844feb1c42cf
+    - mcr.microsoft.com/azure-sql-edge:latest
+    sizeBytes: 2288521146
+  - names:
+    - mcr.microsoft.com/devcontainers/python@sha256:452e43dd2381de67191c53f7692433baba156ee9138ccfaed5124ff26c63eaed
+    - mcr.microsoft.com/devcontainers/python:0-3.11
+    sizeBytes: 2107226055
+  - names:
+    - vsc-volume-bootstrap@sha256:4d110cb1ee166cbb8fd639f187d8f2a08b6576f4125fcb7c99f5ef7939dfed2b
+    - vsc-volume-bootstrap:latest
+    sizeBytes: 1156722578
+  - names:
+    - docker/dev-environments-default@sha256:c87f49259aaafad12a164d741c2c2fcf64c1c54685cd539ac98d411ebe9919ce
+    - docker/dev-environments-default:stable-1
+    sizeBytes: 903374418
+  - names:
+    - gitpod/openvscode-server@sha256:6406d779a51706f88d7455a254d665475a8baadcdde9e6fec0617c8e5f13b410
+    - gitpod/openvscode-server:1.90.1
+    sizeBytes: 763713574
+  - names:
+    - docker/desktop-kubernetes@sha256:c86a2c3962729d12e51fbb4c8feeefea67778a70a6ffecf3baff3039d80b4cf5
+    - docker/desktop-kubernetes:kubernetes-v1.30.2-cni-v1.4.0-critools-v1.29.0-cri-dockerd-v0.3.11-1-debian
+    sizeBytes: 625228125
+  - names:
+    - hubproxy.docker.internal:5555/docker/desktop-kubernetes@sha256:56c0d46255e05ebc9a5d62abe3ba49f4274222bff434690414a43e58866b882c
+    - hubproxy.docker.internal:5555/docker/desktop-kubernetes:kubernetes-v1.28.2-cni-v1.3.0-critools-v1.28.0-cri-dockerd-v0.3.4-1-debian
+    sizeBytes: 614781764
+  - names:
+    - eshopwebmvc@sha256:3de26e3a312fdae406e9537d75a6b041ef23a8a55d40cd806d32ba180884279f
+    - eshopwebmvc:latest
+    sizeBytes: 466416852
+  - names:
+    - eshoppublicapi@sha256:08ec79440e53a1d9e05f96088d89c509c0f20162c150c66ac2dfb743b256029d
+    - eshoppublicapi:latest
+    sizeBytes: 411621277
+  - names:
+    - registry.k8s.io/etcd@sha256:51eae8381dcb1078289fa7b4f3df2630cdc18d09fb56f8e56b41c40e191d6c83
+    - registry.k8s.io/etcd:3.5.7-0
+    sizeBytes: 401279687
+  - names:
+    - spurin/diveintokubernetes-introduction-lab@sha256:be6d953aa6e1926fe170c277555221262b99aadaa05f90bbc2e94376eeb7d049
+    - spurin/diveintokubernetes-introduction-lab:portal
+    sizeBytes: 286242241
+  - names:
+    - registry.k8s.io/etcd@sha256:44a8e24dcbba3470ee1fee21d5e88d128c936e9b55d4bc51fbef8086f8ed123b
+    - registry.k8s.io/etcd:3.5.12-0
+    sizeBytes: 210637159
+  - names:
+    - registry.k8s.io/kube-apiserver@sha256:6beea2e5531a0606613594fd3ed92d71bbdcef99dd3237522049a0b32cad736c
+    - registry.k8s.io/kube-apiserver:v1.28.2
+    sizeBytes: 164410605
+  - names:
+    - registry.k8s.io/kube-controller-manager@sha256:6a42ce14d716205a99763f3c732c0a8f0ea041bdbbea7d2dfffcc53dafd7cac4
+    - registry.k8s.io/kube-controller-manager:v1.28.2
+    sizeBytes: 159170291
+  - names:
+    - registry.k8s.io/kube-apiserver@sha256:340ab4a1d66a60630a7a298aa0b2576fcd82e51ecdddb751cf61e5d3846fde2d
+    - registry.k8s.io/kube-apiserver:v1.30.2
+    sizeBytes: 152612102
+  - names:
+    - registry.k8s.io/kube-controller-manager@sha256:4c412bc1fc585ddeba10d34a02e7507ea787ec2c57256d4c18fd230377ab048e
+    - registry.k8s.io/kube-controller-manager:v1.30.2
+    sizeBytes: 145571342
+  - names:
+    - registry.k8s.io/kube-proxy@sha256:8a44c6e094af3dea3de57fa967e201608a358a3bd8b4e3f31ab905bbe4108aec
+    - registry.k8s.io/kube-proxy:v1.30.2
+    sizeBytes: 117523082
+  - names:
+    - crazymax/linguist@sha256:7141aaddd796bb63386c68410a67ddacc557adbc78f4531fffed5952dde90202
+    - crazymax/linguist:7.20.0
+    sizeBytes: 108336645
+  - names:
+    - registry.k8s.io/kube-proxy@sha256:41c8f92d1cd571e0e36af431f35c78379f84f5daf5b85d43014a9940d697afcf
+    - registry.k8s.io/kube-proxy:v1.28.2
+    sizeBytes: 102176712
+  - names:
+    - registry.k8s.io/kube-scheduler@sha256:0ed75a333704f5d315395c6ec04d7af7405715537069b65d40b43ec1c8e030bc
+    - registry.k8s.io/kube-scheduler:v1.30.2
+    sizeBytes: 84616998
+  - names:
+    - registry.k8s.io/kube-scheduler@sha256:6511193f8114a2f011790619698efe12a8119ed9a17e2e36f4c1c759ccf173ab
+    - registry.k8s.io/kube-scheduler:v1.28.2
+    sizeBytes: 82899883
+  - names:
+    - docker/desktop-git-helper@sha256:586198418c4e8688393fae4a045d2dfb118ef28ce8f40005636c1045add9b6e8
+    - docker/desktop-git-helper:c1e302e18fba86bb07f6b657155011bd6791dfc5
+    sizeBytes: 71208040
+  - names:
+    - registry.k8s.io/coredns/coredns@sha256:a0ead06651cf580044aeb0a0feba63591858fb2e43ade8c9dea45a6a89ae7e5e
+    - registry.k8s.io/coredns/coredns:v1.10.1
+    sizeBytes: 69821777
+  - names:
+    - docker/desktop-git-helper@sha256:daea94e30e578e811ac8c894adf126ba12a657ecfdc9c394cd60fc273659203c
+    - docker/desktop-git-helper:5a4fca126aadcd3f6cc3a011aa991de982ae7000
+    sizeBytes: 68157197
+  - names:
+    - docker/desktop-storage-provisioner@sha256:115d77efe6e256cefbcdf1d3292bede9339ef3952a2a83393cea217a3ffdef36
+    - docker/desktop-storage-provisioner:v2.0
+    sizeBytes: 59161250
+  - names:
+    - docker/labs-vscode-installer@sha256:e2ad356121098e05e4d06e49454579e87c0865be447ab3b66d3acd223450b62c
+    - docker/labs-vscode-installer:0.0.9
+    sizeBytes: 53776037
+  - names:
+    - docker/desktop-vpnkit-controller@sha256:7ecf567ea07095f9af6ce2004055d4d37e4ee3bc19b553cce2f6c37ee9b916bf
+    - docker/desktop-vpnkit-controller:dc331cb22850be0cdd97c84a9cfecaf44a1afb6e
+    sizeBytes: 46994937
+  - names:
+    - kong/konnect-docker-extension@sha256:f4c3c5e4439262f71a93191ac42abcef3f9e7b1f86529afd3f7b10a0090a2ba4
+    - kong/konnect-docker-extension:1.1.1
+    sizeBytes: 31891967
+  - names:
+    - edwinat/loglens@sha256:5c6e0aeaa1a49fcb6ddc0c84d5f053bb2f17e571d5dd26d53ffcfdd73849d30b
+    - edwinat/loglens:1.1.0
+    sizeBytes: 13153323
+  - names:
+    - spurin/diveintokubernetes-introduction-lab-extension@sha256:b466adad8b0c448cafab753c2c1febf27448e704e7f8a7233ba3a214b13e70d5
+    - spurin/diveintokubernetes-introduction-lab-extension:1.0.2
+    sizeBytes: 12134768
+  - names:
+    - phpstorm_helpers@sha256:4c512d5c965d1c0ad379279072faecf099d0350b0f830354053bada5d3d08b76
+    - phpstorm_helpers:PS-233.13135.108
+    sizeBytes: 6855633
+  - names:
+    - busybox@sha256:ba76950ac9eaa407512c9d859cea48114eeff8a6f12ebaa5d32ce79d4a017dd8
+    - COmerce/busybox:latest
+    - busybox:latest
+    sizeBytes: 6612448
+  - names:
+    - registry.k8s.io/pause@sha256:7031c1b283388d2c2e09b57badb803c05ebed362dc88d84b480cc47f72a21097
+    - registry.k8s.io/pause:3.9
+    sizeBytes: 1068683
+  nodeInfo:
+    architecture: amd64
+    bootID: 60b5a700-f4f0-4b44-9a1f-1b99b54dc1d0
+    containerRuntimeVersion: docker://27.2.0
+    kernelVersion: 5.15.153.1-microsoft-standard-WSL2
+    kubeProxyVersion: v1.30.2
+    kubeletVersion: v1.30.2
+    machineID: 5679abd4-4ae8-4d20-910d-9ae7afc0d623
+    operatingSystem: linux
+    osImage: Docker Desktop
+    systemUUID: 5679abd4-4ae8-4d20-910d-9ae7afc0d623

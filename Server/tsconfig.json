@@ -6,9 +6,9 @@
     "noImplicitAny": true,
     "moduleResolution": "node",
     "sourceMap": true,
-    "outDir": "dist",
-    "rootDir": ".",
-    "baseUrl": ".",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "baseUrl": "./",
     "paths": {
       "*": ["node_modules/*"]
     },
@@ -16,6 +16,7 @@
       "./node_modules/@types"
     ],
     "resolveJsonModule": true,
+    "skipLibCheck": true
   },
   "include": ["src", "bin"],
   "exclude": [

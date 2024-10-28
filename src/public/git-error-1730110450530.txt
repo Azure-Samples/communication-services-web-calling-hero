@@ -1,0 +1,20 @@
+> git add -A -- .
+warning: adding embedded git repository: Ecommerence/node-ecommerce-V2
+hint: You've added another git repository inside your current repository.
+hint: Clones of the outer repository will not contain the contents of
+hint: the embedded repository and will not know how to obtain it.
+hint: If you meant to add a submodule, use:
+hint: 
+hint: 	git submodule add <url> Ecommerence/node-ecommerce-V2
+hint: 
+hint: If you added this path by mistake, you can remove it from the
+hint: index with:
+hint: 
+hint: 	git rm --cached Ecommerence/node-ecommerce-V2
+hint: 
+hint: See "git help submodule" for more information.
+warning: in the working copy of 'Function .ipynb', LF will be replaced by CRLF the next time Git touches it
+warning: adding embedded git repository: NodejsFullstack/Stage-/node-crud-project
+warning: adding embedded git repository: NodejsFullstack/nodejs-starter
+error: 'Online_portal/' does not have a commit checked out
+fatal: adding files failed

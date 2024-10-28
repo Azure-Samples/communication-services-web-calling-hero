@@ -35,7 +35,7 @@ We appreciate your feedback and energy helping us improve our services. [Please 
 - Create an Azure Communication Services resource. For details, see [Create an Azure Communication Resource](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource). You'll need to record your resource **connection string** for this quickstart.
 
 ## Code structure
-- ./Calling/src/app: Where the client code lives
+<!-- - ./Calling/src/app/connect.tsx -->
 - ./Calling/src/app/App.tsx:  Entry point into the calling sample 
 - ./Calling/src/app/views/HomeScreen.tsx:  
 - ./Calling/src/app/views/CallScreen.tsx:  

@@ -5,7 +5,7 @@
 ## Overview
 
 This is a sample application to show how we can use the `@azure/communication-react` package to build a calling experience.
-Learn more about the [Azure Communication Services UI Library](https://azure.github.io/communication-ui-library/). 
+Learn more about the [Azure Communication Services UI Library](https://azure.github.io/communication-ui-library/).
 The client-side application is a React based user interface. Alongside this front-end is a NodeJS web application powered by ExpressJS that performs functionality like minting new user tokens for each call participant.
 
 Additional documentation for this sample can be found on [Microsoft Docs](https://docs.microsoft.com/azure/communication-services/samples/calling-hero-sample).

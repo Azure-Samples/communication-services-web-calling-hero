@@ -94,8 +94,7 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
   // Get display name from local storage if available
   const defaultDisplayName = localStorageAvailable ? getDisplayNameFromLocalStorage() : null;
   const [displayName, setDisplayName] = useState<string | undefined>(defaultDisplayName ?? undefined);
-
-  const [chosenCallOption, setChosenCallOption] = useState(callOptions[0] as ICallChoiceGroupOption);
+  const [chosenCallOption, setChosenCallOption] = useState<ICallChoiceGroupOption>(callOptions[0]);
   const [callLocator, setCallLocator] = useState<TeamsMeetingLinkLocator | RoomLocator | TeamsMeetingIdLocator>();
   const [meetingId, setMeetingId] = useState<string>();
   const [passcode, setPasscode] = useState<string>();
@@ -106,7 +105,6 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
   const [teamsToken, setTeamsToken] = useState<string>();
   const [teamsId, setTeamsId] = useState<string>();
   const [outboundTeamsUsers, setOutboundTeamsUsers] = useState<string | undefined>();
-
   const [alternateCallerIdCalloutVisible, setAlternateCallerIdCalloutVisible] = useState<boolean>(false);
 
   const startGroupCall: boolean = chosenCallOption.key === 'ACSCall';
@@ -130,9 +128,7 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
   registerIcons({ icons: { DialpadBackspace: <Backspace20Regular /> } });
 
   const isMobileSession = useIsMobile();
-
   const showDisplayNameField = !teamsIdentityChosen;
-
   const [teamsIdFormatError, setTeamsIdFormatError] = useState<boolean>(false);
 
   return (

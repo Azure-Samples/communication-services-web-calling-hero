@@ -131,8 +131,7 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
 
   const isMobileSession = useIsMobile();
 
-  let showDisplayNameField = true;
-  showDisplayNameField = !teamsIdentityChosen;
+  const showDisplayNameField = !teamsIdentityChosen;
 
   const [teamsIdFormatError, setTeamsIdFormatError] = useState<boolean>(false);
 

@@ -135,9 +135,7 @@ const App = (): JSX.Element => {
                 throw 'Invalid userId!';
               }
             }
-
             setCallLocator(callLocator);
-
             // Update window URL to have a joinable link
             if (callLocator && !joiningExistingCall) {
               window.history.pushState(

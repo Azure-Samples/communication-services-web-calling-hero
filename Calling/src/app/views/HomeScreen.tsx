@@ -94,7 +94,7 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
   // Get display name from local storage if available
   const defaultDisplayName = localStorageAvailable ? getDisplayNameFromLocalStorage() : null;
   const [displayName, setDisplayName] = useState<string | undefined>(defaultDisplayName ?? undefined);
-  const [chosenCallOption, setChosenCallOption] = useState<ICallChoiceGroupOption>(callOptions[0]);
+  const [chosenCallOption, setChosenCallOption] = useState(callOptions[0] as ICallChoiceGroupOption);
   const [callLocator, setCallLocator] = useState<TeamsMeetingLinkLocator | RoomLocator | TeamsMeetingIdLocator>();
   const [meetingId, setMeetingId] = useState<string>();
   const [passcode, setPasscode] = useState<string>();
@@ -106,14 +106,12 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
   const [teamsId, setTeamsId] = useState<string>();
   const [outboundTeamsUsers, setOutboundTeamsUsers] = useState<string | undefined>();
   const [alternateCallerIdCalloutVisible, setAlternateCallerIdCalloutVisible] = useState<boolean>(false);
-
   const startGroupCall: boolean = chosenCallOption.key === 'ACSCall';
   const teamsCallChosen: boolean = chosenCallOption.key === 'TeamsMeeting';
   const teamsIdentityChosen = chosenCallOption.key === 'TeamsIdentity';
   const pstnCallChosen: boolean = chosenCallOption.key === 'PSTN';
   const acsCallChosen: boolean = chosenCallOption.key === '1:N';
   const teamsAdhocChosen: boolean = chosenCallOption.key === 'TeamsAdhoc';
-
   const buttonEnabled =
     (displayName || teamsToken) &&
     (startGroupCall ||
@@ -126,7 +124,6 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
       (teamsIdentityChosen && callLocator && teamsToken && teamsId));
 
   registerIcons({ icons: { DialpadBackspace: <Backspace20Regular /> } });
-
   const isMobileSession = useIsMobile();
   const showDisplayNameField = !teamsIdentityChosen;
   const [teamsIdFormatError, setTeamsIdFormatError] = useState<boolean>(false);
@@ -363,7 +360,6 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
             onClick={() => {
               if (displayName || teamsIdentityChosen) {
                 displayName && saveDisplayNameToLocalStorage(displayName);
-
                 const acsParticipantsToCall = parseParticipants(outboundParticipants);
                 const teamsParticipantsToCall = parseParticipants(outboundTeamsUsers);
                 const dialpadParticipantToCall = parseParticipants(dialPadParticipant);

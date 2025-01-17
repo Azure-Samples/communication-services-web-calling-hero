@@ -93,6 +93,7 @@ const App = (): JSX.Element => {
               getMeetingIdFromUrl() ||
               getGroupIdFromUrl() ||
               createGroupId();
+
             if (callDetails.option === 'Rooms') {
               callLocator = getRoomIdFromUrl() || callDetails.callLocator;
             }
@@ -121,6 +122,7 @@ const App = (): JSX.Element => {
               } catch (e) {
                 console.log(e);
               }
+
               callLocator = { roomId: roomId };
             }
 
@@ -135,9 +137,7 @@ const App = (): JSX.Element => {
                 throw 'Invalid userId!';
               }
             }
-
             setCallLocator(callLocator);
-
             // Update window URL to have a joinable link
             if (callLocator && !joiningExistingCall) {
               window.history.pushState(

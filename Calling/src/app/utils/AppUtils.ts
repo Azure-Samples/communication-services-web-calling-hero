@@ -14,7 +14,7 @@ import { v1 as generateGUID } from 'uuid';
 export const fetchTokenResponse = async (): Promise<any> => {
   const response = await fetch('token?scope=voip');
   if (response.ok) {
-    const responseAsJson = await response.json();
+    const responseAsJson = await response.json(); //(await response.json())?.value?.token;
     const token = responseAsJson.token;
     if (token) {
       return responseAsJson;
@@ -134,7 +134,7 @@ export const isOnIphoneAndNotSafari = (): boolean => {
 export const isLandscape = (): boolean => window.innerWidth < window.innerHeight;
 
 export const navigateToHomePage = (): void => {
-  window.location.href = window.location.href.split('?')[0];
+  window.location.href = window.location.href.split('?')[0] ?? window.location.href;
 };
 
 export const WEB_APP_TITLE = document.title;

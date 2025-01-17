@@ -48,6 +48,7 @@ export const CallError = (props: CallErrorProps): JSX.Element => {
             onClick={props.rejoinHandler}
             onRenderIcon={() => <Video20Filled className={videoCameraIconStyle} primaryFill="currentColor" />}
           />
+
           <DefaultButton
             className={buttonStyle}
             styles={buttonWithIconStyles}

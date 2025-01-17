@@ -93,7 +93,6 @@ const App = (): JSX.Element => {
               getMeetingIdFromUrl() ||
               getGroupIdFromUrl() ||
               createGroupId();
-
             if (callDetails.option === 'Rooms') {
               callLocator = getRoomIdFromUrl() || callDetails.callLocator;
             }
@@ -122,7 +121,6 @@ const App = (): JSX.Element => {
               } catch (e) {
                 console.log(e);
               }
-
               callLocator = { roomId: roomId };
             }
 

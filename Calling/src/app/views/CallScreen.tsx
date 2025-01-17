@@ -213,7 +213,6 @@ const AzureCommunicationOutboundCallScreen = (props: AzureCommunicationCallScree
         applauseReaction: { url: 'assets/reactions/clapEmoji.png', frameCount: 102 },
         surprisedReaction: { url: 'assets/reactions/surprisedEmoji.png', frameCount: 102 }
       },
-
       onFetchProfile: async (userId: string, defaultProfile?: Profile): Promise<Profile | undefined> => {
         if (userId === '<28:orgid:Enter your teams app here>') {
           return { displayName: 'Teams app display name' };

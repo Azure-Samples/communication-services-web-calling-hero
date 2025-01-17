@@ -81,7 +81,6 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
     { key: 'PSTN', text: 'Start a PSTN Call' },
     { key: 'TeamsAdhoc', text: 'Call a Teams User or voice application' }
   ];
-
   const roomIdLabel = 'Room ID';
   const teamsTokenLabel = 'Enter a Teams token';
   const teamsIdLabel = 'Enter a Teams Id';
@@ -154,7 +153,6 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 required={true}
                 onChange={(_, option) => {
                   option && setChosenCallOption(option as ICallChoiceGroupOption);
-
                   setTeamsIdFormatError(false);
                 }}
               />
@@ -327,7 +325,6 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                   onChange={(_, newValue) => setAlternateCallerId(newValue)}
                   onFocus={() => setAlternateCallerIdCalloutVisible(true)}
                 />
-
                 {alternateCallerIdCalloutVisible && (
                   <Callout
                     role="dialog"
@@ -381,7 +378,6 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
               }
             }}
           />
-
           <div>
             <ThemeSelector label="Theme" horizontal={true} />
           </div>

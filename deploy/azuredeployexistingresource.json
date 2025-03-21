@@ -55,7 +55,7 @@
           },
           "properties": {
             "ResourceConnectionString": "[listkeys(variables('communicationServicesResourceId'), '2020-08-20' ).primaryConnectionString]",
-            "WEBSITE_NODE_DEFAULT_VERSION": "~12"
+            "WEBSITE_NODE_DEFAULT_VERSION": "~22"
           }
         },
         {

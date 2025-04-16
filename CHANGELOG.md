@@ -1,13 +1,9 @@
-## [project-title] Changelog
+##  communication-services-web-calling-hero Changelog
 
-<a name="x.y.z"></a>
-# x.y.z (yyyy-mm-dd)
+<a name="1.26.0"></a>
+# 1.26.0 (2025-04-16)
 
 *Features*
-* ...
+* Added in RTT
 
-*Bug Fixes*
-* ...
-
-*Breaking Changes*
-* ...
+Please refer to https://github.com/Azure/communication-ui-library/blob/main/packages/communication-react/CHANGELOG.stable.md

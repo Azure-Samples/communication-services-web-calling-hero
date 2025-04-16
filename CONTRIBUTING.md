@@ -26,8 +26,7 @@ The app is built on top of the existing Azure Communiation Services SDKs, and wi
 This means that if the feature desired is not supported on the SDK, please don't try to hack it into the sample. 
 
 The sample is continously updated as new features are added to the underlying SDKs and feel free to contribute any features that are supported.
-In the case of the calling app, two samples are available, one on the `main` branch and another on the `public-preview` branch. 
-If the feature you are looking to add is currently in `public preview`, meaning it is only available on `beta` packages, make sure to contribute to the correct branch.
+The sample app under the hood uses the Call Composite from [UI Library](https://github.com/Azure/communication-ui-library/tree/main)
 
 ## <a name="coc"></a> Code of Conduct
 Help us keep this project open and inclusive. Please read and follow our [Code of Conduct](https://opensource.microsoft.com/codeofconduct/).

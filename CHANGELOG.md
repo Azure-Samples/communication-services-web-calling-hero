@@ -4,6 +4,6 @@
 # 1.26.0 (2025-04-16)
 
 *Features*
-* Added in RTT
+* Added in Real-Time Text (RTT).
 
-Please refer to https://github.com/Azure/communication-ui-library/blob/main/packages/communication-react/CHANGELOG.stable.md
+Please refer to [changelog - @azure/communication-react@1.26.0](https://github.com/Azure/communication-ui-library/blob/main/packages/communication-react/CHANGELOG.stable.md#1260)

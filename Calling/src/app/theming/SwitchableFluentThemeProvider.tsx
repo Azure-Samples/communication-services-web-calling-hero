@@ -71,9 +71,11 @@ const defaultTheme: NamedTheme = defaultThemes.Light as NamedTheme;
 const SwitchableFluentThemeContext = createContext<SwitchableFluentThemeContext>({
   currentTheme: defaultTheme,
   currentRtl: false,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars @typescript-eslint/no-empty-function
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setCurrentTheme: (theme: NamedTheme) => {},
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars @typescript-eslint/no-empty-function
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setCurrentRtl: (rtl: boolean) => {},
   themeStore: defaultThemes
 });

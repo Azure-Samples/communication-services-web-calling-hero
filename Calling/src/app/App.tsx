@@ -10,6 +10,10 @@ import { initializeIcons, Spinner, Stack } from '@fluentui/react';
 import { CallAdapterLocator } from '@azure/communication-react';
 import React, { useEffect, useState } from 'react';
 import {
+  buildTime,
+  callingSDKVersion,
+  commitID,
+  communicationReactSDKVersion,
   createGroupId,
   fetchTokenResponse,
   getGroupIdFromUrl,
@@ -29,10 +33,18 @@ import { getMeetingIdFromUrl } from './utils/AppUtils';
 
 setLogLevel('error');
 
+console.log(
+  `ACS sample calling app. Last Updated ${buildTime} with CommitID:${commitID} using @azure/communication-calling:${callingSDKVersion} and @azure/communication-react:${communicationReactSDKVersion}`
+);
+
 initializeIcons();
 
 type AppPages = 'home' | 'call';
 
+/**
+ * The main app component that renders the home screen or call screen based on the current page.
+ * It fetches user credentials from the server and manages the state of the application.
+ */
 const App = (): JSX.Element => {
   const [page, setPage] = useState<AppPages>('home');
   // User credentials to join a call with - these are retrieved from the server
@@ -93,6 +105,7 @@ const App = (): JSX.Element => {
               getMeetingIdFromUrl() ||
               getGroupIdFromUrl() ||
               createGroupId();
+
             if (callDetails.option === 'Rooms') {
               callLocator = getRoomIdFromUrl() || callDetails.callLocator;
             }
@@ -121,6 +134,7 @@ const App = (): JSX.Element => {
               } catch (e) {
                 console.log(e);
               }
+
               callLocator = { roomId: roomId };
             }
 
@@ -148,9 +162,12 @@ const App = (): JSX.Element => {
               );
             }
             setIsTeamsCall(!!callDetails.teamsToken);
-            callDetails.teamsToken && setToken(callDetails.teamsToken);
-            callDetails.teamsId &&
+            if (callDetails.teamsToken) {
+              setToken(callDetails.teamsToken);
+            }
+            if (callDetails.teamsId) {
               setUserId(fromFlatCommunicationIdentifier(callDetails.teamsId) as MicrosoftTeamsUserIdentifier);
+            }
             setPage('call');
           }}
         />

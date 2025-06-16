@@ -168,9 +168,3 @@ declare let __COMMUNICATIONREACTVERSION__: string; //Injected by webpack
  * Version of the Communication React SDK.
  */
 export const communicationReactSDKVersion = __COMMUNICATIONREACTVERSION__;
-
-declare let __COMMITID__: string; //Injected by webpack
-/**
- * Commit ID of the application.
- */
-export const commitID = __COMMITID__;

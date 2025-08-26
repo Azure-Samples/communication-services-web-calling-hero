@@ -6,7 +6,29 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
+const fs = require('fs');
+
 const webpackConfig = (sampleAppDir, env, babelConfig) => {
+  // load optional env file for local dev
+  const dotenvPath = path.resolve(sampleAppDir, env.development ? '.env.development' : '.env');
+  let localEnv = {};
+  try {
+    if (fs.existsSync(dotenvPath)) {
+      fs.readFileSync(dotenvPath, 'utf8')
+        .split(/\r?\n/)
+        .forEach((line) => {
+          const m = line.match(/^([^#=]+)=(.*)$/);
+            if (m) {
+              const k = m[1].trim();
+              let v = m[2].trim();
+              if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
+                v = v.slice(1, -1);
+              }
+              localEnv[k] = v;
+            }
+        });
+    }
+  } catch { /* ignore */ }
   const config = {
     entry: './src/index.tsx',
     ...(env.production || !env.development ? {} : { devtool: 'eval-source-map' }),
@@ -50,18 +72,24 @@ const webpackConfig = (sampleAppDir, env, babelConfig) => {
     },
     plugins: [
       new HtmlWebpackPlugin({ template: './public/index.html' }),
-      new webpack.DefinePlugin({
-        'process.env.PRODUCTION': env.production || !env.development,
-        'process.env.NAME': JSON.stringify(require(path.resolve(sampleAppDir, 'package.json')).name),
-        'process.env.VERSION': JSON.stringify(require(path.resolve(sampleAppDir, 'package.json')).version),
-        __CALLINGVERSION__: JSON.stringify(
-          require(path.resolve(sampleAppDir, 'package.json')).dependencies['@azure/communication-calling']
-        ),
-        __COMMUNICATIONREACTVERSION__: JSON.stringify(
-          require(path.resolve(sampleAppDir, 'package.json')).dependencies['@azure/communication-react']
-        ),
-        __BUILDTIME__: JSON.stringify(new Date().toLocaleString())
-      }),
+      new webpack.DefinePlugin((() => {
+        const base = {
+          'process.env.PRODUCTION': env.production || !env.development,
+          'process.env.NAME': JSON.stringify(require(path.resolve(sampleAppDir, 'package.json')).name),
+          'process.env.VERSION': JSON.stringify(require(path.resolve(sampleAppDir, 'package.json')).version),
+          __CALLINGVERSION__: JSON.stringify(
+            require(path.resolve(sampleAppDir, 'package.json')).dependencies['@azure/communication-calling']
+          ),
+          __COMMUNICATIONREACTVERSION__: JSON.stringify(
+            require(path.resolve(sampleAppDir, 'package.json')).dependencies['@azure/communication-react']
+          ),
+          __BUILDTIME__: JSON.stringify(new Date().toLocaleString())
+        };
+        ['REACT_APP_ENTRA_CLIENT_ID','REACT_APP_ENTRA_TENANT_ID','REACT_APP_ACS_RESOURCE_ENDPOINT','REACT_APP_ENTRA_REDIRECT_URI'].forEach(k => {
+          base[`process.env.${k}`] = JSON.stringify(localEnv[k] || process.env[k] || '');
+        });
+        return base;
+      })()),
       new CopyPlugin({
         patterns: [
           { from: path.resolve(sampleAppDir, 'public/manifest.json'), to: 'manifest.json' },

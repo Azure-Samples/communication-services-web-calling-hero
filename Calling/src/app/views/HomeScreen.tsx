@@ -38,6 +38,7 @@ import { Dialpad } from '@azure/communication-react';
 import { Backspace20Regular } from '@fluentui/react-icons';
 import { useIsMobile } from '../utils/useIsMobile';
 import { CallAdapterLocator } from '@azure/communication-react';
+import { EntraAuthStatus } from './EntraAuthStatus';
 
 export type CallOption =
   | 'ACSCall'

@@ -256,7 +256,7 @@ const App = (): JSX.Element => {
       return (
         <CallScreen
           token={isEntraIdCall ? undefined : token}
-          userId={userId}
+          userId={userId as CommunicationUserIdentifier | MicrosoftTeamsUserIdentifier}
           displayName={displayName}
           callLocator={callLocator}
           targetCallees={targetCallees}

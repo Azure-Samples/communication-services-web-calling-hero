@@ -87,3 +87,7 @@ export const alternateCallerIdCalloutLinkStyles: IStyle = {
   display: 'block',
   marginTop: 20
 };
+// Space for auth status component
+export const authStatusStyle = mergeStyles({
+  marginTop: '0.75rem'
+});

@@ -26,17 +26,20 @@ import { WEB_APP_TITLE } from '../utils/AppUtils';
 import { CallCompositeContainer } from './CallCompositeContainer';
 
 export interface CallScreenProps {
-  token: string;
+  token: string | undefined;
   userId: CommunicationUserIdentifier | MicrosoftTeamsUserIdentifier;
   callLocator?: CallAdapterLocator;
   targetCallees?: StartCallIdentifier[];
   displayName: string;
   alternateCallerId?: string;
   isTeamsIdentityCall?: boolean;
+  entraIdCredential?: AzureCommunicationTokenCredential;
+  isEntraIdCall?: boolean;
+  signOutEntra?: () => void;
 }
 
 export const CallScreen = (props: CallScreenProps): JSX.Element => {
-  const { token, userId, isTeamsIdentityCall } = props;
+  const { token, userId, isTeamsIdentityCall, entraIdCredential, isEntraIdCall, signOutEntra } = props;
   const callIdRef = useRef<string>();
 
   const subscribeAdapterEvents = useCallback((adapter: CommonCallAdapter) => {
@@ -76,22 +79,39 @@ export const CallScreen = (props: CallScreenProps): JSX.Element => {
   );
 
   const credential = useMemo(() => {
-    if (isTeamsIdentityCall) {
+    if (isEntraIdCall && entraIdCredential) {
+      return entraIdCredential;
+    }
+    if (isTeamsIdentityCall && token) {
       return new AzureCommunicationTokenCredential(token);
     }
-    return createAutoRefreshingCredential(toFlatCommunicationIdentifier(userId), token);
-  }, [token, userId, isTeamsIdentityCall]);
+    if (token) {
+      return createAutoRefreshingCredential(toFlatCommunicationIdentifier(userId), token);
+    }
+    throw new Error('No valid credential source');
+  }, [token, userId, isTeamsIdentityCall, isEntraIdCall, entraIdCredential]);
 
-  if (isTeamsIdentityCall) {
-    return <TeamsCallScreen afterCreate={afterTeamsCallAdapterCreate} credential={credential} {...props} />;
-  }
-  if (props.callLocator) {
-    return <AzureCommunicationCallScreen afterCreate={afterCallAdapterCreate} credential={credential} {...props} />;
-  } else {
-    return (
-      <AzureCommunicationOutboundCallScreen afterCreate={afterCallAdapterCreate} credential={credential} {...props} />
-    );
-  }
+  const renderAdapter = () => {
+    if (isTeamsIdentityCall) {
+      return <TeamsCallScreen afterCreate={afterTeamsCallAdapterCreate} credential={credential} {...props} />;
+    }
+    if (props.callLocator) {
+      return <AzureCommunicationCallScreen afterCreate={afterCallAdapterCreate} credential={credential} {...props} />;
+    }
+    return <AzureCommunicationOutboundCallScreen afterCreate={afterCallAdapterCreate} credential={credential} {...props} />;
+  };
+
+  return (
+    <div style={{ height: '100%' }}>
+      {isEntraIdCall && (
+        <div style={{ padding: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span>{`Signed in as ${props.displayName}`}</span>
+          <button onClick={signOutEntra}>Sign out</button>
+        </div>
+      )}
+      {renderAdapter()}
+    </div>
+  );
 };
 
 type TeamsCallScreenProps = CallScreenProps & {

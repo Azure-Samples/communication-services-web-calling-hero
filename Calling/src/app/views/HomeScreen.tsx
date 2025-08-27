@@ -38,6 +38,7 @@ import { Dialpad } from '@azure/communication-react';
 import { Backspace20Regular } from '@fluentui/react-icons';
 import { useIsMobile } from '../utils/useIsMobile';
 import { CallAdapterLocator } from '@azure/communication-react';
+import { EntraAuthStatus } from './EntraAuthStatus';
 
 export type CallOption =
   | 'ACSCall'
@@ -47,7 +48,8 @@ export type CallOption =
   | 'TeamsIdentity'
   | '1:N'
   | 'PSTN'
-  | 'TeamsAdhoc';
+  | 'TeamsAdhoc'
+  | 'EntraIdAuth';
 
 export interface HomeScreenProps {
   startCallHandler(callDetails: {
@@ -62,6 +64,13 @@ export interface HomeScreenProps {
     outboundTeamsUsers?: string[];
   }): void;
   joiningExistingCall: boolean;
+  startEntraAuth?: () => void;
+  retryEntraAuth?: () => void;
+  signOutEntra?: () => void;
+  entraAuthInProgress?: boolean;
+  entraAuthError?: string | null;
+  entraAuthenticated?: boolean;
+  entraUserName?: string | undefined;
 }
 
 type ICallChoiceGroupOption = IChoiceGroupOption & { key: CallOption };
@@ -79,7 +88,8 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
     { key: 'TeamsIdentity', text: 'Join a Teams call using Teams identity' },
     { key: '1:N', text: 'Start a 1:N ACS Call' },
     { key: 'PSTN', text: 'Start a PSTN Call' },
-    { key: 'TeamsAdhoc', text: 'Call a Teams User or voice application' }
+    { key: 'TeamsAdhoc', text: 'Call a Teams User or voice application' },
+    { key: 'EntraIdAuth', text: '🔐 Authenticate with Entra ID (preview)' }
   ];
   const roomIdLabel = 'Room ID';
   const teamsTokenLabel = 'Enter a Teams token';
@@ -112,16 +122,23 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
   const pstnCallChosen: boolean = chosenCallOption.key === 'PSTN';
   const acsCallChosen: boolean = chosenCallOption.key === '1:N';
   const teamsAdhocChosen: boolean = chosenCallOption.key === 'TeamsAdhoc';
-  const buttonEnabled =
-    (displayName || teamsToken) &&
-    (startGroupCall ||
-      (teamsCallChosen && callLocator) ||
-      (((chosenCallOption.key === 'Rooms' && callLocator) || chosenCallOption.key === 'StartRooms') &&
-        chosenRoomsRoleOption) ||
-      (pstnCallChosen && dialPadParticipant && alternateCallerId) ||
-      (teamsAdhocChosen && outboundTeamsUsers) ||
-      (outboundParticipants && acsCallChosen) ||
-      (teamsIdentityChosen && callLocator && teamsToken && teamsId));
+  const entraIdChosen: boolean = chosenCallOption.key === 'EntraIdAuth';
+  const { startEntraAuth, retryEntraAuth, signOutEntra, entraAuthInProgress, entraAuthError, entraAuthenticated, entraUserName } = props;
+  let buttonEnabled: boolean;
+  if (entraIdChosen) {
+    buttonEnabled = !!entraAuthenticated;
+  } else {
+    buttonEnabled = !!(
+      (displayName || teamsToken) &&
+      (startGroupCall ||
+        (teamsCallChosen && callLocator) ||
+        (((chosenCallOption.key === 'Rooms' && callLocator) || chosenCallOption.key === 'StartRooms') && chosenRoomsRoleOption) ||
+        (pstnCallChosen && dialPadParticipant && alternateCallerId) ||
+        (teamsAdhocChosen && outboundTeamsUsers) ||
+        (outboundParticipants && acsCallChosen) ||
+        (teamsIdentityChosen && callLocator && teamsToken && teamsId))
+    );
+  }
 
   registerIcons({ icons: { DialpadBackspace: <Backspace20Regular /> } });
   const isMobileSession = useIsMobile();
@@ -352,7 +369,20 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
               </Stack>
             )}
           </Stack>
-          {showDisplayNameField && <DisplayNameField defaultName={displayName} setName={setDisplayName} />}
+          {entraIdChosen && (
+            <div className={teamsItemStyle}>
+              <EntraAuthStatus
+                authInProgress={entraAuthInProgress}
+                authError={entraAuthError}
+                authenticated={entraAuthenticated}
+                userName={entraUserName}
+                onSignIn={startEntraAuth}
+                onRetry={retryEntraAuth}
+                onSignOut={signOutEntra}
+              />
+            </div>
+          )}
+          {!entraIdChosen && showDisplayNameField && <DisplayNameField defaultName={displayName} setName={setDisplayName} />}
           <PrimaryButton
             disabled={!buttonEnabled}
             className={buttonStyle}

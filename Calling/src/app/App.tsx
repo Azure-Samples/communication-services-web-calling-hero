@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { CommunicationUserIdentifier } from '@azure/communication-common';
+import { CommunicationUserIdentifier, AzureCommunicationTokenCredential } from '@azure/communication-common';
 import { ParticipantRole } from '@azure/communication-calling';
 import { fromFlatCommunicationIdentifier, StartCallIdentifier } from '@azure/communication-react';
 import { MicrosoftTeamsUserIdentifier } from '@azure/communication-common';
@@ -9,6 +9,7 @@ import { setLogLevel } from '@azure/logger';
 import { initializeIcons, Spinner, Stack } from '@fluentui/react';
 import { CallAdapterLocator } from '@azure/communication-react';
 import React, { useEffect, useState } from 'react';
+import { authenticateWithEntraId, getEntraIdConfig, signOutEntraId } from './utils/EntraIdAuthUtils';
 import {
   createGroupId,
   fetchTokenResponse,
@@ -45,6 +46,45 @@ const App = (): JSX.Element => {
   const [displayName, setDisplayName] = useState<string>('');
   const [isTeamsCall, setIsTeamsCall] = useState<boolean>(false);
   const [alternateCallerId, setAlternateCallerId] = useState<string | undefined>();
+  // Entra ID auth state
+  const [entraIdCredential, setEntraIdCredential] = useState<AzureCommunicationTokenCredential>();
+  const [isEntraIdCall, setIsEntraIdCall] = useState<boolean>(false);
+  const [entraIdAuthError, setEntraIdAuthError] = useState<string | null>(null);
+  const [entraAuthInProgress, setEntraAuthInProgress] = useState<boolean>(false);
+
+  const performEntraAuth = async (): Promise<void> => {
+    setEntraIdAuthError(null);
+    setEntraAuthInProgress(true);
+    try {
+      const config = getEntraIdConfig();
+      const authResult = await authenticateWithEntraId(config);
+      setEntraIdCredential(authResult.credential);
+      setIsEntraIdCall(true);
+      setDisplayName(authResult.userInfo.displayName);
+      if (!callLocator) {
+        setCallLocator(createGroupId());
+      }
+      setPage('call');
+    } catch (e) {
+      setEntraIdAuthError(e instanceof Error ? e.message : 'Authentication failed');
+    } finally {
+      setEntraAuthInProgress(false);
+    }
+  };
+
+  const signOutEntra = (): void => {
+    try {
+      const config = getEntraIdConfig();
+      signOutEntraId(config);
+    } catch {
+      /* no-op */
+    }
+    setIsEntraIdCall(false);
+    setEntraIdCredential(undefined);
+    setDisplayName('');
+    setCallLocator(undefined);
+    setPage('home');
+  };
 
   // Get Azure Communications Service token from the server
   useEffect(() => {
@@ -84,6 +124,14 @@ const App = (): JSX.Element => {
         <HomeScreen
           joiningExistingCall={joiningExistingCall}
           startCallHandler={async (callDetails) => {
+            // Entra ID call path
+            if (callDetails.option === 'EntraIdAuth') {
+              await performEntraAuth();
+              return;
+            } else {
+              setIsEntraIdCall(false);
+              setEntraIdCredential(undefined);
+            }
             setDisplayName(callDetails.displayName);
             setAlternateCallerId(callDetails.alternateCallerId);
             let callLocator: CallAdapterLocator | undefined =
@@ -153,6 +201,13 @@ const App = (): JSX.Element => {
               setUserId(fromFlatCommunicationIdentifier(callDetails.teamsId) as MicrosoftTeamsUserIdentifier);
             setPage('call');
           }}
+          startEntraAuth={performEntraAuth}
+          retryEntraAuth={performEntraAuth}
+          signOutEntra={signOutEntra}
+          entraAuthInProgress={entraAuthInProgress}
+          entraAuthError={entraIdAuthError}
+          entraAuthenticated={!!entraIdCredential}
+          entraUserName={isEntraIdCall ? displayName : undefined}
         />
       );
     }
@@ -170,7 +225,27 @@ const App = (): JSX.Element => {
         );
       }
 
-      if (!token || !userId || (!displayName && !isTeamsCall) || (!targetCallees && !callLocator)) {
+      if (entraIdAuthError) {
+        document.title = `error - ${WEB_APP_TITLE}`;
+        return (
+          <CallError
+            title="Entra ID Authentication Failed"
+            reason={entraIdAuthError}
+            rejoinHandler={() => { setEntraIdAuthError(null); setPage('home'); }}
+            homeHandler={() => { setEntraIdAuthError(null); navigateToHomePage(); }}
+          />
+        );
+      }
+      if (isEntraIdCall) {
+        if (!entraIdCredential || !displayName || (!targetCallees && !callLocator)) {
+          document.title = `credentials - ${WEB_APP_TITLE}`;
+          return (
+            <Stack horizontalAlign="center" verticalAlign="center" styles={{ root: { height: '100%' } }}>
+              <Spinner label={'Setting up Entra ID authentication'} ariaLive="assertive" labelPosition="top" />
+            </Stack>
+          );
+        }
+      } else if (!token || !userId || (!displayName && !isTeamsCall) || (!targetCallees && !callLocator)) {
         document.title = `credentials - ${WEB_APP_TITLE}`;
         return (
           <Stack horizontalAlign="center" verticalAlign="center" styles={{ root: { height: '100%' } }}>
@@ -180,13 +255,16 @@ const App = (): JSX.Element => {
       }
       return (
         <CallScreen
-          token={token}
-          userId={userId}
+          token={isEntraIdCall ? undefined : token}
+          userId={userId as CommunicationUserIdentifier | MicrosoftTeamsUserIdentifier}
           displayName={displayName}
           callLocator={callLocator}
           targetCallees={targetCallees}
           alternateCallerId={alternateCallerId}
           isTeamsIdentityCall={isTeamsCall}
+          entraIdCredential={entraIdCredential}
+          isEntraIdCall={isEntraIdCall}
+          signOutEntra={signOutEntra}
         />
       );
     }

@@ -24,7 +24,9 @@ import React, { useCallback, useMemo, useRef } from 'react';
 import { createAutoRefreshingCredential } from '../utils/credential';
 import { WEB_APP_TITLE } from '../utils/AppUtils';
 import { CallCompositeContainer } from './CallCompositeContainer';
-
+/**
+ * CallScreenProps defines the properties for the CallScreen component.
+ */
 export interface CallScreenProps {
   token: string;
   userId: CommunicationUserIdentifier | MicrosoftTeamsUserIdentifier;
@@ -34,7 +36,11 @@ export interface CallScreenProps {
   alternateCallerId?: string;
   isTeamsIdentityCall?: boolean;
 }
-
+/**
+ * CallScreen is a React component that renders the appropriate call screen based on the provided props.
+ * @param props - The properties for the CallScreen component.
+ * @returns A JSX element that renders the CallScreen component.
+ */
 export const CallScreen = (props: CallScreenProps): JSX.Element => {
   const { token, userId, isTeamsIdentityCall } = props;
   const callIdRef = useRef<string>();
@@ -54,8 +60,11 @@ export const CallScreen = (props: CallScreenProps): JSX.Element => {
         console.log(`Call Id: ${callIdRef.current}`);
       }
     });
-    adapter.on('transferAccepted', (e) => {
-      console.log('Call being transferred to: ' + e);
+    adapter.on('transferAccepted', (event) => {
+      console.log('Call being transferred to: ' + event);
+    });
+    adapter.on('callEnded', (event) => {
+      console.log('Call ended id: ' + event.callId + ' code: ' + event.code, 'subcode: ' + event.subCode);
     });
   }, []);
 
@@ -213,6 +222,7 @@ const AzureCommunicationOutboundCallScreen = (props: AzureCommunicationCallScree
         applauseReaction: { url: 'assets/reactions/clapEmoji.png', frameCount: 102 },
         surprisedReaction: { url: 'assets/reactions/surprisedEmoji.png', frameCount: 102 }
       },
+
       onFetchProfile: async (userId: string, defaultProfile?: Profile): Promise<Profile | undefined> => {
         if (userId === '<28:orgid:Enter your teams app here>') {
           return { displayName: 'Teams app display name' };

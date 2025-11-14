@@ -38,7 +38,9 @@ import { Dialpad } from '@azure/communication-react';
 import { Backspace20Regular } from '@fluentui/react-icons';
 import { useIsMobile } from '../utils/useIsMobile';
 import { CallAdapterLocator } from '@azure/communication-react';
-
+/**
+ * CallOption defines the different call options available in the home screen.
+ */
 export type CallOption =
   | 'ACSCall'
   | 'TeamsMeeting'
@@ -48,7 +50,9 @@ export type CallOption =
   | '1:N'
   | 'PSTN'
   | 'TeamsAdhoc';
-
+/**
+ * HomeScreenProps defines the properties for the HomeScreen component.
+ */
 export interface HomeScreenProps {
   startCallHandler(callDetails: {
     displayName: string;
@@ -65,7 +69,12 @@ export interface HomeScreenProps {
 }
 
 type ICallChoiceGroupOption = IChoiceGroupOption & { key: CallOption };
-
+/**
+ * HomeScreen component is the main entry point for the application.
+ * It allows users to start or join a call with various options.
+ * @param props - The properties for the HomeScreen component.
+ * @returns A JSX element that renders the HomeScreen component.
+ */
 export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
   const imageProps = { src: heroSVG.toString() };
   const headerTitle = props.joiningExistingCall ? 'Join Call' : 'Start or join a call!';
@@ -81,6 +90,7 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
     { key: 'PSTN', text: 'Start a PSTN Call' },
     { key: 'TeamsAdhoc', text: 'Call a Teams User or voice application' }
   ];
+
   const roomIdLabel = 'Room ID';
   const teamsTokenLabel = 'Enter a Teams token';
   const teamsIdLabel = 'Enter a Teams Id';
@@ -88,6 +98,7 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
   const roomRoleOptions: IChoiceGroupOption[] = [
     { key: 'Consumer', text: 'Consumer' },
     { key: 'Presenter', text: 'Presenter' },
+    { key: 'Collaborator', text: 'Collaborator' },
     { key: 'Attendee', text: 'Attendee' }
   ];
 
@@ -152,7 +163,9 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 options={callOptions}
                 required={true}
                 onChange={(_, option) => {
-                  option && setChosenCallOption(option as ICallChoiceGroupOption);
+                  if (option) {
+                    setChosenCallOption(option as ICallChoiceGroupOption);
+                  }
                   setTeamsIdFormatError(false);
                 }}
               />
@@ -165,7 +178,7 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 required
                 placeholder={'Enter a Teams meeting link'}
                 onChange={(_, newValue) => {
-                  newValue ? setCallLocator({ meetingLink: newValue }) : setCallLocator(undefined);
+                  setCallLocator(newValue ? { meetingLink: newValue } : undefined);
                 }}
               />
             )}
@@ -183,7 +196,7 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 placeholder={'Enter a meeting id'}
                 onChange={(_, newValue) => {
                   setMeetingId(newValue);
-                  newValue ? setCallLocator({ meetingId: newValue, passcode: passcode }) : setCallLocator(undefined);
+                  setCallLocator(newValue ? { meetingId: newValue, passcode: passcode } : undefined);
                 }}
               />
             )}
@@ -196,7 +209,7 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 onChange={(_, newValue) => {
                   // meeting id is required, but passcode is not
                   setPasscode(newValue);
-                  meetingId ? setCallLocator({ meetingId: meetingId, passcode: newValue }) : setCallLocator(undefined);
+                  setCallLocator(meetingId ? { meetingId: meetingId, passcode: newValue } : undefined);
                 }}
               />
             )}
@@ -325,6 +338,7 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                   onChange={(_, newValue) => setAlternateCallerId(newValue)}
                   onFocus={() => setAlternateCallerIdCalloutVisible(true)}
                 />
+
                 {alternateCallerIdCalloutVisible && (
                   <Callout
                     role="dialog"
@@ -359,7 +373,9 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
             text={buttonText}
             onClick={() => {
               if (displayName || teamsIdentityChosen) {
-                displayName && saveDisplayNameToLocalStorage(displayName);
+                if (displayName) {
+                  saveDisplayNameToLocalStorage(displayName);
+                }
                 const acsParticipantsToCall = parseParticipants(outboundParticipants);
                 const teamsParticipantsToCall = parseParticipants(outboundTeamsUsers);
                 const dialpadParticipantToCall = parseParticipants(dialPadParticipant);
@@ -378,6 +394,7 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
               }
             }}
           />
+
           <div>
             <ThemeSelector label="Theme" horizontal={true} />
           </div>
